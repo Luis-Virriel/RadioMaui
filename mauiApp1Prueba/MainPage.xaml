@@ -55,6 +55,12 @@
                 SemanticProperties.Hint="Counts the number of times you click"
                 Clicked="btnGPS_Clicked"
                 HorizontalOptions="Fill" />
+            <Button
+                x:Name="btnirAPruebas2"
+                Text="irAPruebas" 
+                SemanticProperties.Hint="Counts the number of times you click"
+                Clicked="btnirAPruebas2_Clicked"
+                HorizontalOptions="Fill" />
         </VerticalStackLayout>
     </ScrollView>
 

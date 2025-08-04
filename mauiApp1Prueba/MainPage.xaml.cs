@@ -49,10 +49,12 @@ namespace mauiApp1Prueba
 
         private async void btnFotoVideo_Clicked(object sender, EventArgs e)
         {
+            //para filtrar en que dispositivos quiero que se vea algo
             if (DeviceInfo.Current.Platform == DevicePlatform.Android) 
             {
             
             }
+            //Preferencias
             try 
             {
                 var foto = await MediaPicker.CapturePhotoAsync();
@@ -83,6 +85,11 @@ namespace mauiApp1Prueba
             {
                 DisplayAlert("ERROR", "ERROR AL ABRIR LA UBICACION", "CERRAR");
             }
+        }
+
+        private void btnirAPruebas2_Clicked(object sender, EventArgs e)
+        {
+            Navigation.PushAsync(new PaginaParaPruebas2());
         }
     }
 
