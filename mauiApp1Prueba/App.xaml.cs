@@ -11,7 +11,7 @@ namespace mauiApp1Prueba
             InitializeComponent();
             _serviceProvider = serviceProvider;
 
-            // Iniciar con LoginPage
+            // Iniciar con LoginPage///
             var loginPage = _serviceProvider.GetRequiredService<LoginPage>();
             MainPage = new NavigationPage(loginPage);
         }
