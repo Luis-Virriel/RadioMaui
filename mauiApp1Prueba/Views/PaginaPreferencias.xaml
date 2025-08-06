@@ -1,14 +1,48 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="mauiApp1Prueba.PaginaPreferencias"
-             Title="PaginaPreferencias">
-    <VerticalStackLayout>
-        <Label 
-        Text="Página de Preferencias"
-        FontSize="32"
-        FontAttributes="Bold"
-        HorizontalOptions="Center"
-        VerticalOptions="CenterAndExpand" />
-    </VerticalStackLayout>
+             x:Class="mauiApp1Prueba.Views.PaginaPreferencias"
+             Title="Preferencias">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <Label Text="Seleccioná qué páginas querés ver:"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+
+            <HorizontalStackLayout>
+                <CheckBox x:Name="NoticiasCheck" />
+                <Label Text="Noticias" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout>
+                <CheckBox x:Name="CineCheck" />
+                <Label Text="Cine" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout>
+                <CheckBox x:Name="ClimaCheck" />
+                <Label Text="Clima" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout>
+                <CheckBox x:Name="CotizacionesCheck" />
+                <Label Text="Cotizaciones" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout>
+                <CheckBox x:Name="PatrocinadoresCheck" />
+                <Label Text="Patrocinadores" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <Button Text="Guardar preferencias"
+                    Clicked="OnGuardarClicked"
+                    BackgroundColor="LightBlue"
+                    TextColor="Black"
+                    FontAttributes="Bold"
+                    CornerRadius="10" />
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

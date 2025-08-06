@@ -34,6 +34,6 @@ public partial class PaginaParaPruebas2 : ContentPage
 
     private void btnIrAPreferencias_Clicked(object sender, EventArgs e)
     {
-        Navigation.PushAsync(new PaginaPreferencias());
+        Navigation.PushAsync(new Views.PaginaPreferencias());
     }
 }

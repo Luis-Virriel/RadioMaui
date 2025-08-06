@@ -7,26 +7,20 @@
              Background="{StaticResource CoolBackgroundGradient}">
 
     <ScrollView>
-        <Grid Padding="30,50,30,30" 
-              RowDefinitions="*,Auto,*">
+        <Grid Padding="30,50,30,30" RowDefinitions="*,Auto,*">
 
             <!-- Contenido principal -->
-            <StackLayout Grid.Row="1" 
-                         Spacing="30">
+            <StackLayout Grid.Row="1" Spacing="30">
 
                 <!-- Logo y título -->
                 <StackLayout Spacing="15">
-                    <Label Text="📻" 
-                           FontSize="80" 
-                           HorizontalOptions="Center" />
-
-                    <Label Text="Radio Punta del Este" 
+                    <Label Text="📻" FontSize="80" HorizontalOptions="Center" />
+                    <Label Text="Radio Punta del Este"
                            FontSize="32"
-                           FontAttributes="Bold" 
+                           FontAttributes="Bold"
                            TextColor="{StaticResource Primary}"
                            HorizontalOptions="Center" />
-
-                    <Label Text="Tu emisora favorita" 
+                    <Label Text="Tu emisora favorita"
                            FontSize="18"
                            TextColor="{StaticResource TextSecondary}"
                            HorizontalOptions="Center" />
@@ -47,7 +41,7 @@
                                HeightRequest="50"
                                BackgroundColor="Transparent"
                                TextColor="{StaticResource TextPrimary}"
-                               PlaceholderColor="{StaticResource TextLight}"/>
+                               PlaceholderColor="{StaticResource TextLight}" />
                     </Frame>
 
                     <!-- Campo contraseña -->
@@ -64,8 +58,7 @@
                                    HeightRequest="50"
                                    BackgroundColor="Transparent"
                                    TextColor="{StaticResource TextPrimary}"
-                                   PlaceholderColor="{StaticResource TextLight}"/>
-
+                                   PlaceholderColor="{StaticResource TextLight}" />
                             <!-- Botón mostrar/ocultar contraseña -->
                             <Button x:Name="ShowPasswordButton"
                                     Text="👁️"
@@ -76,7 +69,7 @@
                                     WidthRequest="40"
                                     HeightRequest="40"
                                     Clicked="OnTogglePasswordVisibility"
-                                    FontSize="16"/>
+                                    FontSize="16" />
                         </Grid>
                     </Frame>
 
@@ -88,14 +81,14 @@
                            HorizontalOptions="Center"
                            HorizontalTextAlignment="Center"
                            IsVisible="False"
-                           Margin="10,0"/>
+                           Margin="10,0" />
 
                     <!-- Loading indicator -->
                     <ActivityIndicator x:Name="LoadingIndicator"
                                        IsVisible="False"
                                        IsRunning="False"
                                        Color="{StaticResource Primary}"
-                                       HeightRequest="30"/>
+                                       HeightRequest="30" />
 
                     <!-- Botón login -->
                     <Button x:Name="LoginButton"
@@ -112,7 +105,7 @@
                             <Shadow Brush="{StaticResource PrimaryBrush}"
                                     Offset="0,4"
                                     Radius="10"
-                                    Opacity="0.3"/>
+                                    Opacity="0.3" />
                         </Button.Shadow>
                     </Button>
 
@@ -130,28 +123,28 @@
                             <Shadow Brush="{StaticResource SecondaryBrush}"
                                     Offset="0,2"
                                     Radius="8"
-                                    Opacity="0.3"/>
+                                    Opacity="0.3" />
                         </Button.Shadow>
                     </Button>
 
                 </StackLayout>
 
                 <!-- Separador -->
-                <StackLayout Orientation="Horizontal" 
+                <StackLayout Orientation="Horizontal"
                              HorizontalOptions="Center"
                              Spacing="10"
                              Margin="0,20,0,0">
                     <BoxView BackgroundColor="{StaticResource Gray300}"
                              HeightRequest="1"
                              WidthRequest="60"
-                             VerticalOptions="Center"/>
+                             VerticalOptions="Center" />
                     <Label Text="¿No tienes cuenta?"
                            TextColor="{StaticResource TextSecondary}"
-                           FontSize="14"/>
+                           FontSize="14" />
                     <BoxView BackgroundColor="{StaticResource Gray300}"
                              HeightRequest="1"
                              WidthRequest="60"
-                             VerticalOptions="Center"/>
+                             VerticalOptions="Center" />
                 </StackLayout>
 
                 <!-- Botón crear cuenta -->
@@ -165,18 +158,18 @@
                         HeightRequest="50"
                         FontSize="16"
                         FontAttributes="Bold"
-                        Clicked="OnRegisterClicked"/>
+                        Clicked="OnRegisterClicked" />
 
             </StackLayout>
 
             <!-- Footer -->
-            <StackLayout Grid.Row="2" 
+            <StackLayout Grid.Row="2"
                          VerticalOptions="End"
                          Margin="0,30,0,0">
                 <Label Text="© 2025 Radio Punta del Este"
                        TextColor="{StaticResource TextLight}"
                        FontSize="12"
-                       HorizontalOptions="Center"/>
+                       HorizontalOptions="Center" />
             </StackLayout>
 
         </Grid>
