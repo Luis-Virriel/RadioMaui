@@ -1,5 +1,6 @@
 ﻿using mauiApp1Prueba.Services;
 using mauiApp1Prueba.Models;
+using Microsoft.Maui.Controls;
 
 namespace mauiApp1Prueba.Views;
 
@@ -15,7 +16,7 @@ public partial class LoginPage : ContentPage
         _userService = userService;
         _biometricAuthService = biometricAuthService;
 
-        // Verificar disponibilidad de biometría al cargar
+        // Verificar disponibilidad de biometría al cargar (sin bloquear UI)
         _ = CheckBiometricAvailabilityAsync();
     }
 
@@ -28,20 +29,15 @@ public partial class LoginPage : ContentPage
             await SetLoadingState(true);
             await HideErrorMessage();
 
-            // Validaciones básicas
             if (!ValidateLoginFields())
-            {
                 return;
-            }
 
-            // Crear request de login
             var loginRequest = new UserLoginRequest
             {
                 Username = UsernameEntry.Text.Trim(),
                 Password = PasswordEntry.Text
             };
 
-            // Ejecutar login
             var (result, user) = await _userService.LoginAsync(loginRequest);
 
             await HandleLoginResult(result, user);
@@ -175,14 +171,12 @@ public partial class LoginPage : ContentPage
 
         await DisplayAlert("Éxito", welcomeMessage, "Continuar");
 
-        // Por ahora, volver a MainPage (aquí navegarías a la página principal de la app)
-        await DisplayAlert("Info", "Login exitoso! Aquí navegarías a la página principal de la app", "OK");
-
-        // Opcional: Navegar a MainPage
-        // await Shell.Current.GoToAsync("//main");
+        // Redirigir a la pestaña principal (MainPage) del AppShell
+        await Shell.Current.GoToAsync("//main");
     }
 
-    private async Task SetLoadingState(bool isLoading)
+
+    private Task SetLoadingState(bool isLoading)
     {
         LoadingIndicator.IsVisible = isLoading;
         LoadingIndicator.IsRunning = isLoading;
@@ -191,6 +185,8 @@ public partial class LoginPage : ContentPage
         RegisterButton.IsEnabled = !isLoading;
 
         LoginButton.Text = isLoading ? "Iniciando sesión..." : "Iniciar Sesión";
+
+        return Task.CompletedTask; // No await necesario
     }
 
     private async Task ShowErrorMessage(string message)
@@ -198,7 +194,6 @@ public partial class LoginPage : ContentPage
         ErrorLabel.Text = message;
         ErrorLabel.IsVisible = true;
 
-        // Auto-hide después de 5 segundos usando DispatcherTimer
         var timer = Application.Current?.Dispatcher.CreateTimer();
         if (timer != null)
         {
@@ -212,9 +207,10 @@ public partial class LoginPage : ContentPage
         }
     }
 
-    private async Task HideErrorMessage()
+    private Task HideErrorMessage()
     {
         ErrorLabel.IsVisible = false;
+        return Task.CompletedTask;
     }
 
     private async Task CheckBiometricAvailabilityAsync()
@@ -237,7 +233,7 @@ public partial class LoginPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        // Limpiar campos al aparecer la página
+
         UsernameEntry.Text = string.Empty;
         PasswordEntry.Text = string.Empty;
         ErrorLabel.IsVisible = false;

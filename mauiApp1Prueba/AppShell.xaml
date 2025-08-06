@@ -3,13 +3,36 @@
     x:Class="mauiApp1Prueba.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:mauiApp1Prueba"
-    Shell.FlyoutBehavior="Disabled"
+    xmlns:local="clr-namespace:mauiApp1Prueba.Views"
+    Shell.FlyoutBehavior="Flyout"
     Title="mauiApp1Prueba">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <FlyoutItem Title="Home" Icon="home_icon.png">
+        <ShellContent ContentTemplate="{DataTemplate local:MainPage}" Route="main" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Noticias" Icon="news_icon.png">
+        <ShellContent ContentTemplate="{DataTemplate local:PaginaNoticias}" Route="PaginaNoticias" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Cine" Icon="cine_icon.png">
+        <ShellContent ContentTemplate="{DataTemplate local:PaginaCine}" Route="PaginaCine" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Clima" Icon="clima_icon.png">
+        <ShellContent ContentTemplate="{DataTemplate local:PaginaClima}" Route="PaginaClima" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Cotizaciones" Icon="cotizaciones_icon.png">
+        <ShellContent ContentTemplate="{DataTemplate local:PaginaCotizaciones}" Route="PaginaCotizaciones" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Patrocinadores" Icon="patrocinadores_icon.png">
+        <ShellContent ContentTemplate="{DataTemplate local:PaginaPatrocinadores}" Route="PaginaPatrocinadores" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Preferencias" Icon="settings_icon.png">
+        <ShellContent ContentTemplate="{DataTemplate local:PaginaPreferencias}" Route="PaginaPreferencias" />
+    </FlyoutItem>
 
 </Shell>
