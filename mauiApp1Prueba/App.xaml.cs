@@ -11,9 +11,14 @@ namespace mauiApp1Prueba
             InitializeComponent();
             _serviceProvider = serviceProvider;
 
-            // Iniciar con LoginPage///
-            var loginPage = _serviceProvider.GetRequiredService<LoginPage>();
-            MainPage = new NavigationPage(loginPage);
+            // Inicia con LoginPage fuera del Shell
+            MainPage = new NavigationPage(_serviceProvider.GetRequiredService<LoginPage>());
+        }
+
+        // Método público para cambiar a AppShell después del login
+        public void IniciarShell()
+        {
+            MainPage = _serviceProvider.GetRequiredService<AppShell>();
         }
     }
 }

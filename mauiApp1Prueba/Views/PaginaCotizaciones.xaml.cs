@@ -1,4 +1,4 @@
-namespace mauiApp1Prueba;
+namespace mauiApp1Prueba.Views;
 
 public partial class PaginaCotizaciones : ContentPage
 {

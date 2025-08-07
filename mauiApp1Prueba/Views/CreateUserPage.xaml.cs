@@ -22,8 +22,10 @@ public partial class CreateUserPage : ContentPage
             !string.IsNullOrEmpty(_viewModel.SuccessMessage))
         {
             await DisplayAlert("¡Éxito!", _viewModel.SuccessMessage, "OK");
+            await Navigation.PopAsync(); // Vuelve a LoginPage que está en la pila
         }
     }
+
 
     protected override void OnDisappearing()
     {
