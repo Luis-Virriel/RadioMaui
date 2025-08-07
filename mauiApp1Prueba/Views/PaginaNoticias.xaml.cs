@@ -1,9 +1,10 @@
-namespace mauiApp1Prueba;
-
-public partial class PaginaNoticias : ContentPage
+namespace mauiApp1Prueba.Views
 {
-	public PaginaNoticias()
-	{
-		InitializeComponent();
-	}
+    public partial class PaginaNoticias : ContentPage
+    {
+        public PaginaNoticias()
+        {
+            InitializeComponent();
+        }
+    }
 }

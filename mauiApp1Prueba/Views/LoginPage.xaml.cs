@@ -1,6 +1,9 @@
-﻿using mauiApp1Prueba.Services;
-using mauiApp1Prueba.Models;
+﻿using mauiApp1Prueba.Models;
+using mauiApp1Prueba.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Maui.Controls;
+using System;
+using System.Threading.Tasks;
 
 namespace mauiApp1Prueba.Views;
 
@@ -29,7 +32,7 @@ public partial class LoginPage : ContentPage
             await SetLoadingState(true);
             await HideErrorMessage();
 
-            if (!ValidateLoginFields())
+            if (!await ValidateLoginFieldsAsync())
                 return;
 
             var loginRequest = new UserLoginRequest
@@ -103,25 +106,25 @@ public partial class LoginPage : ContentPage
 
     #region Helper Methods
 
-    private bool ValidateLoginFields()
+    private async Task<bool> ValidateLoginFieldsAsync()
     {
         if (string.IsNullOrWhiteSpace(UsernameEntry?.Text))
         {
-            _ = ShowErrorMessage("Por favor ingresa tu nombre de usuario");
+            await ShowErrorMessage("Por favor ingresa tu nombre de usuario");
             UsernameEntry?.Focus();
             return false;
         }
 
         if (string.IsNullOrWhiteSpace(PasswordEntry?.Text))
         {
-            _ = ShowErrorMessage("Por favor ingresa tu contraseña");
+            await ShowErrorMessage("Por favor ingresa tu contraseña");
             PasswordEntry?.Focus();
             return false;
         }
 
         if (PasswordEntry.Text.Length < 6)
         {
-            _ = ShowErrorMessage("La contraseña debe tener al menos 6 caracteres");
+            await ShowErrorMessage("La contraseña debe tener al menos 6 caracteres");
             PasswordEntry?.Focus();
             return false;
         }
@@ -163,17 +166,20 @@ public partial class LoginPage : ContentPage
         }
     }
 
-    private async Task ShowSuccessAndNavigate(Models.User? user)
+    private async Task ShowSuccessAndNavigate(User? user)
+{
+    var welcomeMessage = !string.IsNullOrEmpty(user?.FullName)
+        ? $"¡Bienvenido, {user.FullName}!"
+        : "¡Bienvenido!";
+
+    await DisplayAlert("Éxito", welcomeMessage, "Continuar");
+    if (Application.Current is App app)
     {
-        var welcomeMessage = !string.IsNullOrEmpty(user?.FullName)
-            ? $"¡Bienvenido, {user.FullName}!"
-            : "¡Bienvenido!";
-
-        await DisplayAlert("Éxito", welcomeMessage, "Continuar");
-
-        // Redirigir a la pestaña principal (MainPage) del AppShell
-        await Shell.Current.GoToAsync("//main");
+        app.IniciarShell();
     }
+}
+
+
 
 
     private Task SetLoadingState(bool isLoading)
@@ -186,7 +192,7 @@ public partial class LoginPage : ContentPage
 
         LoginButton.Text = isLoading ? "Iniciando sesión..." : "Iniciar Sesión";
 
-        return Task.CompletedTask; // No await necesario
+        return Task.CompletedTask;
     }
 
     private async Task ShowErrorMessage(string message)

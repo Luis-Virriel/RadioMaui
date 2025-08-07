@@ -29,6 +29,7 @@ namespace mauiApp1Prueba
             builder.Services.AddSingleton<IBiometricAuthService, BiometricAuthService>();
             builder.Services.AddSingleton<IUserService, UserService>();
             builder.Services.AddSingleton<IPhotoService, PhotoService>();
+            builder.Services.AddSingleton<AppShell>();
 
             // Servicios del sistema
             builder.Services.AddSingleton<IPreferences>(Preferences.Default);

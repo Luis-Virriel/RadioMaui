@@ -9,6 +9,11 @@ public partial class AppShell : Shell
     public AppShell()
     {
         InitializeComponent();
+
+        // Registrar rutas para navegación con Shell
+        Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
+        Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
+
         ConstruirMenu();
     }
 
@@ -31,7 +36,6 @@ public partial class AppShell : Shell
             }
         });
 
-        // Agregar ítems según preferencias guardadas
         if (Preferences.Get("MostrarNoticias", true))
             AgregarFlyoutItem("Noticias", typeof(PaginaNoticias), "PaginaNoticias");
 
