@@ -17,6 +17,7 @@
     {
         Task<PhotoResult> TakePhotoAsync(int userId);
         Task<PhotoResult> PickPhotoAsync(int userId);
+        Task<PhotoResult> ShowPhotoOptionsAsync(int userId); // ⭐ MÉTODO AGREGADO
         Task<bool> DeletePhotoAsync(string filePath);
         Task<string> GetProfileImagePathAsync(int userId);
         Task<bool> PhotoExistsAsync(string filePath);
@@ -25,6 +26,59 @@
     public class PhotoService : IPhotoService
     {
         private const string ProfilePhotosFolder = "ProfilePhotos";
+
+        public async Task<PhotoResult> ShowPhotoOptionsAsync(int userId)
+        {
+            try
+            {
+                // Verificar permisos de cámara
+                var cameraStatus = await Permissions.CheckStatusAsync<Permissions.Camera>();
+                if (cameraStatus != PermissionStatus.Granted)
+                {
+                    cameraStatus = await Permissions.RequestAsync<Permissions.Camera>();
+                    if (cameraStatus != PermissionStatus.Granted)
+                    {
+                        return new PhotoResult
+                        {
+                            IsSuccess = false,
+                            ErrorMessage = "Se necesitan permisos de cámara para continuar"
+                        };
+                    }
+                }
+
+                // Mostrar opciones al usuario
+                var action = await Application.Current?.MainPage?.DisplayActionSheet(
+                    "Seleccionar foto de perfil",
+                    "Cancelar",
+                    null,
+                    "Tomar foto",
+                    "Seleccionar de galería");
+
+                if (string.IsNullOrEmpty(action) || action == "Cancelar")
+                {
+                    return new PhotoResult
+                    {
+                        IsSuccess = false,
+                        ErrorMessage = "Operación cancelada"
+                    };
+                }
+
+                return action switch
+                {
+                    "Tomar foto" => await TakePhotoAsync(userId),
+                    "Seleccionar de galería" => await PickPhotoAsync(userId),
+                    _ => new PhotoResult { IsSuccess = false, ErrorMessage = "Operación cancelada" }
+                };
+            }
+            catch (Exception ex)
+            {
+                return new PhotoResult
+                {
+                    IsSuccess = false,
+                    ErrorMessage = $"Error: {ex.Message}"
+                };
+            }
+        }
 
         public async Task<PhotoResult> TakePhotoAsync(int userId)
         {
@@ -186,7 +240,7 @@
         #endregion
     }
 
-    // Extensión para facilitar el uso en ViewModels
+    // Extensión para facilitar el uso en ViewModels (ya no es necesaria, pero la mantengo por compatibilidad)
     public static class PhotoServiceExtensions
     {
         public static async Task<PhotoResult> ShowPhotoOptionsAsync(this IPhotoService photoService, int userId)
