@@ -45,6 +45,9 @@ namespace mauiApp1Prueba
             builder.Services.AddSingleton<IAudioService, AudioService>(); 
             builder.Services.AddSingleton<AppShell>();
 
+            // 👉 Nuevo servicio de clima
+            builder.Services.AddSingleton<WeatherServices>();
+
             // Servicios del sistema
             builder.Services.AddSingleton<IPreferences>(Preferences.Default);
             builder.Services.AddSingleton<ISecureStorage>(SecureStorage.Default);
@@ -68,4 +71,7 @@ namespace mauiApp1Prueba
     }
 }
 
-#pragma warning restore CA1416
+
+#pragma warning restore CA1416 // Validate platform compatibility
+
+
