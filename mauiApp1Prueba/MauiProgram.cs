@@ -31,6 +31,9 @@ namespace mauiApp1Prueba
             builder.Services.AddSingleton<IPhotoService, PhotoService>();
             builder.Services.AddSingleton<AppShell>();
 
+            // 👉 Nuevo servicio de clima
+            builder.Services.AddSingleton<WeatherServices>();
+
             // Servicios del sistema
             builder.Services.AddSingleton<IPreferences>(Preferences.Default);
             builder.Services.AddSingleton<ISecureStorage>(SecureStorage.Default);

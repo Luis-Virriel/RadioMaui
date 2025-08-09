@@ -9,7 +9,7 @@ public partial class PaginaParaPruebas2 : ContentPage
 
     private void btnIrAClima_Clicked(object sender, EventArgs e)
     {
-        Navigation.PushAsync(new PaginaClima());
+        //Navigation.PushAsync(new PaginaClima());
     }
 
     private void btnIrACotizaciones_Clicked(object sender, EventArgs e)
