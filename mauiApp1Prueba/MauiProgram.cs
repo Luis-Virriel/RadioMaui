@@ -5,8 +5,10 @@ using mauiApp1Prueba.Services;
 using mauiApp1Prueba.Views;
 using mauiApp1Prueba.ViewModels;
 
-// Solo incluir ViewModels si los estás usando
-// using mauiApp1Prueba.ViewModels;
+
+#if ANDROID
+using Plugin.Fingerprint;
+#endif
 
 namespace mauiApp1Prueba
 {
@@ -20,15 +22,27 @@ namespace mauiApp1Prueba
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                    // Solo incluir fuentes que realmente existen
-                    // fonts.AddFont("Roboto-Regular.ttf", "RobotoRegular");
                 });
 
-            // Servicios de datos (Singleton = una instancia para toda la app)
+            // Configurar Plugin.Fingerprint para Android
+#if ANDROID
+            try
+            {
+                CrossFingerprint.SetCurrentActivityResolver(() =>
+                    Platform.CurrentActivity ?? Android.App.Application.Context as Android.App.Activity);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error configurando Plugin.Fingerprint: {ex.Message}");
+            }
+#endif
+
+            // Servicios de datos
             builder.Services.AddSingleton<DatabaseService>();
             builder.Services.AddSingleton<IBiometricAuthService, BiometricAuthService>();
             builder.Services.AddSingleton<IUserService, UserService>();
             builder.Services.AddSingleton<IPhotoService, PhotoService>();
+            builder.Services.AddSingleton<IAudioService, AudioService>(); 
             builder.Services.AddSingleton<AppShell>();
 
             // Servicios del sistema
@@ -36,13 +50,14 @@ namespace mauiApp1Prueba
             builder.Services.AddSingleton<ISecureStorage>(SecureStorage.Default);
             builder.Services.AddSingleton<IConnectivity>(Connectivity.Current);
 
-            // Páginas (Transient = nueva instancia cada vez)
+            // Páginas
             builder.Services.AddTransient<MainPage>();
             builder.Services.AddTransient<LoginPage>();
             builder.Services.AddTransient<CreateUserPage>();
 
             // ViewModels
             builder.Services.AddTransient<CreateUserViewModel>();
+            builder.Services.AddTransient<RadioHomeViewModel>();
 
 #if DEBUG
             builder.Services.AddLogging(configure => configure.AddDebug());
@@ -53,4 +68,4 @@ namespace mauiApp1Prueba
     }
 }
 
-#pragma warning restore CA1416 // Validate platform compatibility
+#pragma warning restore CA1416
