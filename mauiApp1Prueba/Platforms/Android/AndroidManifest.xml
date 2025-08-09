@@ -1,8 +1,59 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-	<application android:allowBackup="true" android:icon="@mipmap/appicon" android:supportsRtl="true"></application>
+
+	<!-- Permisos de red (ya existentes) -->
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.INTERNET" />
+
+	<!-- Permisos de ubicación (ya existentes) -->
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+
+	<!-- Permisos de medios (ya existentes) -->
 	<uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
+
+	<!-- Permisos varios (ya existentes) -->
+	<uses-permission android:name="android.permission.ACCEPT_HANDOVER" />
+	<uses-permission android:name="android.permission.ACCESS_BLOBS_ACROSS_USERS" />
+	<uses-permission android:name="android.permission.ACCESS_CHECKIN_PROPERTIES" />
+
+	<!-- ⭐ PERMISOS PARA CÁMARA Y GALERÍA -->
+	<uses-permission android:name="android.permission.CAMERA" />
+	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+	<!-- ⭐ PERMISOS PARA AUTENTICACIÓN BIOMÉTRICA -->
+	<uses-permission android:name="android.permission.USE_FINGERPRINT" />
+	<uses-permission android:name="android.permission.USE_BIOMETRIC" />
+
+	<!-- ⭐ PERMISOS PARA RADIO APP -->
+	<uses-permission android:name="android.permission.VIBRATE" />
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+	<uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+	<!-- ⭐ CARACTERÍSTICAS DEL HARDWARE (opcionales) -->
+	<uses-feature android:name="android.hardware.camera" android:required="false" />
+	<uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+	<uses-feature android:name="android.hardware.fingerprint" android:required="false" />
+	<uses-feature android:name="android.hardware.biometrics" android:required="false" />
+	<uses-feature android:name="android.hardware.microphone" android:required="false" />
+	<uses-feature android:name="android.hardware.audio.output" android:required="true" />
+
+	<application
+        android:allowBackup="true"
+        android:icon="@mipmap/appicon"
+        android:supportsRtl="true"
+        android:label="Radio Punta"
+        android:theme="@style/Maui.SplashTheme"
+        android:usesCleartextTraffic="true">
+
+		<!-- ⭐ CONFIGURACIÓN PARA REPRODUCCIÓN DE AUDIO EN BACKGROUND -->
+		<service android:name="androidx.media.session.MediaButtonReceiver" />
+
+	</application>
+
 </manifest>
