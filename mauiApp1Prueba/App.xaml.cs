@@ -11,6 +11,11 @@ namespace mauiApp1Prueba
             InitializeComponent();
             _serviceProvider = serviceProvider;
 
+            // Registrar rutas para páginas que usan inyección de dependencias
+            Routing.RegisterRoute("patrocinadores", typeof(PaginaPatrocinadores));
+            Routing.RegisterRoute("sponsordetail", typeof(SponsorDetailPage));
+            Routing.RegisterRoute("locationpicker", typeof(LocationPickerPage));
+
             // Inicia con LoginPage fuera del Shell
             MainPage = new NavigationPage(_serviceProvider.GetRequiredService<LoginPage>());
         }

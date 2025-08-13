@@ -2,13 +2,229 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="mauiApp1Prueba.Views.PaginaPatrocinadores"
-             Title="PaginaPatrocinadores">
-    <VerticalStackLayout>
-        <Label 
-        Text="Página de Patrocinadores"
-        FontSize="32"
-        FontAttributes="Bold"
-        HorizontalOptions="Center"
-        VerticalOptions="CenterAndExpand" />
-    </VerticalStackLayout>
+             xmlns:vm="clr-namespace:mauiApp1Prueba.ViewModels"
+             xmlns:models="clr-namespace:mauiApp1Prueba.Models"
+             x:DataType="vm:PatrocinadoresViewModel"
+             Title="{Binding PageTitle}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Agregar" 
+                     IconImageSource="add_icon.png"
+                     Command="{Binding AddSponsorCommand}" />
+        <ToolbarItem Text="Mapa" 
+                     IconImageSource="map_icon.png"
+                     Command="{Binding ViewMapCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Barra de búsqueda -->
+        <Border Grid.Row="0" 
+                Margin="15,10,15,5"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}"
+                Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 10">
+            <SearchBar x:Name="SearchBar"
+                       Placeholder="Buscar patrocinadores..."
+                       Text="{Binding SearchText}"
+                       SearchCommand="{Binding SearchSponsorsCommand}"
+                       BackgroundColor="Transparent"
+                       Margin="5,0" />
+        </Border>
+
+        <!-- Contenido principal -->
+        <RefreshView Grid.Row="1" 
+                     IsRefreshing="{Binding IsRefreshing}"
+                     Command="{Binding RefreshCommand}">
+
+            <Grid>
+                <!-- CollectionView -->
+                <CollectionView ItemsSource="{Binding Sponsors}"
+                                SelectionMode="None"
+                                BackgroundColor="Transparent"
+                                x:Name="SponsorsCollectionView">
+                    <!-- Quitamos temporalmente IsVisible hasta que creemos el convertidor -->
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Sponsor">
+                            <Border Margin="15,5,15,10"
+                                    BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource Gray900}}"
+                                    Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 12">
+
+                                <Border.Shadow>
+                                    <Shadow Brush="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Black}}"
+                                            Offset="0,2"
+                                            Radius="8"
+                                            Opacity="0.3" />
+                                </Border.Shadow>
+
+                                <Grid Padding="15">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="60" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Logo del patrocinador -->
+                                    <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"
+                                            WidthRequest="50" HeightRequest="50"
+                                            BackgroundColor="{StaticResource Gray100}"
+                                            StrokeShape="RoundRectangle 25"
+                                            VerticalOptions="Start">
+                                        <Image Source="{Binding LogoPath, FallbackValue='sponsor_placeholder.png'}"
+                                               Aspect="AspectFill" />
+                                    </Border>
+
+                                    <!-- Nombre del patrocinador -->
+                                    <Label Grid.Row="0" Grid.Column="1"
+                                           Text="{Binding Name}"
+                                           FontSize="16"
+                                           FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                                           VerticalOptions="Start" />
+
+                                    <!-- Descripción -->
+                                    <Label Grid.Row="1" Grid.Column="1"
+                                           Text="{Binding Description}"
+                                           FontSize="13"
+                                           TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
+                                           MaxLines="2"
+                                           LineBreakMode="TailTruncation"
+                                           Margin="0,2,0,0" />
+
+                                    <!-- Dirección -->
+                                    <Grid Grid.Row="2" Grid.Column="1" 
+                                          Margin="0,5,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Label Grid.Column="0"
+                                               Text="📍"
+                                               FontSize="12"
+                                               VerticalOptions="Center" />
+
+                                        <Label Grid.Column="1"
+                                               Text="{Binding Address}"
+                                               FontSize="12"
+                                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray500}}"
+                                               VerticalOptions="Center"
+                                               Margin="5,0,0,0"
+                                               MaxLines="1"
+                                               LineBreakMode="TailTruncation" />
+                                    </Grid>
+
+                                    <!-- Botones de acción -->
+                                    <Grid Grid.Row="0" Grid.Column="2" Grid.RowSpan="3"
+                                          VerticalOptions="Center">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="8" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <!-- Botón Editar -->
+                                        <Button Grid.Row="0"
+                                                Text="✏️"
+                                                FontSize="16"
+                                                WidthRequest="35" HeightRequest="35"
+                                                CornerRadius="17"
+                                                BackgroundColor="{StaticResource Primary}"
+                                                TextColor="White"
+                                                Padding="0"
+                                                Command="{Binding Source={x:Reference SponsorsCollectionView}, Path=BindingContext.SelectSponsorCommand}"
+                                                CommandParameter="{Binding .}" />
+
+                                        <!-- Botón Eliminar -->
+                                        <Button Grid.Row="2"
+                                                Text="🗑️"
+                                                FontSize="16"
+                                                WidthRequest="35" HeightRequest="35"
+                                                CornerRadius="17"
+                                                BackgroundColor="Red"
+                                                TextColor="White"
+                                                Padding="0"
+                                                Command="{Binding Source={x:Reference SponsorsCollectionView}, Path=BindingContext.DeleteSponsorCommand}"
+                                                CommandParameter="{Binding .}" />
+                                    </Grid>
+
+                                    <!-- Gesto para tocar toda la tarjeta -->
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={x:Reference SponsorsCollectionView}, Path=BindingContext.SelectSponsorCommand}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Grid.GestureRecognizers>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!-- Estado vacío -->
+                <Grid IsVisible="{Binding IsEmptyStateVisible}"
+                      VerticalOptions="Center"
+                      HorizontalOptions="Center"
+                      Padding="40">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="20" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="10" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Label Grid.Row="0"
+                           Text="📍"
+                           FontSize="80"
+                           HorizontalOptions="Center"
+                           Opacity="0.3" />
+
+                    <Label Grid.Row="2"
+                           Text="No hay patrocinadores"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}" />
+
+                    <Label Grid.Row="4"
+                           Text="Toca el botón + para agregar el primer patrocinador"
+                           FontSize="14"
+                           HorizontalOptions="Center"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray500}}" />
+
+                    <Button Grid.Row="6"
+                            Text="Agregar Patrocinador"
+                            Command="{Binding AddSponsorCommand}"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="White"
+                            CornerRadius="20"
+                            Padding="20,10"
+                            HorizontalOptions="Center" />
+                </Grid>
+            </Grid>
+        </RefreshView>
+
+        <!-- Indicador de carga -->
+        <ActivityIndicator Grid.Row="1"
+                           IsVisible="{Binding IsBusy}"
+                           IsRunning="{Binding IsBusy}"
+                           Color="{StaticResource Primary}"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center" />
+    </Grid>
 </ContentPage>
