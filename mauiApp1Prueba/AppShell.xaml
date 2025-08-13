@@ -29,7 +29,7 @@
     </FlyoutItem>
 
     <FlyoutItem Title="Patrocinadores" Icon="patrocinadores_icon.png">
-        <ShellContent ContentTemplate="{DataTemplate views:PaginaPatrocinadores}" Route="PaginaPatrocinadores" />
+        <ShellContent Route="patrocinadores" />
     </FlyoutItem>
 
     <FlyoutItem Title="Preferencias" Icon="settings_icon.png">

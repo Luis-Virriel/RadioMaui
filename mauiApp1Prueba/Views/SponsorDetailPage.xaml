@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="mauiApp1Prueba.Views.SponsorDetailPage"
+             xmlns:vm="clr-namespace:mauiApp1Prueba.ViewModels"
+             x:DataType="vm:SponsorDetailViewModel"
+             Title="{Binding PageTitle}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Guardar" 
+                     Command="{Binding SaveCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <Grid>
+        <!-- Contenido principal -->
+        <ScrollView Padding="20">
+            <VerticalStackLayout Spacing="20">
+
+                <!-- Logo -->
+                <Frame BackgroundColor="LightGray" Padding="15" CornerRadius="10">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Logo del Patrocinador" FontSize="16" FontAttributes="Bold" />
+
+                        <Border WidthRequest="100" HeightRequest="100"
+                                BackgroundColor="Gray"
+                                StrokeShape="RoundRectangle 50"
+                                HorizontalOptions="Center">
+                            <Label Text="🏢" FontSize="40" 
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+
+                        <Button Text="Seleccionar Logo" 
+                                Command="{Binding SelectImageCommand}"
+                                BackgroundColor="Blue" TextColor="White" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Nombre -->
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Nombre del Patrocinador *" FontAttributes="Bold" />
+                    <Entry Text="{Binding Name}" Placeholder="Ej: Restaurante El Buen Sabor" />
+                </VerticalStackLayout>
+
+                <!-- Descripción -->
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Descripción" FontAttributes="Bold" />
+                    <Editor Text="{Binding Description}" 
+                            Placeholder="Descripción opcional..."
+                            HeightRequest="80" />
+                </VerticalStackLayout>
+
+                <!-- Dirección -->
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Dirección *" FontAttributes="Bold" />
+                    <Entry Text="{Binding Address}" Placeholder="Ej: Av. Principal 123" />
+                </VerticalStackLayout>
+
+                <!-- Ubicación -->
+                <Frame BackgroundColor="LightGray" Padding="15" CornerRadius="10">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Ubicación del Patrocinador" FontSize="16" FontAttributes="Bold" />
+
+                        <Grid ColumnSpacing="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Button Grid.Column="0"
+                                    Text="📍 Mi Ubicación" 
+                                    Command="{Binding UseCurrentLocationCommand}"
+                                    BackgroundColor="Green" TextColor="White" />
+
+                            <Button Grid.Column="1"
+                                    Text="🗺️ En el Mapa" 
+                                    Command="{Binding SelectOnMapCommand}"
+                                    BackgroundColor="Blue" TextColor="White" />
+                        </Grid>
+
+                        <Label Text="Toca 'Mi Ubicación' para usar tu ubicación actual o 'En el Mapa' para seleccionar manualmente" 
+                               FontSize="12" 
+                               TextColor="Gray" 
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Coordenadas -->
+                <Grid ColumnSpacing="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <VerticalStackLayout Grid.Column="0" Spacing="5">
+                        <Label Text="Latitud" FontSize="12" />
+                        <Entry Text="{Binding Latitude}" IsReadOnly="True" BackgroundColor="LightGray" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="1" Spacing="5">
+                        <Label Text="Longitud" FontSize="12" />
+                        <Entry Text="{Binding Longitude}" IsReadOnly="True" BackgroundColor="LightGray" />
+                    </VerticalStackLayout>
+                </Grid>
+
+                <!-- Botones -->
+                <Grid ColumnSpacing="15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="0"
+                            Text="Cancelar" 
+                            Command="{Binding CancelCommand}"
+                            BackgroundColor="Gray" TextColor="White" />
+
+                    <Button Grid.Column="1"
+                            Text="Guardar" 
+                            Command="{Binding SaveCommand}"
+                            BackgroundColor="Green" TextColor="White" />
+                </Grid>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Indicador de carga -->
+        <Grid IsVisible="{Binding IsBusy}" BackgroundColor="#80000000">
+            <Frame BackgroundColor="White" Padding="20" CornerRadius="10"
+                   VerticalOptions="Center" HorizontalOptions="Center">
+                <VerticalStackLayout Spacing="10">
+                    <ActivityIndicator IsRunning="{Binding IsBusy}" Color="Blue" />
+                    <Label Text="Guardando..." HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </Frame>
+        </Grid>
+    </Grid>
+</ContentPage>

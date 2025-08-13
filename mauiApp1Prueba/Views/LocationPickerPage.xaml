@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="mauiApp1Prueba.Views.LocationPickerPage"
+    Title="Selector de Ubicación">
+
+    <ScrollView Padding="20">
+        <StackLayout Spacing="20">
+
+            <Label 
+                Text="Seleccionar Ubicación del Patrocinador" 
+                FontSize="24" 
+                FontAttributes="Bold"
+                HorizontalOptions="Center" />
+
+            <Frame BackgroundColor="LightGreen" Padding="15">
+                <StackLayout Spacing="10">
+                    <Label 
+                        Text="📍 Usar Mi Ubicación Actual" 
+                        FontSize="18" 
+                        FontAttributes="Bold" />
+                    <Label 
+                        Text="Si estás en la ubicación del patrocinador" 
+                        FontSize="14" />
+                    <Button 
+                        Text="Obtener Mi Ubicación" 
+                        Command="{Binding GoToCurrentLocationCommand}"
+                        BackgroundColor="Green" 
+                        TextColor="White" />
+                </StackLayout>
+            </Frame>
+
+            <Frame BackgroundColor="LightBlue" Padding="15">
+                <StackLayout Spacing="10">
+                    <Label 
+                        Text="🔍 Buscar por Dirección" 
+                        FontSize="18" 
+                        FontAttributes="Bold" />
+                    <Entry 
+                        Text="{Binding SearchAddress}" 
+                        Placeholder="Ingresa la dirección..." />
+                    <Button 
+                        Text="Buscar" 
+                        Command="{Binding SearchByAddressCommand}"
+                        BackgroundColor="Blue" 
+                        TextColor="White" />
+                </StackLayout>
+            </Frame>
+
+            <Frame BackgroundColor="LightGray" Padding="15">
+                <StackLayout Spacing="10">
+                    <Label 
+                        Text="🎯 Coordenadas Exactas" 
+                        FontSize="18" 
+                        FontAttributes="Bold" />
+                    <StackLayout Orientation="Horizontal" Spacing="10">
+                        <Entry 
+                            Text="{Binding SelectedLatitude}" 
+                            Placeholder="Latitud" 
+                            HorizontalOptions="FillAndExpand" />
+                        <Entry 
+                            Text="{Binding SelectedLongitude}" 
+                            Placeholder="Longitud" 
+                            HorizontalOptions="FillAndExpand" />
+                    </StackLayout>
+                    <Button 
+                        Text="Obtener Dirección" 
+                        Command="{Binding UpdateAddressCommand}"
+                        BackgroundColor="Gray" 
+                        TextColor="White" />
+                </StackLayout>
+            </Frame>
+
+            <Frame 
+                BackgroundColor="White" 
+                IsVisible="{Binding HasSelectedLocation}">
+                <StackLayout Spacing="10">
+                    <Label 
+                        Text="✅ Ubicación Seleccionada" 
+                        FontAttributes="Bold" />
+                    <Label Text="{Binding SelectedAddress}" />
+                </StackLayout>
+            </Frame>
+
+            <StackLayout Orientation="Horizontal" Spacing="15">
+                <Button 
+                    Text="Cancelar" 
+                    Command="{Binding CancelCommand}"
+                    BackgroundColor="Gray" 
+                    TextColor="White" 
+                    HorizontalOptions="FillAndExpand" />
+                <Button 
+                    Text="Confirmar" 
+                    Command="{Binding ConfirmLocationCommand}"
+                    BackgroundColor="Green" 
+                    TextColor="White"
+                    HorizontalOptions="FillAndExpand" />
+            </StackLayout>
+
+        </StackLayout>
+    </ScrollView>
+</ContentPage>
