@@ -10,7 +10,7 @@ namespace mauiApp1Prueba.Services
     public class WeatherServices
     {
         private readonly HttpClient _httpClient;
-        private const string ApiKey = "6854acbc28783ae1d4d2c2dce74337ad\r\n"; // Pon tu API key aquí
+        private const string ApiKey = "6854acbc28783ae1d4d2c2dce74337ad\r\n";
         private const string CityQuery = "Punta%20del%20Este,UY";
 
         public WeatherServices()

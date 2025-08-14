@@ -2,13 +2,141 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="mauiApp1Prueba.Views.PaginaCotizaciones"
-             Title="PaginaCotizaciones">
-    <VerticalStackLayout>
-        <Label 
-        Text="Página de Cotizaciones"
-        FontSize="32"
-        FontAttributes="Bold"
-        HorizontalOptions="Center"
-        VerticalOptions="CenterAndExpand" />
-    </VerticalStackLayout>
+             Title="Cotizaciones"
+             BackgroundColor="#1a237e">
+
+    <ScrollView>
+        <Grid Padding="20,30,20,20" RowSpacing="25">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Frame Grid.Row="0" 
+                   BackgroundColor="#3949ab" 
+                   CornerRadius="20" 
+                   Padding="0" 
+                   HasShadow="True">
+                <Grid Padding="25,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackLayout Grid.Column="0" VerticalOptions="Center">
+                        <Label Text="💱 Cotizaciones" 
+                               FontSize="28" 
+                               FontAttributes="Bold" 
+                               TextColor="White"/>
+                        <Label Text="Mercado de Divisas" 
+                               FontSize="14" 
+                               TextColor="#b3d4fc" 
+                               Opacity="0.9"/>
+                    </StackLayout>
+
+                    <ActivityIndicator Grid.Column="1" 
+                                       x:Name="LoadingIndicator"
+                                       IsVisible="False"
+                                       IsRunning="False"
+                                       Color="White"
+                                       VerticalOptions="Center"/>
+                </Grid>
+            </Frame>
+
+            <!-- Status Message -->
+            <Label x:Name="StatusLabel" 
+                   Grid.Row="1"
+                   Text="Cargando cotizaciones..."
+                   FontSize="14"
+                   TextColor="#b3d4fc"
+                   HorizontalOptions="Center"
+                   IsVisible="False"/>
+
+            <!-- Currency Cards -->
+            <StackLayout Grid.Row="2" Spacing="15">
+
+                <!-- USD Card -->
+                <Frame BackgroundColor="#5c6bc0" CornerRadius="15" Padding="0" HasShadow="True">
+                    <Grid Padding="20,18">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Frame Grid.Column="0" BackgroundColor="#7986cb" CornerRadius="12" Padding="12" HasShadow="False" VerticalOptions="Center">
+                            <Label Text="🇺🇸" FontSize="24"/>
+                        </Frame>
+
+                        <StackLayout Grid.Column="1" Padding="15,0,0,0" VerticalOptions="Center">
+                            <Label Text="Dólar Estadounidense" FontSize="16" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="USD → UYU" FontSize="12" TextColor="#b3d4fc"/>
+                        </StackLayout>
+
+                        <Label x:Name="UsdLabel" Grid.Column="2" Text="$ --,--" FontSize="20" FontAttributes="Bold" TextColor="White" VerticalOptions="Center"/>
+                    </Grid>
+                </Frame>
+
+                <!-- EUR Card -->
+                <Frame BackgroundColor="#5c6bc0" CornerRadius="15" Padding="0" HasShadow="True">
+                    <Grid Padding="20,18">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Frame Grid.Column="0" BackgroundColor="#7986cb" CornerRadius="12" Padding="12" HasShadow="False" VerticalOptions="Center">
+                            <Label Text="🇪🇺" FontSize="24"/>
+                        </Frame>
+
+                        <StackLayout Grid.Column="1" Padding="15,0,0,0" VerticalOptions="Center">
+                            <Label Text="Euro" FontSize="16" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="EUR → UYU" FontSize="12" TextColor="#b3d4fc"/>
+                        </StackLayout>
+
+                        <Label x:Name="EurLabel" Grid.Column="2" Text="$ --,--" FontSize="20" FontAttributes="Bold" TextColor="White" VerticalOptions="Center"/>
+                    </Grid>
+                </Frame>
+
+                <!-- BRL Card -->
+                <Frame BackgroundColor="#5c6bc0" CornerRadius="15" Padding="0" HasShadow="True">
+                    <Grid Padding="20,18">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Frame Grid.Column="0" BackgroundColor="#7986cb" CornerRadius="12" Padding="12" HasShadow="False" VerticalOptions="Center">
+                            <Label Text="🇧🇷" FontSize="24"/>
+                        </Frame>
+
+                        <StackLayout Grid.Column="1" Padding="15,0,0,0" VerticalOptions="Center">
+                            <Label Text="Real Brasileño" FontSize="16" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="BRL → UYU" FontSize="12" TextColor="#b3d4fc"/>
+                        </StackLayout>
+
+                        <Label x:Name="BrlLabel" Grid.Column="2" Text="$ --,--" FontSize="20" FontAttributes="Bold" TextColor="White" VerticalOptions="Center"/>
+                    </Grid>
+                </Frame>
+
+            </StackLayout>
+
+            <!-- Last Updated Info -->
+            <Frame Grid.Row="3" BackgroundColor="#3949ab" CornerRadius="12" Padding="15" HasShadow="False" Margin="0,10,0,0">
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+                    <Label Text="🕒" FontSize="14"/>
+                    <Label x:Name="LastUpdatedLabel" Text="Última actualización: --" FontSize="13" TextColor="#b3d4fc" VerticalOptions="Center"/>
+                </StackLayout>
+            </Frame>
+
+            <!-- Información adicional -->
+            <Label Grid.Row="4" Text="Datos actualizados cada hora" FontSize="12" TextColor="#9fa8da" HorizontalOptions="Center" Margin="0,5,0,0"/>
+        </Grid>
+    </ScrollView>
 </ContentPage>
