@@ -1,14 +1,263 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<ContentPage x:Class="mauiApp1Prueba.Views.PaginaCine"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="mauiApp1Prueba.Views.PaginaCine"
-             Title="PaginaCine">
-    <VerticalStackLayout>
-        <Label 
-        Text="Página de Cine"
-        FontSize="32"
-        FontAttributes="Bold"
-        HorizontalOptions="Center"
-        VerticalOptions="CenterAndExpand" />
-    </VerticalStackLayout>
+             xmlns:models="clr-namespace:mauiApp1Prueba.Models"
+             xmlns:viewmodels="clr-namespace:mauiApp1Prueba.ViewModels"
+             x:DataType="viewmodels:PaginaCineViewModel"
+             Title="Próximos Estrenos"
+             BackgroundColor="#1a1a2e">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Estilos -->
+            <Style x:Key="HeaderStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="28" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="TextColor" Value="#eee" />
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="Margin" Value="0,10" />
+            </Style>
+
+            <Style x:Key="SearchEntryStyle" TargetType="Entry">
+                <Setter Property="BackgroundColor" Value="#16213e" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="PlaceholderColor" Value="#888" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="HeightRequest" Value="45" />
+                <Setter Property="Margin" Value="10,5" />
+            </Style>
+
+            <Style x:Key="PickerStyle" TargetType="Picker">
+                <Setter Property="BackgroundColor" Value="#16213e" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="HeightRequest" Value="45" />
+                <Setter Property="Margin" Value="10,5" />
+            </Style>
+
+            <Style x:Key="MovieCardStyle" TargetType="Frame">
+                <Setter Property="BackgroundColor" Value="#16213e" />
+                <Setter Property="CornerRadius" Value="15" />
+                <Setter Property="Margin" Value="10" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="HasShadow" Value="True" />
+            </Style>
+
+            <Style x:Key="MovieTitleStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="TextColor" Value="#eee" />
+                <Setter Property="LineBreakMode" Value="TailTruncation" />
+                <Setter Property="MaxLines" Value="2" />
+            </Style>
+
+            <Style x:Key="MovieDetailStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="TextColor" Value="#ccc" />
+                <Setter Property="LineBreakMode" Value="TailTruncation" />
+                <Setter Property="MaxLines" Value="3" />
+            </Style>
+
+            <Style x:Key="RatingLabelStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="TextColor" Value="#0f3460" />
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+
+            <Style x:Key="StatusLabelStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="TextColor" Value="#888" />
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="Margin" Value="0,10" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid>
+        <ScrollView>
+            <StackLayout Spacing="0">
+
+                <!-- Header -->
+                <StackLayout BackgroundColor="#0f3460" Padding="20,10">
+                    <Label Text="🎬 Próximos Estrenos de Cine" 
+                           Style="{StaticResource HeaderStyle}" />
+
+                    <!-- Controles de búsqueda y filtros -->
+                    <Grid ColumnDefinitions="2*,1*" RowDefinitions="Auto,Auto" Margin="0,10,0,0">
+
+                        <!-- Búsqueda -->
+                        <Entry Grid.Column="0" Grid.Row="0"
+                               Text="{Binding SearchText}" 
+                               Placeholder="Buscar películas..."
+                               Style="{StaticResource SearchEntryStyle}" 
+                               IsEnabled="{Binding IsNotLoading}" />
+
+                        <!-- Picker de géneros -->
+                        <Picker Grid.Column="1" Grid.Row="0"
+                                ItemsSource="{Binding Genres}"
+                                SelectedItem="{Binding SelectedGenre}"
+                                ItemDisplayBinding="{Binding Name}"
+                                Title="Género"
+                                Style="{StaticResource PickerStyle}"
+                                IsEnabled="{Binding IsNotLoading}" />
+
+                        <!-- Botones de acción -->
+                        <StackLayout Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" 
+                                   Orientation="Horizontal" 
+                                   HorizontalOptions="Center" 
+                                   Margin="0,10">
+                            <Button Text="🔄 Actualizar" 
+                                    Command="{Binding RefreshCommand}"
+                                    BackgroundColor="#e94560" 
+                                    TextColor="White" 
+                                    CornerRadius="20"
+                                    IsEnabled="{Binding IsNotLoading}" />
+
+                            <Button Text="🗑️ Limpiar" 
+                                    Command="{Binding ClearFiltersCommand}"
+                                    BackgroundColor="#533483" 
+                                    TextColor="White" 
+                                    CornerRadius="20"
+                                    Margin="10,0,0,0"
+                                    IsEnabled="{Binding IsNotLoading}" />
+                        </StackLayout>
+                    </Grid>
+
+                    <!-- Status message -->
+                    <Label Text="{Binding StatusMessage}" 
+                           Style="{StaticResource StatusLabelStyle}" 
+                           IsVisible="{Binding IsNotLoading}" />
+                </StackLayout>
+
+                <!-- Loading indicator -->
+                <StackLayout IsVisible="{Binding IsLoading}" 
+                           HorizontalOptions="Center" 
+                           VerticalOptions="Center"
+                           Padding="20">
+                    <ActivityIndicator IsRunning="{Binding IsLoading}" 
+                                     Color="#e94560" 
+                                     HeightRequest="50" 
+                                     WidthRequest="50" />
+                    <Label Text="Cargando películas..." 
+                           TextColor="#888" 
+                           HorizontalOptions="Center" 
+                           Margin="0,10,0,0" />
+                </StackLayout>
+
+                <!-- Error message -->
+                <StackLayout IsVisible="{Binding HasError}" 
+                           Padding="20" 
+                           HorizontalOptions="Center">
+                    <Label Text="❌" FontSize="48" HorizontalOptions="Center" />
+                    <Label Text="{Binding ErrorMessage}" 
+                           TextColor="#e94560" 
+                           FontSize="16" 
+                           HorizontalTextAlignment="Center"
+                           Margin="0,10" />
+                    <Button Text="Reintentar" 
+                            Command="{Binding LoadMoviesCommand}"
+                            BackgroundColor="#e94560" 
+                            TextColor="White" 
+                            CornerRadius="20" />
+                </StackLayout>
+
+                <!-- Movies List -->
+                <CollectionView ItemsSource="{Binding Movies}" 
+                              IsVisible="{Binding HasMovies}"
+                              Margin="0,10">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical" Span="2" />
+                    </CollectionView.ItemsLayout>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Movie">
+                            <Frame Style="{StaticResource MovieCardStyle}">
+                                <Grid RowDefinitions="300,*" Margin="0">
+
+                                    <!-- Poster Image -->
+                                    <Grid Grid.Row="0">
+                                        <Image Source="{Binding FullPosterUrl}" 
+                                               Aspect="AspectFill"
+                                               HeightRequest="300"
+                                               IsVisible="{Binding HasPoster}" />
+
+                                        <!-- Placeholder cuando no hay poster -->
+                                        <StackLayout IsVisible="{Binding HasPoster, Converter={StaticResource InvertedBoolConverter}}"
+                                                   BackgroundColor="#333" 
+                                                   VerticalOptions="FillAndExpand"
+                                                   HorizontalOptions="FillAndExpand">
+                                            <Label Text="🎬" 
+                                                   FontSize="48" 
+                                                   HorizontalOptions="Center" 
+                                                   VerticalOptions="Center"
+                                                   TextColor="#666" />
+                                        </StackLayout>
+
+                                        <!-- Rating badge -->
+                                        <Frame BackgroundColor="#e94560" 
+                                               CornerRadius="15"
+                                               Padding="8,4"
+                                               HorizontalOptions="End"
+                                               VerticalOptions="Start"
+                                               Margin="10"
+                                               IsVisible="{Binding VoteAverage, Converter={StaticResource DoubleToVisibilityConverter}}">
+                                            <StackLayout Orientation="Horizontal" Spacing="3">
+                                                <Label Text="⭐" FontSize="12" />
+                                                <Label Text="{Binding FormattedVoteAverage}" 
+                                                       Style="{StaticResource RatingLabelStyle}"
+                                                       TextColor="White" />
+                                            </StackLayout>
+                                        </Frame>
+                                    </Grid>
+
+                                    <!-- Movie Info -->
+                                    <StackLayout Grid.Row="1" Padding="15" Spacing="8">
+                                        <Label Text="{Binding Title}" 
+                                               Style="{StaticResource MovieTitleStyle}" />
+
+                                        <Label Text="{Binding FormattedReleaseDate}" 
+                                               FontSize="12" 
+                                               TextColor="#e94560"
+                                               FontAttributes="Bold" />
+
+                                        <Label Text="{Binding ShortOverview}" 
+                                               Style="{StaticResource MovieDetailStyle}"
+                                               IsVisible="{Binding HasOverview}" />
+
+                                        <Label Text="Sin sinopsis disponible" 
+                                               Style="{StaticResource MovieDetailStyle}"
+                                               FontAttributes="Italic"
+                                               IsVisible="{Binding HasOverview, Converter={StaticResource InvertedBoolConverter}}" />
+                                    </StackLayout>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!-- Empty state -->
+                <StackLayout IsVisible="{Binding HasMovies, Converter={StaticResource InvertedBoolConverter}}"
+                           Padding="40"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center"
+                           Spacing="15">
+                    <Label Text="🎬" FontSize="64" HorizontalOptions="Center" />
+                    <Label Text="No se encontraron películas" 
+                           FontSize="18" 
+                           FontAttributes="Bold"
+                           TextColor="#666" 
+                           HorizontalOptions="Center" />
+                    <Label Text="Intenta con otros términos de búsqueda o selecciona un género diferente" 
+                           FontSize="14" 
+                           TextColor="#888" 
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center" />
+                </StackLayout>
+
+            </StackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>

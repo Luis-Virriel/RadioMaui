@@ -47,9 +47,12 @@ namespace mauiApp1Prueba
             // Servicio de clima
             builder.Services.AddSingleton<WeatherServices>();
 
-            // 👉 NUEVOS SERVICIOS PARA PATROCINADORES
+            // 👉 SERVICIOS PARA PATROCINADORES
             builder.Services.AddSingleton<ISponsorService, SponsorService>();
             builder.Services.AddSingleton<IGeolocationService, GeolocationService>();
+
+            // 🎬 SERVICIOS PARA CINE - Sin dependencias adicionales
+            builder.Services.AddSingleton<IMovieService, MovieService>();
 
             // Servicios del sistema
             builder.Services.AddSingleton<IPreferences>(Preferences.Default);
@@ -67,15 +70,21 @@ namespace mauiApp1Prueba
             builder.Services.AddTransient<LocationPickerPage>(); // Selector de mapa
             // builder.Services.AddTransient<SponsorMapPage>();     // TODO: Crear esta página
 
+            // 🎬 PÁGINA PARA CINE
+            builder.Services.AddTransient<PaginaCine>();
+
             // ViewModels existentes
             builder.Services.AddTransient<CreateUserViewModel>();
             builder.Services.AddTransient<RadioHomeViewModel>();
 
-            // 👉 NUEVOS VIEWMODELS PARA PATROCINADORES
+            // 👉 VIEWMODELS PARA PATROCINADORES
             builder.Services.AddTransient<PatrocinadoresViewModel>();
             builder.Services.AddTransient<SponsorDetailViewModel>(); // Nuevo ViewModel de detalles
             builder.Services.AddTransient<LocationPickerViewModel>(); // ViewModel del selector de mapa
             // builder.Services.AddTransient<SponsorMapViewModel>();    // TODO: Crear este ViewModel
+
+            // 🎬 VIEWMODEL PARA CINE
+            builder.Services.AddTransient<PaginaCineViewModel>();
 
 #if DEBUG
             builder.Services.AddLogging(configure => configure.AddDebug());
