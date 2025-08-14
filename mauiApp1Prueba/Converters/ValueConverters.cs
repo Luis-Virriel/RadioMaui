@@ -85,4 +85,54 @@ namespace mauiApp1Prueba.Converters
             throw new NotImplementedException();
         }
     }
+
+    // 🎬 NUEVOS CONVERTERS PARA CINE
+
+    // Convierte double a bool (para mostrar rating cuando es > 0)
+    public class DoubleToVisibilityConverter : IValueConverter
+    {
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value is double doubleValue)
+                return doubleValue > 0;
+
+            return false;
+        }
+
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    // Convierte string a bool (para mostrar elementos cuando hay contenido)
+    public class StringToVisibilityConverter : IValueConverter
+    {
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            return !string.IsNullOrWhiteSpace(value?.ToString());
+        }
+
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    // Convierte collection a bool (para mostrar cuando hay elementos)
+    public class CollectionToVisibilityConverter : IValueConverter
+    {
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value is System.Collections.ICollection collection)
+                return collection.Count > 0;
+
+            return false;
+        }
+
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
