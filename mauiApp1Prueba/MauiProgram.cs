@@ -23,11 +23,10 @@ namespace mauiApp1Prueba
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 });
 
-            // Configurar Plugin.Fingerprint para Android
 #if ANDROID
             try
             {
-                CrossFingerprint.SetCurrentActivityResolver(() =>
+                Plugin.Fingerprint.CrossFingerprint.SetCurrentActivityResolver(() =>
                     Platform.CurrentActivity ?? Android.App.Application.Context as Android.App.Activity);
             }
             catch (Exception ex)
@@ -36,7 +35,13 @@ namespace mauiApp1Prueba
             }
 #endif
 
-            // Servicios de datos existentes
+            // Inyectar HttpClient manualmente para noticias
+            builder.Services.AddSingleton(sp => new System.Net.Http.HttpClient
+            {
+                BaseAddress = new System.Uri("https://newsdata.io/api/1/")
+            });
+
+            // Servicios
             builder.Services.AddSingleton<DatabaseService>();
             builder.Services.AddSingleton<IBiometricAuthService, BiometricAuthService>();
             builder.Services.AddSingleton<IUserService, UserService>();
@@ -44,14 +49,17 @@ namespace mauiApp1Prueba
             builder.Services.AddSingleton<IAudioService, AudioService>();
             builder.Services.AddSingleton<AppShell>();
 
+            // Servicio de noticias
+            builder.Services.AddSingleton<NewsService>();
+
             // Servicio de clima
             builder.Services.AddSingleton<WeatherServices>();
 
-            // 👉 SERVICIOS PARA PATROCINADORES
+            // Servicios para patrocinadores
             builder.Services.AddSingleton<ISponsorService, SponsorService>();
             builder.Services.AddSingleton<IGeolocationService, GeolocationService>();
 
-            // 🎬 SERVICIOS PARA CINE - Sin dependencias adicionales
+            // Servicios para cine
             builder.Services.AddSingleton<IMovieService, MovieService>();
 
             // Servicios del sistema
@@ -59,32 +67,24 @@ namespace mauiApp1Prueba
             builder.Services.AddSingleton<ISecureStorage>(SecureStorage.Default);
             builder.Services.AddSingleton<IConnectivity>(Connectivity.Current);
 
-            // Páginas existentes
+            // Páginas
             builder.Services.AddTransient<MainPage>();
             builder.Services.AddTransient<LoginPage>();
             builder.Services.AddTransient<CreateUserPage>();
-
-            // 👉 PÁGINAS PARA PATROCINADORES
-            builder.Services.AddTransient<PaginaPatrocinadores>(); // Tu página existente
-            builder.Services.AddTransient<SponsorDetailPage>();  // Nueva página de detalles
-            builder.Services.AddTransient<LocationPickerPage>(); // Selector de mapa
-            // builder.Services.AddTransient<SponsorMapPage>();     // TODO: Crear esta página
-
-            // 🎬 PÁGINA PARA CINE
+            builder.Services.AddTransient<PaginaPatrocinadores>();
+            builder.Services.AddTransient<SponsorDetailPage>();
+            builder.Services.AddTransient<LocationPickerPage>();
             builder.Services.AddTransient<PaginaCine>();
+            builder.Services.AddTransient<PaginaNoticias>(); // página de noticias
 
-            // ViewModels existentes
+            // ViewModels
             builder.Services.AddTransient<CreateUserViewModel>();
             builder.Services.AddTransient<RadioHomeViewModel>();
-
-            // 👉 VIEWMODELS PARA PATROCINADORES
             builder.Services.AddTransient<PatrocinadoresViewModel>();
-            builder.Services.AddTransient<SponsorDetailViewModel>(); // Nuevo ViewModel de detalles
-            builder.Services.AddTransient<LocationPickerViewModel>(); // ViewModel del selector de mapa
-            // builder.Services.AddTransient<SponsorMapViewModel>();    // TODO: Crear este ViewModel
-
-            // 🎬 VIEWMODEL PARA CINE
+            builder.Services.AddTransient<SponsorDetailViewModel>();
+            builder.Services.AddTransient<LocationPickerViewModel>();
             builder.Services.AddTransient<PaginaCineViewModel>();
+            builder.Services.AddTransient<NewsViewModel>(); // ViewModel de noticias
 
 #if DEBUG
             builder.Services.AddLogging(configure => configure.AddDebug());
