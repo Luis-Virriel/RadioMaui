@@ -1,14 +1,11 @@
 ﻿#pragma warning disable CA1416 // Validate platform compatibility
-
 using Microsoft.Extensions.Logging;
 using mauiApp1Prueba.Services;
 using mauiApp1Prueba.Views;
 using mauiApp1Prueba.ViewModels;
-
 #if ANDROID
 using Plugin.Fingerprint;
 #endif
-
 namespace mauiApp1Prueba
 {
     public static class MauiProgram
@@ -22,7 +19,6 @@ namespace mauiApp1Prueba
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 });
-
 #if ANDROID
             try
             {
@@ -34,7 +30,6 @@ namespace mauiApp1Prueba
                 System.Diagnostics.Debug.WriteLine($"Error configurando Plugin.Fingerprint: {ex.Message}");
             }
 #endif
-
             // Inyectar HttpClient manualmente para noticias
             builder.Services.AddSingleton(sp => new System.Net.Http.HttpClient
             {
@@ -48,20 +43,15 @@ namespace mauiApp1Prueba
             builder.Services.AddSingleton<IPhotoService, PhotoService>();
             builder.Services.AddSingleton<IAudioService, AudioService>();
             builder.Services.AddSingleton<AppShell>();
-
             // Servicio de noticias
             builder.Services.AddSingleton<NewsService>();
-
             // Servicio de clima
             builder.Services.AddSingleton<WeatherServices>();
-
             // Servicios para patrocinadores
             builder.Services.AddSingleton<ISponsorService, SponsorService>();
             builder.Services.AddSingleton<IGeolocationService, GeolocationService>();
-
             // Servicios para cine
             builder.Services.AddSingleton<IMovieService, MovieService>();
-
             // Servicios del sistema
             builder.Services.AddSingleton<IPreferences>(Preferences.Default);
             builder.Services.AddSingleton<ISecureStorage>(SecureStorage.Default);
@@ -75,7 +65,9 @@ namespace mauiApp1Prueba
             builder.Services.AddTransient<SponsorDetailPage>();
             builder.Services.AddTransient<LocationPickerPage>();
             builder.Services.AddTransient<PaginaCine>();
-            builder.Services.AddTransient<PaginaNoticias>(); // página de noticias
+            builder.Services.AddTransient<PaginaNoticias>(); 
+            // 🎬 NUEVA: Página de trailer
+            builder.Services.AddTransient<TrailerPage>();
 
             // ViewModels
             builder.Services.AddTransient<CreateUserViewModel>();
@@ -84,15 +76,15 @@ namespace mauiApp1Prueba
             builder.Services.AddTransient<SponsorDetailViewModel>();
             builder.Services.AddTransient<LocationPickerViewModel>();
             builder.Services.AddTransient<PaginaCineViewModel>();
-            builder.Services.AddTransient<NewsViewModel>(); // ViewModel de noticias
+            builder.Services.AddTransient<NewsViewModel>(); 
+            // 🎬 NUEVO: ViewModel de trailer
+            builder.Services.AddTransient<TrailerPageViewModel>();
 
 #if DEBUG
             builder.Services.AddLogging(configure => configure.AddDebug());
 #endif
-
             return builder.Build();
         }
     }
 }
-
 #pragma warning restore CA1416 // Validate platform compatibility
