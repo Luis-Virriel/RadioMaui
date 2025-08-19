@@ -14,6 +14,13 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
         Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
 
+        // 🎬 NUEVA: Registrar ruta para la página de trailer
+        Routing.RegisterRoute("trailer", typeof(TrailerPage));
+
+        // Si tienes otras páginas modales/detalle, regístralas aquí también
+        // Routing.RegisterRoute("sponsordetail", typeof(SponsorDetailPage));
+        // Routing.RegisterRoute("locationpicker", typeof(LocationPickerPage));
+
         ConstruirMenu();
     }
 

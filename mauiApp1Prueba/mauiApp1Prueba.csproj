@@ -99,6 +99,9 @@
 		<MauiXaml Update="Views\SponsorDetailPage.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
+		<MauiXaml Update="Views\TrailerPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
 	</ItemGroup>
 
 </Project>

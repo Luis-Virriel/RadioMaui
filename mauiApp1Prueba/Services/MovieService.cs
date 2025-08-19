@@ -6,9 +6,11 @@ namespace mauiApp1Prueba.Services
     public interface IMovieService
     {
         Task<IEnumerable<Movie>> GetUpcomingMoviesAsync();
+        Task<IEnumerable<Movie>> GetNowPlayingMoviesAsync();
         Task<IEnumerable<Movie>> SearchMoviesAsync(string query);
         Task<IEnumerable<Genre>> GetGenresAsync();
         Task<IEnumerable<Movie>> GetMoviesByGenreAsync(int genreId);
+        Task<IEnumerable<MovieVideo>> GetMovieVideosAsync(int movieId);
     }
 
     public class MovieService : IMovieService
@@ -21,9 +23,11 @@ namespace mauiApp1Prueba.Services
         {
             _httpClient = new HttpClient();
             _httpClient.Timeout = TimeSpan.FromSeconds(30);
-            // No configuramos BaseAddress para usar URLs completas
         }
 
+        /// <summary>
+        /// Obtiene películas que se estrenarán próximamente
+        /// </summary>
         public async Task<IEnumerable<Movie>> GetUpcomingMoviesAsync()
         {
             try
@@ -42,10 +46,6 @@ namespace mauiApp1Prueba.Services
                 }
 
                 var json = await response.Content.ReadAsStringAsync();
-
-                // Debug: Log the JSON response
-                System.Diagnostics.Debug.WriteLine($"API Response: {json.Substring(0, Math.Min(200, json.Length))}...");
-
                 var movieResponse = JsonSerializer.Deserialize<MovieResponse>(json, GetJsonOptions());
 
                 if (movieResponse?.Results == null)
@@ -53,21 +53,111 @@ namespace mauiApp1Prueba.Services
                     throw new Exception("La respuesta de la API no contiene resultados válidos");
                 }
 
-                System.Diagnostics.Debug.WriteLine($"Películas obtenidas: {movieResponse.Results.Length}");
+                // Filtrar solo películas que realmente son próximas (fecha futura)
+                var upcomingMovies = movieResponse.Results
+                    .Where(m => DateTime.TryParse(m.ReleaseDate, out var releaseDate) &&
+                               releaseDate > DateTime.Now)
+                    .OrderBy(m => DateTime.Parse(m.ReleaseDate))
+                    .ToArray();
 
-                return movieResponse.Results;
-            }
-            catch (JsonException jsonEx)
-            {
-                throw new Exception($"Error al procesar la respuesta JSON: {jsonEx.Message}", jsonEx);
-            }
-            catch (HttpRequestException httpEx)
-            {
-                throw new Exception($"Error de conexión: {httpEx.Message}", httpEx);
+                System.Diagnostics.Debug.WriteLine($"Próximas películas obtenidas: {upcomingMovies.Length}");
+
+                return upcomingMovies;
             }
             catch (Exception ex)
             {
                 throw new Exception($"Error al obtener próximos estrenos: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        /// Obtiene películas actualmente en cartelera (recién estrenadas)
+        /// </summary>
+        public async Task<IEnumerable<Movie>> GetNowPlayingMoviesAsync()
+        {
+            try
+            {
+                var fullUrl = $"{BaseUrl}/movie/now_playing?api_key={ApiKey}&language=es-ES&page=1&region=US";
+
+                System.Diagnostics.Debug.WriteLine($"Calling URL: {fullUrl}");
+
+                var response = await _httpClient.GetAsync(fullUrl);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    throw new HttpRequestException($"Error en la API: {response.StatusCode} - {errorContent}");
+                }
+
+                var json = await response.Content.ReadAsStringAsync();
+                var movieResponse = JsonSerializer.Deserialize<MovieResponse>(json, GetJsonOptions());
+
+                if (movieResponse?.Results == null)
+                {
+                    throw new Exception("La respuesta de la API no contiene resultados válidos");
+                }
+
+                // Filtrar películas estrenadas en los últimos 45 días
+                var nowPlayingMovies = movieResponse.Results
+                    .Where(m => DateTime.TryParse(m.ReleaseDate, out var releaseDate) &&
+                               releaseDate <= DateTime.Now &&
+                               releaseDate >= DateTime.Now.AddDays(-45))
+                    .OrderByDescending(m => DateTime.Parse(m.ReleaseDate))
+                    .ToArray();
+
+                System.Diagnostics.Debug.WriteLine($"Películas en cartelera obtenidas: {nowPlayingMovies.Length}");
+
+                return nowPlayingMovies;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al obtener películas en cartelera: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        /// Obtiene los videos/trailers de una película específica
+        /// </summary>
+        public async Task<IEnumerable<MovieVideo>> GetMovieVideosAsync(int movieId)
+        {
+            try
+            {
+                var fullUrl = $"{BaseUrl}/movie/{movieId}/videos?api_key={ApiKey}&language=es-ES";
+
+                System.Diagnostics.Debug.WriteLine($"Getting videos for movie {movieId}: {fullUrl}");
+
+                var response = await _httpClient.GetAsync(fullUrl);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    throw new HttpRequestException($"Error en la API: {response.StatusCode} - {errorContent}");
+                }
+
+                var json = await response.Content.ReadAsStringAsync();
+                var videoResponse = JsonSerializer.Deserialize<VideoResponse>(json, GetJsonOptions());
+
+                if (videoResponse?.Results == null)
+                {
+                    return Enumerable.Empty<MovieVideo>();
+                }
+
+                // Filtrar solo trailers de YouTube y ordenar por calidad
+                var trailers = videoResponse.Results
+                    .Where(v => v.Type.Equals("Trailer", StringComparison.OrdinalIgnoreCase) &&
+                               v.Site.Equals("YouTube", StringComparison.OrdinalIgnoreCase))
+                    .OrderByDescending(v => v.Size) // Priorizar mayor calidad
+                    .ThenByDescending(v => v.Official) // Priorizar oficiales
+                    .ToArray();
+
+                System.Diagnostics.Debug.WriteLine($"Trailers encontrados: {trailers.Length}");
+
+                return trailers;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error al obtener videos: {ex.Message}");
+                return Enumerable.Empty<MovieVideo>();
             }
         }
 

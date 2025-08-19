@@ -15,6 +15,7 @@ namespace mauiApp1Prueba
             Routing.RegisterRoute("patrocinadores", typeof(PaginaPatrocinadores));
             Routing.RegisterRoute("sponsordetail", typeof(SponsorDetailPage));
             Routing.RegisterRoute("locationpicker", typeof(LocationPickerPage));
+            Routing.RegisterRoute("trailer", typeof(Views.TrailerPage));
 
             // Inicia con LoginPage fuera del Shell
             MainPage = new NavigationPage(_serviceProvider.GetRequiredService<LoginPage>());

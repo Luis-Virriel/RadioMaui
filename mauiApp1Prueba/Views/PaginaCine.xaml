@@ -4,13 +4,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:models="clr-namespace:mauiApp1Prueba.Models"
              xmlns:viewmodels="clr-namespace:mauiApp1Prueba.ViewModels"
+             xmlns:converters="clr-namespace:mauiApp1Prueba.Converters"
              x:DataType="viewmodels:PaginaCineViewModel"
-             Title="Próximos Estrenos"
+             Title="{Binding ViewTypeTitle}"
              BackgroundColor="#1a1a2e">
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            <!-- Estilos -->
+            <!-- Convertidores -->
+            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <converters:DoubleToVisibilityConverter x:Key="DoubleToVisibilityConverter" />
+
+            <!-- Estilos existentes -->
             <Style x:Key="HeaderStyle" TargetType="Label">
                 <Setter Property="FontSize" Value="28" />
                 <Setter Property="FontAttributes" Value="Bold" />
@@ -44,35 +49,19 @@
                 <Setter Property="HasShadow" Value="True" />
             </Style>
 
-            <Style x:Key="MovieTitleStyle" TargetType="Label">
-                <Setter Property="FontSize" Value="18" />
-                <Setter Property="FontAttributes" Value="Bold" />
-                <Setter Property="TextColor" Value="#eee" />
-                <Setter Property="LineBreakMode" Value="TailTruncation" />
-                <Setter Property="MaxLines" Value="2" />
-            </Style>
-
-            <Style x:Key="MovieDetailStyle" TargetType="Label">
+            <Style x:Key="CategoryButtonStyle" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="#533483" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="CornerRadius" Value="20" />
                 <Setter Property="FontSize" Value="14" />
-                <Setter Property="TextColor" Value="#ccc" />
-                <Setter Property="LineBreakMode" Value="TailTruncation" />
-                <Setter Property="MaxLines" Value="3" />
+                <Setter Property="Margin" Value="5,0" />
             </Style>
 
-            <Style x:Key="RatingLabelStyle" TargetType="Label">
-                <Setter Property="FontSize" Value="12" />
+            <Style x:Key="CategoryButtonActiveStyle" TargetType="Button" BasedOn="{StaticResource CategoryButtonStyle}">
+                <Setter Property="BackgroundColor" Value="#e94560" />
                 <Setter Property="FontAttributes" Value="Bold" />
-                <Setter Property="TextColor" Value="#0f3460" />
-                <Setter Property="HorizontalOptions" Value="Center" />
-                <Setter Property="VerticalOptions" Value="Center" />
             </Style>
 
-            <Style x:Key="StatusLabelStyle" TargetType="Label">
-                <Setter Property="FontSize" Value="14" />
-                <Setter Property="TextColor" Value="#888" />
-                <Setter Property="HorizontalOptions" Value="Center" />
-                <Setter Property="Margin" Value="0,10" />
-            </Style>
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -80,13 +69,38 @@
         <ScrollView>
             <StackLayout Spacing="0">
 
-                <!-- Header -->
+                <!-- Header mejorado -->
                 <StackLayout BackgroundColor="#0f3460" Padding="20,10">
-                    <Label Text="🎬 Próximos Estrenos de Cine" 
+                    <Label Text="{Binding ViewTypeTitle}" 
                            Style="{StaticResource HeaderStyle}" />
 
+                    <!-- Botones de categorías -->
+                    <StackLayout Orientation="Horizontal" 
+                               HorizontalOptions="Center" 
+                               Margin="0,10,0,15"
+                               Spacing="10">
+
+                        <Button Text="🎪 Todas" 
+                                Command="{Binding ChangeViewTypeCommand}"
+                                CommandParameter="All"
+                                Style="{StaticResource CategoryButtonStyle}"
+                                IsEnabled="{Binding IsNotLoading}" />
+
+                        <Button Text="🎬 En Cartelera" 
+                                Command="{Binding ChangeViewTypeCommand}"
+                                CommandParameter="NowPlaying"
+                                Style="{StaticResource CategoryButtonStyle}"
+                                IsEnabled="{Binding IsNotLoading}" />
+
+                        <Button Text="🎯 Próximas" 
+                                Command="{Binding ChangeViewTypeCommand}"
+                                CommandParameter="Upcoming"
+                                Style="{StaticResource CategoryButtonStyle}"
+                                IsEnabled="{Binding IsNotLoading}" />
+                    </StackLayout>
+
                     <!-- Controles de búsqueda y filtros -->
-                    <Grid ColumnDefinitions="2*,1*" RowDefinitions="Auto,Auto" Margin="0,10,0,0">
+                    <Grid ColumnDefinitions="2*,1*" RowDefinitions="Auto,Auto" Margin="0,0,0,0">
 
                         <!-- Búsqueda -->
                         <Entry Grid.Column="0" Grid.Row="0"
@@ -128,7 +142,10 @@
 
                     <!-- Status message -->
                     <Label Text="{Binding StatusMessage}" 
-                           Style="{StaticResource StatusLabelStyle}" 
+                           FontSize="14" 
+                           TextColor="#888" 
+                           HorizontalOptions="Center" 
+                           Margin="0,10"
                            IsVisible="{Binding IsNotLoading}" />
                 </StackLayout>
 
@@ -164,7 +181,7 @@
                             CornerRadius="20" />
                 </StackLayout>
 
-                <!-- Movies List -->
+                <!-- Movies List mejorada -->
                 <CollectionView ItemsSource="{Binding Movies}" 
                               IsVisible="{Binding HasMovies}"
                               Margin="0,10">
@@ -175,6 +192,13 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:Movie">
                             <Frame Style="{StaticResource MovieCardStyle}">
+                                <!-- Gesture recognizer para ver trailer -->
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ShowTrailerCommand}"
+                                        CommandParameter="{Binding}" />
+                                </Frame.GestureRecognizers>
+
                                 <Grid RowDefinitions="300,*" Margin="0">
 
                                     <!-- Poster Image -->
@@ -196,39 +220,81 @@
                                                    TextColor="#666" />
                                         </StackLayout>
 
+                                        <!-- Status badge mejorado -->
+                                        <Frame BackgroundColor="{Binding StatusColor}" 
+                                               CornerRadius="15"
+                                               Padding="8,4"
+                                               HorizontalOptions="Start"
+                                               VerticalOptions="Start"
+                                               Margin="10">
+                                            <Label Text="{Binding MovieStatus}" 
+                                                   FontSize="10" 
+                                                   FontAttributes="Bold"
+                                                   TextColor="White" />
+                                        </Frame>
+
                                         <!-- Rating badge -->
-                                        <Frame BackgroundColor="#e94560" 
+                                        <Frame BackgroundColor="#000000AA" 
                                                CornerRadius="15"
                                                Padding="8,4"
                                                HorizontalOptions="End"
                                                VerticalOptions="Start"
                                                Margin="10"
                                                IsVisible="{Binding VoteAverage, Converter={StaticResource DoubleToVisibilityConverter}}">
-                                            <StackLayout Orientation="Horizontal" Spacing="3">
-                                                <Label Text="⭐" FontSize="12" />
-                                                <Label Text="{Binding FormattedVoteAverage}" 
-                                                       Style="{StaticResource RatingLabelStyle}"
+                                            <Label Text="{Binding RatingStars}" 
+                                                   FontSize="12" 
+                                                   TextColor="#FFD700" />
+                                        </Frame>
+
+                                        <!-- Indicador de trailer -->
+                                        <Frame BackgroundColor="#e94560" 
+                                               CornerRadius="20"
+                                               Padding="10"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="End"
+                                               Margin="10">
+                                            <StackLayout Orientation="Horizontal" Spacing="5">
+                                                <Label Text="▶️" FontSize="16" />
+                                                <Label Text="Ver Trailer" 
+                                                       FontSize="14" 
+                                                       FontAttributes="Bold"
                                                        TextColor="White" />
                                             </StackLayout>
                                         </Frame>
                                     </Grid>
 
-                                    <!-- Movie Info -->
+                                    <!-- Movie Info mejorada -->
                                     <StackLayout Grid.Row="1" Padding="15" Spacing="8">
                                         <Label Text="{Binding Title}" 
-                                               Style="{StaticResource MovieTitleStyle}" />
+                                               FontSize="18" 
+                                               FontAttributes="Bold" 
+                                               TextColor="#eee" 
+                                               LineBreakMode="TailTruncation" 
+                                               MaxLines="2" />
 
-                                        <Label Text="{Binding FormattedReleaseDate}" 
-                                               FontSize="12" 
-                                               TextColor="#e94560"
-                                               FontAttributes="Bold" />
+                                        <StackLayout Orientation="Horizontal" Spacing="10">
+                                            <Label Text="{Binding FormattedReleaseDate}" 
+                                                   FontSize="12" 
+                                                   TextColor="#e94560"
+                                                   FontAttributes="Bold" />
+
+                                            <Label Text="{Binding DaysUntilRelease}" 
+                                                   FontSize="12" 
+                                                   TextColor="#FFD700"
+                                                   FontAttributes="Bold"
+                                                   IsVisible="{Binding IsUpcoming}" />
+                                        </StackLayout>
 
                                         <Label Text="{Binding ShortOverview}" 
-                                               Style="{StaticResource MovieDetailStyle}"
+                                               FontSize="14" 
+                                               TextColor="#ccc" 
+                                               LineBreakMode="TailTruncation" 
+                                               MaxLines="3"
                                                IsVisible="{Binding HasOverview}" />
 
                                         <Label Text="Sin sinopsis disponible" 
-                                               Style="{StaticResource MovieDetailStyle}"
+                                               FontSize="14" 
+                                               TextColor="#ccc" 
                                                FontAttributes="Italic"
                                                IsVisible="{Binding HasOverview, Converter={StaticResource InvertedBoolConverter}}" />
                                     </StackLayout>

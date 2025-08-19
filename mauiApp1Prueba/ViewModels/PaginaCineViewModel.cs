@@ -10,24 +10,55 @@ namespace mauiApp1Prueba.ViewModels
     public class PaginaCineViewModel : INotifyPropertyChanged
     {
         private readonly IMovieService _movieService;
-
-        // Campos privados
         private bool _isLoading;
         private bool _hasError;
         private string _errorMessage = string.Empty;
         private string _searchText = string.Empty;
-        private Genre _selectedGenre;
         private string _statusMessage = string.Empty;
+        private Genre _selectedGenre;
+        private MovieViewType _selectedViewType = MovieViewType.All;
 
-        // Propiedades públicas
-        public ObservableCollection<Movie> Movies { get; set; } = new();
-        public ObservableCollection<Genre> Genres { get; set; } = new();
+        // Colecciones separadas para mejor rendimiento
+        private readonly List<Movie> _allMovies = new();
+        private readonly List<Movie> _nowPlayingMovies = new();
+        private readonly List<Movie> _upcomingMovies = new();
+
+        public PaginaCineViewModel(IMovieService movieService)
+        {
+            _movieService = movieService;
+
+            // Inicializar colecciones
+            Movies = new ObservableCollection<Movie>();
+            Genres = new ObservableCollection<Genre>();
+
+            // Inicializar comandos
+            LoadMoviesCommand = new Command(async () => await LoadMoviesAsync());
+            RefreshCommand = new Command(async () => await RefreshAsync());
+            ClearFiltersCommand = new Command(async () => await ClearFiltersAsync());
+            SearchCommand = new Command(async () => await SearchMoviesAsync());
+            ShowTrailerCommand = new Command<Movie>(async (movie) => await ShowTrailerAsync(movie));
+            ChangeViewTypeCommand = new Command<string>(async (viewType) => await ChangeViewTypeAsync(viewType));
+
+            // Cargar géneros al inicializar
+            _ = Task.Run(LoadGenresAsync);
+        }
+
+        #region Propiedades
+
+        public ObservableCollection<Movie> Movies { get; }
+        public ObservableCollection<Genre> Genres { get; }
 
         public bool IsLoading
         {
             get => _isLoading;
-            set => SetProperty(ref _isLoading, value);
+            set
+            {
+                SetProperty(ref _isLoading, value);
+                OnPropertyChanged(nameof(IsNotLoading));
+            }
         }
+
+        public bool IsNotLoading => !IsLoading;
 
         public bool HasError
         {
@@ -46,22 +77,17 @@ namespace mauiApp1Prueba.ViewModels
             get => _searchText;
             set
             {
-                if (SetProperty(ref _searchText, value))
-                {
-                    _ = PerformSearchAsync();
-                }
-            }
-        }
+                SetProperty(ref _searchText, value);
 
-        public Genre SelectedGenre
-        {
-            get => _selectedGenre;
-            set
-            {
-                if (SetProperty(ref _selectedGenre, value))
+                // Búsqueda automática con debounce
+                _ = Task.Run(async () =>
                 {
-                    _ = FilterByGenreAsync();
-                }
+                    await Task.Delay(500); // Debounce de 500ms
+                    if (_searchText == value) // Solo buscar si el texto no ha cambiado
+                    {
+                        await SearchMoviesAsync();
+                    }
+                });
             }
         }
 
@@ -71,236 +97,322 @@ namespace mauiApp1Prueba.ViewModels
             set => SetProperty(ref _statusMessage, value);
         }
 
-        public bool HasMovies => Movies?.Count > 0;
-        public bool IsNotLoading => !IsLoading;
+        public Genre SelectedGenre
+        {
+            get => _selectedGenre;
+            set
+            {
+                SetProperty(ref _selectedGenre, value);
+                _ = Task.Run(async () => await FilterMoviesAsync());
+            }
+        }
 
-        // Comandos
+        public MovieViewType SelectedViewType
+        {
+            get => _selectedViewType;
+            set
+            {
+                SetProperty(ref _selectedViewType, value);
+                OnPropertyChanged(nameof(ViewTypeTitle));
+                _ = Task.Run(async () => await FilterMoviesAsync());
+            }
+        }
+
+        public string ViewTypeTitle
+        {
+            get
+            {
+                return SelectedViewType switch
+                {
+                    MovieViewType.NowPlaying => "🎬 En Cartelera",
+                    MovieViewType.Upcoming => "🎯 Próximos Estrenos",
+                    _ => "🎪 Todas las Películas"
+                };
+            }
+        }
+
+        public bool HasMovies => Movies.Count > 0;
+
+        #endregion
+
+        #region Comandos
+
         public ICommand LoadMoviesCommand { get; }
         public ICommand RefreshCommand { get; }
         public ICommand ClearFiltersCommand { get; }
+        public ICommand SearchCommand { get; }
+        public ICommand ShowTrailerCommand { get; }
+        public ICommand ChangeViewTypeCommand { get; }
 
-        public PaginaCineViewModel(IMovieService movieService)
+        #endregion
+
+        #region Métodos públicos
+
+        public async Task InitializeAsync()
         {
-            _movieService = movieService ?? throw new ArgumentNullException(nameof(movieService));
-
-            // Inicializar comandos
-            LoadMoviesCommand = new Command(async () => await LoadInitialDataAsync());
-            RefreshCommand = new Command(async () => await RefreshDataAsync());
-            ClearFiltersCommand = new Command(ClearFilters);
-
-            // Cargar datos iniciales
-            _ = Task.Run(LoadInitialDataAsync);
+            await LoadMoviesAsync();
         }
 
-        private async Task LoadInitialDataAsync()
+        #endregion
+
+        #region Métodos privados
+
+        private async Task LoadMoviesAsync()
         {
+            if (IsLoading) return;
+
             try
             {
                 IsLoading = true;
                 HasError = false;
-                StatusMessage = "Cargando próximos estrenos...";
+                StatusMessage = "Cargando películas...";
 
-                // Cargar géneros y películas en paralelo
-                var genresTask = _movieService.GetGenresAsync();
-                var moviesTask = _movieService.GetUpcomingMoviesAsync();
+                // Cargar ambos tipos de películas en paralelo
+                var nowPlayingTask = _movieService.GetNowPlayingMoviesAsync();
+                var upcomingTask = _movieService.GetUpcomingMoviesAsync();
 
-                await Task.WhenAll(genresTask, moviesTask);
+                await Task.WhenAll(nowPlayingTask, upcomingTask);
 
-                var genres = await genresTask;
-                var movies = await moviesTask;
+                // Limpiar y actualizar colecciones
+                _nowPlayingMovies.Clear();
+                _upcomingMovies.Clear();
+                _allMovies.Clear();
 
-                // Actualizar UI en el hilo principal
-                await MainThread.InvokeOnMainThreadAsync(() =>
+                _nowPlayingMovies.AddRange(await nowPlayingTask);
+                _upcomingMovies.AddRange(await upcomingTask);
+                _allMovies.AddRange(_nowPlayingMovies);
+                _allMovies.AddRange(_upcomingMovies);
+
+                // Aplicar filtros actuales
+                await FilterMoviesAsync();
+
+                StatusMessage = $"Se encontraron {Movies.Count} películas";
+            }
+            catch (Exception ex)
+            {
+                HasError = true;
+                ErrorMessage = $"Error al cargar películas: {ex.Message}";
+                StatusMessage = "Error al cargar películas";
+                System.Diagnostics.Debug.WriteLine($"Error: {ex}");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        private async Task RefreshAsync()
+        {
+            // Limpiar cachés y recargar
+            _allMovies.Clear();
+            _nowPlayingMovies.Clear();
+            _upcomingMovies.Clear();
+
+            await LoadMoviesAsync();
+        }
+
+        private async Task ClearFiltersAsync()
+        {
+            SearchText = string.Empty;
+            SelectedGenre = null;
+            SelectedViewType = MovieViewType.All;
+
+            await FilterMoviesAsync();
+        }
+
+        private async Task SearchMoviesAsync()
+        {
+            if (IsLoading) return;
+
+            try
+            {
+                if (string.IsNullOrWhiteSpace(SearchText))
                 {
-                    // Limpiar y cargar géneros
+                    await FilterMoviesAsync();
+                    return;
+                }
+
+                IsLoading = true;
+                StatusMessage = "Buscando películas...";
+
+                var searchResults = await _movieService.SearchMoviesAsync(SearchText);
+
+                Movies.Clear();
+                foreach (var movie in searchResults.Take(20)) // Limitar resultados
+                {
+                    Movies.Add(movie);
+                }
+
+                StatusMessage = $"Se encontraron {Movies.Count} resultados para '{SearchText}'";
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Error en la búsqueda: {ex.Message}";
+                StatusMessage = "Error en la búsqueda";
+            }
+            finally
+            {
+                IsLoading = false;
+                OnPropertyChanged(nameof(HasMovies));
+            }
+        }
+
+        private async Task FilterMoviesAsync()
+        {
+            await Task.Run(() =>
+            {
+                try
+                {
+                    // Seleccionar la colección base según el tipo de vista
+                    IEnumerable<Movie> baseMovies = SelectedViewType switch
+                    {
+                        MovieViewType.NowPlaying => _nowPlayingMovies,
+                        MovieViewType.Upcoming => _upcomingMovies,
+                        _ => _allMovies
+                    };
+
+                    // Aplicar filtro de género si está seleccionado
+                    if (SelectedGenre != null)
+                    {
+                        baseMovies = baseMovies.Where(m => m.GenreIds.Contains(SelectedGenre.Id));
+                    }
+
+                    // Actualizar la UI en el hilo principal
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        Movies.Clear();
+                        foreach (var movie in baseMovies.OrderByDescending(m => m.Popularity))
+                        {
+                            Movies.Add(movie);
+                        }
+
+                        OnPropertyChanged(nameof(HasMovies));
+
+                        // Actualizar mensaje de estado
+                        var categoryText = SelectedViewType switch
+                        {
+                            MovieViewType.NowPlaying => "en cartelera",
+                            MovieViewType.Upcoming => "próximas",
+                            _ => "total"
+                        };
+
+                        var genreText = SelectedGenre != null ? $" de {SelectedGenre.Name}" : "";
+                        StatusMessage = $"{Movies.Count} películas {categoryText}{genreText}";
+                    });
+                }
+                catch (Exception ex)
+                {
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        ErrorMessage = $"Error al filtrar: {ex.Message}";
+                    });
+                }
+            });
+        }
+
+        // Reemplaza tu método ShowTrailerAsync en PaginaCineViewModel con este:
+        private async Task ShowTrailerAsync(Movie movie)
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine($"ShowTrailerAsync llamado para: {movie?.Title}");
+
+                if (movie == null)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error",
+                        "No se pudo identificar la película seleccionada.", "OK");
+                    return;
+                }
+
+                // Mostrar loading mientras verificamos si hay trailers
+                IsLoading = true;
+                StatusMessage = "Verificando disponibilidad de trailer...";
+
+                try
+                {
+                    // Verificar si la película tiene trailers antes de navegar
+                    var videos = await _movieService.GetMovieVideosAsync(movie.Id);
+                    var hasTrailers = videos.Any(v => v.IsTrailer && v.IsYouTube);
+
+                    if (!hasTrailers)
+                    {
+                        await Application.Current.MainPage.DisplayAlert("Sin trailer",
+                            $"'{movie.Title}' no tiene trailers disponibles en YouTube.", "OK");
+                        return;
+                    }
+
+                    System.Diagnostics.Debug.WriteLine($"Navegando a trailer para: {movie.Title}");
+
+                    // Navegar a la página de trailer
+                    var parameters = new Dictionary<string, object>
+                    {
+                        ["Movie"] = movie
+                    };
+
+                    await Shell.Current.GoToAsync("trailer", parameters);
+
+                    System.Diagnostics.Debug.WriteLine("Navegación completada");
+                }
+                catch (HttpRequestException httpEx)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error de conexión",
+                        "No se pudo conectar al servicio de videos. Verifica tu conexión a internet.", "OK");
+                }
+                catch (Exception navEx)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error de navegación: {navEx.Message}");
+                    await Application.Current.MainPage.DisplayAlert("Error",
+                        $"No se pudo abrir el trailer: {navEx.Message}", "OK");
+                }
+                finally
+                {
+                    IsLoading = false;
+                    StatusMessage = $"{Movies.Count} películas encontradas";
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error general: {ex.Message}");
+                await Application.Current.MainPage.DisplayAlert("Error",
+                    "Ocurrió un error inesperado al intentar ver el trailer.", "OK");
+                IsLoading = false;
+            }
+        }
+
+        private async Task ChangeViewTypeAsync(string viewTypeString)
+        {
+            if (Enum.TryParse<MovieViewType>(viewTypeString, out var viewType))
+            {
+                SelectedViewType = viewType;
+                await FilterMoviesAsync();
+            }
+        }
+
+        private async Task LoadGenresAsync()
+        {
+            try
+            {
+                var genres = await _movieService.GetGenresAsync();
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
                     Genres.Clear();
-                    Genres.Add(new Genre { Id = 0, Name = "Todos los géneros" });
                     foreach (var genre in genres)
                     {
                         Genres.Add(genre);
                     }
-
-                    // Cargar películas
-                    Movies.Clear();
-                    foreach (var movie in movies)
-                    {
-                        Movies.Add(movie);
-                    }
-
-                    UpdateStatusMessage();
-                    OnPropertyChanged(nameof(HasMovies));
                 });
             }
             catch (Exception ex)
             {
-                await HandleErrorAsync($"Error al cargar datos: {ex.Message}");
-            }
-            finally
-            {
-                IsLoading = false;
+                System.Diagnostics.Debug.WriteLine($"Error al cargar géneros: {ex.Message}");
             }
         }
 
-        private async Task RefreshDataAsync()
-        {
-            SearchText = string.Empty;
-            SelectedGenre = null;
-            await LoadInitialDataAsync();
-        }
+        #endregion
 
-        private async Task PerformSearchAsync()
-        {
-            if (string.IsNullOrWhiteSpace(SearchText))
-            {
-                await LoadUpcomingMoviesAsync();
-                return;
-            }
+        #region INotifyPropertyChanged
 
-            if (SearchText.Length < 2)
-                return;
-
-            try
-            {
-                IsLoading = true;
-                HasError = false;
-                StatusMessage = $"Buscando \"{SearchText}\"...";
-
-                var searchResults = await _movieService.SearchMoviesAsync(SearchText);
-
-                await MainThread.InvokeOnMainThreadAsync(() =>
-                {
-                    Movies.Clear();
-                    foreach (var movie in searchResults)
-                    {
-                        Movies.Add(movie);
-                    }
-
-                    // Limpiar selección de género al buscar
-                    SelectedGenre = Genres.FirstOrDefault();
-
-                    UpdateStatusMessage();
-                    OnPropertyChanged(nameof(HasMovies));
-                });
-            }
-            catch (Exception ex)
-            {
-                await HandleErrorAsync($"Error en la búsqueda: {ex.Message}");
-            }
-            finally
-            {
-                IsLoading = false;
-            }
-        }
-
-        private async Task FilterByGenreAsync()
-        {
-            if (SelectedGenre == null || SelectedGenre.Id == 0)
-            {
-                await LoadUpcomingMoviesAsync();
-                return;
-            }
-
-            try
-            {
-                IsLoading = true;
-                HasError = false;
-                StatusMessage = $"Filtrando por género: {SelectedGenre.Name}...";
-
-                var genreMovies = await _movieService.GetMoviesByGenreAsync(SelectedGenre.Id);
-
-                await MainThread.InvokeOnMainThreadAsync(() =>
-                {
-                    Movies.Clear();
-                    foreach (var movie in genreMovies)
-                    {
-                        Movies.Add(movie);
-                    }
-
-                    // Limpiar búsqueda al filtrar por género
-                    SearchText = string.Empty;
-
-                    UpdateStatusMessage();
-                    OnPropertyChanged(nameof(HasMovies));
-                });
-            }
-            catch (Exception ex)
-            {
-                await HandleErrorAsync($"Error al filtrar por género: {ex.Message}");
-            }
-            finally
-            {
-                IsLoading = false;
-            }
-        }
-
-        private async Task LoadUpcomingMoviesAsync()
-        {
-            try
-            {
-                IsLoading = true;
-                HasError = false;
-                StatusMessage = "Cargando próximos estrenos...";
-
-                var movies = await _movieService.GetUpcomingMoviesAsync();
-
-                await MainThread.InvokeOnMainThreadAsync(() =>
-                {
-                    Movies.Clear();
-                    foreach (var movie in movies)
-                    {
-                        Movies.Add(movie);
-                    }
-
-                    UpdateStatusMessage();
-                    OnPropertyChanged(nameof(HasMovies));
-                });
-            }
-            catch (Exception ex)
-            {
-                await HandleErrorAsync($"Error al cargar películas: {ex.Message}");
-            }
-            finally
-            {
-                IsLoading = false;
-            }
-        }
-
-        private void ClearFilters()
-        {
-            SearchText = string.Empty;
-            SelectedGenre = Genres?.FirstOrDefault();
-        }
-
-        private void UpdateStatusMessage()
-        {
-            var count = Movies?.Count ?? 0;
-
-            if (!string.IsNullOrWhiteSpace(SearchText))
-            {
-                StatusMessage = $"Resultados para \"{SearchText}\": {count} películas";
-            }
-            else if (SelectedGenre != null && SelectedGenre.Id > 0)
-            {
-                StatusMessage = $"Género: {SelectedGenre.Name} - {count} películas";
-            }
-            else
-            {
-                StatusMessage = $"Próximos estrenos: {count} películas";
-            }
-        }
-
-        private async Task HandleErrorAsync(string errorMessage)
-        {
-            await MainThread.InvokeOnMainThreadAsync(() =>
-            {
-                HasError = true;
-                ErrorMessage = errorMessage;
-                StatusMessage = "Error al cargar datos";
-                OnPropertyChanged(nameof(HasMovies));
-            });
-        }
-
-        // Implementación de INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -317,5 +429,7 @@ namespace mauiApp1Prueba.ViewModels
             OnPropertyChanged(propertyName);
             return true;
         }
+
+        #endregion
     }
 }

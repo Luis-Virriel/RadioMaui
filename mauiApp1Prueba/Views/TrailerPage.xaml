@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="mauiApp1Prueba.Views.TrailerPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:mauiApp1Prueba.Models"
+             xmlns:converters="clr-namespace:mauiApp1Prueba.Converters"
+             Title="Trailer"
+             BackgroundColor="#1a1a2e"
+             NavigationPage.HasNavigationBar="True">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Cerrar" 
+                     Command="{Binding CloseCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header con información de la película -->
+        <StackLayout Grid.Row="0" 
+                     BackgroundColor="#0f3460" 
+                     Padding="20,15">
+            <Label Text="{Binding Movie.Title}" 
+                   FontSize="24" 
+                   FontAttributes="Bold" 
+                   TextColor="White" 
+                   HorizontalOptions="Center" />
+
+            <Label Text="{Binding Movie.FormattedReleaseDate}" 
+                   FontSize="16" 
+                   TextColor="#e94560" 
+                   HorizontalOptions="Center" 
+                   Margin="0,5,0,0" />
+        </StackLayout>
+
+        <!-- Contenido principal -->
+        <ScrollView Grid.Row="1">
+            <StackLayout Spacing="0">
+
+                <!-- Loading indicator -->
+                <StackLayout IsVisible="{Binding IsLoading}" 
+                           HorizontalOptions="Center" 
+                           VerticalOptions="Center"
+                           Padding="50">
+                    <ActivityIndicator IsRunning="{Binding IsLoading}" 
+                                     Color="#e94560" 
+                                     HeightRequest="50" 
+                                     WidthRequest="50" />
+                    <Label Text="Buscando trailers..." 
+                           TextColor="White" 
+                           HorizontalOptions="Center" 
+                           FontSize="16"
+                           Margin="0,20,0,0" />
+                </StackLayout>
+
+                <!-- Trailer disponible -->
+                <StackLayout IsVisible="{Binding HasTrailer}" 
+                           Padding="20" 
+                           BackgroundColor="#16213e"
+                           Spacing="20">
+
+                    <!-- Thumbnail del trailer principal -->
+                    <Frame BackgroundColor="Black" 
+                           CornerRadius="15" 
+                           Padding="0"
+                           HasShadow="True">
+                        <Grid>
+                            <Image Source="{Binding SelectedTrailer.YouTubeThumbnailUrl}" 
+                                   Aspect="AspectFill"
+                                   HeightRequest="200" />
+
+                            <!-- Play button overlay -->
+                            <Button Text="▶️ REPRODUCIR TRAILER"
+                                    Command="{Binding OpenInYouTubeCommand}"
+                                    BackgroundColor="#e94560CC"
+                                    TextColor="White"
+                                    FontSize="18"
+                                    FontAttributes="Bold"
+                                    CornerRadius="25"
+                                    Padding="20,10"
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="Center" />
+                        </Grid>
+                    </Frame>
+
+                    <!-- Información del trailer -->
+                    <StackLayout>
+                        <Label Text="{Binding SelectedTrailer.Name}" 
+                               FontSize="18" 
+                               FontAttributes="Bold" 
+                               TextColor="White" 
+                               HorizontalOptions="Center" />
+
+                        <Label Text="{Binding SelectedTrailer.QualityText}" 
+                               FontSize="14" 
+                               TextColor="#e94560" 
+                               HorizontalOptions="Center"
+                               Margin="0,5,0,0" />
+                    </StackLayout>
+
+                    <!-- Lista de trailers adicionales -->
+                    <StackLayout IsVisible="{Binding HasMultipleTrailers}">
+                        <Label Text="Otros trailers disponibles:" 
+                               FontSize="16" 
+                               FontAttributes="Bold" 
+                               TextColor="White" 
+                               Margin="0,10,0,10" />
+
+                        <CollectionView ItemsSource="{Binding AvailableTrailers}"
+                                      HeightRequest="100">
+                            <CollectionView.ItemsLayout>
+                                <LinearItemsLayout Orientation="Horizontal" 
+                                                 ItemSpacing="15" />
+                            </CollectionView.ItemsLayout>
+
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:MovieVideo">
+                                    <Button Text="{Binding Name}"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectTrailerCommand}"
+                                            CommandParameter="{Binding}"
+                                            BackgroundColor="#533483"
+                                            TextColor="White"
+                                            FontSize="12"
+                                            CornerRadius="15"
+                                            Padding="15,8"
+                                            WidthRequest="150"
+                                            LineBreakMode="TailTruncation" />
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </StackLayout>
+                </StackLayout>
+
+                <!-- Información adicional de la película -->
+                <StackLayout Padding="20" BackgroundColor="#1a1a2e" Spacing="15">
+
+                    <StackLayout Orientation="Horizontal" Spacing="15">
+                        <Image Source="{Binding Movie.FullPosterUrl}" 
+                               WidthRequest="120" 
+                               HeightRequest="180" 
+                               Aspect="AspectFill" />
+
+                        <StackLayout VerticalOptions="Start" 
+                                   Spacing="8"
+                                   FlexLayout.Grow="1">
+
+                            <Label Text="{Binding Movie.RatingStars}" 
+                                   FontSize="18" 
+                                   TextColor="#FFD700" />
+
+                            <Label Text="{Binding Movie.FormattedVoteAverage}" 
+                                   FontSize="16" 
+                                   FontAttributes="Bold" 
+                                   TextColor="#e94560" />
+
+                            <Label Text="{Binding Movie.MovieStatus}" 
+                                   FontSize="14" 
+                                   FontAttributes="Bold" 
+                                   TextColor="{Binding Movie.StatusColor}" />
+
+                            <Label Text="{Binding Movie.DaysUntilRelease}" 
+                                   FontSize="14" 
+                                   TextColor="White" 
+                                   IsVisible="{Binding Movie.IsUpcoming}" />
+                        </StackLayout>
+                    </StackLayout>
+
+                    <Label Text="Sinopsis:" 
+                           FontSize="16" 
+                           FontAttributes="Bold" 
+                           TextColor="White" 
+                           IsVisible="{Binding Movie.HasOverview}" />
+
+                    <Label Text="{Binding Movie.Overview}" 
+                           FontSize="14" 
+                           TextColor="#ccc" 
+                           LineBreakMode="WordWrap" 
+                           IsVisible="{Binding Movie.HasOverview}" />
+                </StackLayout>
+
+                <!-- Estado sin trailer -->
+                <StackLayout IsVisible="{Binding HasTrailer, Converter={StaticResource InvertedBoolConverter}}"
+                           Padding="40"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center"
+                           Spacing="20">
+                    <Label Text="🎬" FontSize="64" HorizontalOptions="Center" />
+                    <Label Text="Trailer no disponible" 
+                           FontSize="20" 
+                           FontAttributes="Bold"
+                           TextColor="White" 
+                           HorizontalOptions="Center" />
+                    <Label Text="El trailer de esta película aún no está disponible en YouTube" 
+                           FontSize="16" 
+                           TextColor="#888" 
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center" />
+                </StackLayout>
+
+            </StackLayout>
+        </ScrollView>
+
+        <!-- Botones de acción -->
+        <StackLayout Grid.Row="2" 
+                     Orientation="Horizontal" 
+                     HorizontalOptions="Center" 
+                     Padding="20,15" 
+                     BackgroundColor="#16213e"
+                     Spacing="15">
+
+            <Button Text="🌐 Ver en YouTube" 
+                    Command="{Binding OpenInYouTubeCommand}"
+                    BackgroundColor="#e94560" 
+                    TextColor="White" 
+                    CornerRadius="25"
+                    Padding="20,10"
+                    IsVisible="{Binding HasTrailer}" />
+
+            <Button Text="🔙 Volver" 
+                    Command="{Binding CloseCommand}"
+                    BackgroundColor="#533483" 
+                    TextColor="White" 
+                    CornerRadius="25"
+                    Padding="20,10" />
+        </StackLayout>
+
+    </Grid>
+</ContentPage>
