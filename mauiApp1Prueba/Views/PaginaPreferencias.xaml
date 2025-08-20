@@ -2,47 +2,140 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="mauiApp1Prueba.Views.PaginaPreferencias"
-             Title="Preferencias">
+             Title="Preferencias"
+             BackgroundColor="#1E293B">
 
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="15">
+        <VerticalStackLayout Padding="25" Spacing="20">
 
-            <Label Text="Seleccioná qué páginas querés ver:"
-                   FontSize="24"
-                   FontAttributes="Bold"
-                   HorizontalOptions="Center" />
+            <!-- Header Section -->
+            <Frame BackgroundColor="#1E3A8A" 
+                   CornerRadius="15"
+                   Padding="20"
+                   HasShadow="True">
+                <Label Text="Seleccioná qué páginas querés ver"
+                       FontSize="26"
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       HorizontalOptions="Center"
+                       HorizontalTextAlignment="Center" />
+            </Frame>
 
-            <HorizontalStackLayout>
-                <CheckBox x:Name="NoticiasCheck" />
-                <Label Text="Noticias" VerticalOptions="Center" />
-            </HorizontalStackLayout>
+            <!-- Options Container -->
+            <Frame BackgroundColor="#2D3748" 
+                   CornerRadius="15"
+                   Padding="20"
+                   HasShadow="True">
+                <VerticalStackLayout Spacing="18">
 
-            <HorizontalStackLayout>
-                <CheckBox x:Name="CineCheck" />
-                <Label Text="Cine" VerticalOptions="Center" />
-            </HorizontalStackLayout>
+                    <!-- Noticias -->
+                    <Frame BackgroundColor="#334155" 
+                           CornerRadius="10"
+                           Padding="15"
+                           HasShadow="False">
+                        <HorizontalStackLayout Spacing="15">
+                            <CheckBox x:Name="NoticiasCheck" 
+                                      Color="#60A5FA"
+                                      VerticalOptions="Center" />
+                            <Label Text="📰 Noticias" 
+                                   FontSize="18"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </Frame>
 
-            <HorizontalStackLayout>
-                <CheckBox x:Name="ClimaCheck" />
-                <Label Text="Clima" VerticalOptions="Center" />
-            </HorizontalStackLayout>
+                    <!-- Cine -->
+                    <Frame BackgroundColor="#334155" 
+                           CornerRadius="10"
+                           Padding="15"
+                           HasShadow="False">
+                        <HorizontalStackLayout Spacing="15">
+                            <CheckBox x:Name="CineCheck" 
+                                      Color="#60A5FA"
+                                      VerticalOptions="Center" />
+                            <Label Text="🎬 Cine" 
+                                   FontSize="18"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </Frame>
 
-            <HorizontalStackLayout>
-                <CheckBox x:Name="CotizacionesCheck" />
-                <Label Text="Cotizaciones" VerticalOptions="Center" />
-            </HorizontalStackLayout>
+                    <!-- Clima -->
+                    <Frame BackgroundColor="#334155" 
+                           CornerRadius="10"
+                           Padding="15"
+                           HasShadow="False">
+                        <HorizontalStackLayout Spacing="15">
+                            <CheckBox x:Name="ClimaCheck" 
+                                      Color="#60A5FA"
+                                      VerticalOptions="Center" />
+                            <Label Text="🌤️ Clima" 
+                                   FontSize="18"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </Frame>
 
-            <HorizontalStackLayout>
-                <CheckBox x:Name="PatrocinadoresCheck" />
-                <Label Text="Patrocinadores" VerticalOptions="Center" />
-            </HorizontalStackLayout>
+                    <!-- Cotizaciones -->
+                    <Frame BackgroundColor="#334155" 
+                           CornerRadius="10"
+                           Padding="15"
+                           HasShadow="False">
+                        <HorizontalStackLayout Spacing="15">
+                            <CheckBox x:Name="CotizacionesCheck" 
+                                      Color="#60A5FA"
+                                      VerticalOptions="Center" />
+                            <Label Text="💰 Cotizaciones" 
+                                   FontSize="18"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </Frame>
 
-            <Button Text="Guardar preferencias"
+                    <!-- Patrocinadores -->
+                    <Frame BackgroundColor="#334155" 
+                           CornerRadius="10"
+                           Padding="15"
+                           HasShadow="False">
+                        <HorizontalStackLayout Spacing="15">
+                            <CheckBox x:Name="PatrocinadoresCheck" 
+                                      Color="#60A5FA"
+                                      VerticalOptions="Center" />
+                            <Label Text="🤝 Patrocinadores" 
+                                   FontSize="18"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </Frame>
+
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Save Button -->
+            <Button Text="Guardar Preferencias"
                     Clicked="OnGuardarClicked"
-                    BackgroundColor="LightBlue"
-                    TextColor="Black"
+                    BackgroundColor="#60A5FA"
+                    TextColor="White"
                     FontAttributes="Bold"
-                    CornerRadius="10" />
+                    FontSize="18"
+                    CornerRadius="15"
+                    HeightRequest="55"
+                    Margin="0,10,0,0"
+                     />
+
+            <!-- Info Footer -->
+            <Label Text="Tus preferencias se guardarán automáticamente"
+                   FontSize="14"
+                   TextColor="#94A3B8"
+                   HorizontalOptions="Center"
+                   HorizontalTextAlignment="Center"
+                   Margin="0,10,0,0" />
+
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

@@ -1,24 +1,56 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Text.Json.Serialization;
 
 namespace mauiApp1Prueba.Models
 {
     public class NewsDataResponse
     {
-        public string? status { get; set; }
-        public int? totalResults { get; set; }
-        public List<NewsArticle>? results { get; set; }
-        public string? nextPage { get; set; }
+        [JsonPropertyName("status")]
+        public string? Status { get; set; }
+
+        [JsonPropertyName("totalResults")]
+        public int TotalResults { get; set; }
+
+        [JsonPropertyName("results")]
+        public List<NewsArticle>? Results { get; set; }
+
+        [JsonPropertyName("nextPage")]
+        public string? NextPage { get; set; }
     }
 
     public class NewsArticle
     {
-        public string? title { get; set; }
-        public string? link { get; set; }
-        public string? description { get; set; }
-        public string? image_url { get; set; }
-        public string? pubDate { get; set; }
-        public List<string>? category { get; set; }
-        public string? source_id { get; set; }
+        [JsonPropertyName("article_id")]
+        public string? ArticleId { get; set; }
+
+        [JsonPropertyName("title")]
+        public string? Title { get; set; }
+
+        [JsonPropertyName("link")]
+        public string? Link { get; set; }
+
+        [JsonPropertyName("description")]
+        public string? Description { get; set; }
+
+        // Cambiado a string para evitar error de JSON
+        [JsonPropertyName("pubDate")]
+        public string? PubDate { get; set; }
+
+        [JsonPropertyName("image_url")]
+        public string? ImageUrl { get; set; }
+
+        [JsonPropertyName("source_id")]
+        public string? SourceId { get; set; }
+
+        // Propiedad calculada para parsear la fecha
+        [JsonIgnore]
+        public DateTime? PubDateParsed
+        {
+            get
+            {
+                if (DateTime.TryParse(PubDate, out var dt))
+                    return dt;
+                return null;
+            }
+        }
     }
 }
