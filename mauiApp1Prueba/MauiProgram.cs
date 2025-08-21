@@ -61,11 +61,12 @@ namespace mauiApp1Prueba
             builder.Services.AddTransient<MainPage>();
             builder.Services.AddTransient<LoginPage>();
             builder.Services.AddTransient<CreateUserPage>();
+            builder.Services.AddTransient<EditUserPage>(); // ✅ NUEVA: Página de edición de usuario
             builder.Services.AddTransient<PaginaPatrocinadores>();
             builder.Services.AddTransient<SponsorDetailPage>();
             builder.Services.AddTransient<LocationPickerPage>();
             builder.Services.AddTransient<PaginaCine>();
-            builder.Services.AddTransient<PaginaNoticias>(); 
+            builder.Services.AddTransient<PaginaNoticias>();
             // 🎬 NUEVA: Página de trailer
             builder.Services.AddTransient<TrailerPage>();
 
@@ -76,7 +77,7 @@ namespace mauiApp1Prueba
             builder.Services.AddTransient<SponsorDetailViewModel>();
             builder.Services.AddTransient<LocationPickerViewModel>();
             builder.Services.AddTransient<PaginaCineViewModel>();
-            builder.Services.AddTransient<NewsViewModel>(); 
+            builder.Services.AddTransient<NewsViewModel>();
             // 🎬 NUEVO: ViewModel de trailer
             builder.Services.AddTransient<TrailerPageViewModel>();
 

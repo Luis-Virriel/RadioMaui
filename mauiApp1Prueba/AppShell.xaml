@@ -32,6 +32,10 @@
         <ShellContent ContentTemplate="{DataTemplate views:PaginaPatrocinadores}" Route="patrocinadores" />
     </FlyoutItem>
 
+    <FlyoutItem Title="Editar Usuario" Icon="edit_user_icon.png">
+        <ShellContent ContentTemplate="{DataTemplate views:EditUserPage}" Route="EditUserPage" />
+    </FlyoutItem>
+
     <FlyoutItem Title="Preferencias" Icon="settings_icon.png">
         <ShellContent ContentTemplate="{DataTemplate views:PaginaPreferencias}" Route="PaginaPreferencias" />
     </FlyoutItem>
