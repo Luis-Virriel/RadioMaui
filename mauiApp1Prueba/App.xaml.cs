@@ -21,7 +21,6 @@ namespace mauiApp1Prueba
             MainPage = new NavigationPage(_serviceProvider.GetRequiredService<LoginPage>());
         }
 
-        // Método público para cambiar a AppShell después del login
         public void IniciarShell()
         {
             MainPage = _serviceProvider.GetRequiredService<AppShell>();

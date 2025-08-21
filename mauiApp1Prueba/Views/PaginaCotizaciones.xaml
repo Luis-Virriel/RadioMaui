@@ -3,10 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="mauiApp1Prueba.Views.PaginaCotizaciones"
              Title="Cotizaciones"
-             BackgroundColor="#1a237e">
+             BackgroundColor="#0F172A">
 
     <ScrollView>
-        <Grid Padding="20,30,20,20" RowSpacing="25">
+        <Grid Padding="20" RowSpacing="25">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -15,13 +15,29 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- Header -->
+            <!-- Header con gradiente mejorado -->
             <Frame Grid.Row="0" 
-                   BackgroundColor="#3949ab" 
-                   CornerRadius="20" 
-                   Padding="0" 
-                   HasShadow="True">
-                <Grid Padding="25,20">
+                   CornerRadius="25" 
+                   Padding="30,25" 
+                   HasShadow="True"
+                   Margin="0,10,0,0">
+
+                <Frame.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#3B82F6" Offset="0" />
+                        <GradientStop Color="#2563EB" Offset="0.5" />
+                        <GradientStop Color="#1E40AF" Offset="1" /> 
+                    </LinearGradientBrush>
+                </Frame.Background>
+
+                <Frame.Shadow>
+                    <Shadow Brush="#1E3A8A" 
+                            Offset="0,8" 
+                            Radius="20" 
+                            Opacity="0.4" />
+                </Frame.Shadow>
+
+                <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
@@ -33,110 +49,318 @@
                                FontAttributes="Bold" 
                                TextColor="White"/>
                         <Label Text="Mercado de Divisas" 
-                               FontSize="14" 
-                               TextColor="#b3d4fc" 
-                               Opacity="0.9"/>
+                               FontSize="16" 
+                               TextColor="#E0F2FE" 
+                               FontAttributes="Italic"/>
                     </StackLayout>
 
-                    <ActivityIndicator Grid.Column="1" 
-                                       x:Name="LoadingIndicator"
-                                       IsVisible="False"
-                                       IsRunning="False"
-                                       Color="White"
-                                       VerticalOptions="Center"/>
+                    <!-- Loading indicator con mejor diseño -->
+                    <Frame Grid.Column="1" 
+                           x:Name="LoadingFrame"
+                           CornerRadius="25"
+                           Padding="15"
+                           IsVisible="False"
+                           VerticalOptions="Center">
+                        <ActivityIndicator x:Name="LoadingIndicator"
+                                           IsVisible="False"
+                                           IsRunning="False"
+                                           Color="White"
+                                           WidthRequest="30"
+                                           HeightRequest="30"/>
+                    </Frame>
                 </Grid>
             </Frame>
 
-            <!-- Status Message -->
-            <Label x:Name="StatusLabel" 
+            <!-- Status Message mejorado -->
+            <Frame x:Name="StatusFrame" 
                    Grid.Row="1"
-                   Text="Cargando cotizaciones..."
-                   FontSize="14"
-                   TextColor="#b3d4fc"
-                   HorizontalOptions="Center"
-                   IsVisible="False"/>
+                   IsVisible="False"
+                   BackgroundColor="#1E40AF"
+                   CornerRadius="15"
+                   Padding="15,10"
+                   HorizontalOptions="Center">
+                <Label x:Name="StatusLabel" 
+                       Text="Cargando cotizaciones..."
+                       FontSize="14"
+                       TextColor="White"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"/>
+            </Frame>
 
-            <!-- Currency Cards -->
-            <StackLayout Grid.Row="2" Spacing="15">
+            <!-- Currency Cards mejoradas -->
+            <StackLayout Grid.Row="2" Spacing="20">
 
                 <!-- USD Card -->
-                <Frame BackgroundColor="#5c6bc0" CornerRadius="15" Padding="0" HasShadow="True">
-                    <Grid Padding="20,18">
+                <Frame CornerRadius="22" 
+                       Padding="0" 
+                       HasShadow="True"
+                       BorderColor="#60A5FA">
+
+                    <Frame.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="#3B82F6" Offset="0" />
+                            <GradientStop Color="#2563EB" Offset="0.5" />
+                            <GradientStop Color="#1E40AF" Offset="1" />
+                        </LinearGradientBrush>
+                    </Frame.Background>
+
+                    <Frame.Shadow>
+                        <Shadow Brush="#1E40AF" 
+                                Offset="0,6" 
+                                Radius="15" 
+                                Opacity="0.3" />
+                    </Frame.Shadow>
+
+                    <Grid Padding="25,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <Frame Grid.Column="0" BackgroundColor="#7986cb" CornerRadius="12" Padding="12" HasShadow="False" VerticalOptions="Center">
-                            <Label Text="🇺🇸" FontSize="24"/>
-                        </Frame>
+                        <!-- Icono de bandera con marco -->
+                        <Border Grid.Column="0" 
+                                StrokeThickness="0"
+                                BackgroundColor="White"
+                                WidthRequest="60"
+                                HeightRequest="60"
+                                VerticalOptions="Center">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="30"/>
+                            </Border.StrokeShape>
+                            <Label Text="🇺🇸" 
+                                   FontSize="28"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"/>
+                        </Border>
 
-                        <StackLayout Grid.Column="1" Padding="15,0,0,0" VerticalOptions="Center">
-                            <Label Text="Dólar Estadounidense" FontSize="16" FontAttributes="Bold" TextColor="White"/>
-                            <Label Text="USD → UYU" FontSize="12" TextColor="#b3d4fc"/>
+                        <StackLayout Grid.Column="1" 
+                                   Padding="20,0,15,0" 
+                                   VerticalOptions="Center">
+                            <Label Text="Dólar Estadounidense" 
+                                   FontSize="18" 
+                                   FontAttributes="Bold" 
+                                   TextColor="White"/>
+                            <Label Text="USD → UYU" 
+                                   FontSize="14" 
+                                   TextColor="#E0F2FE"
+                                   FontAttributes="Italic"/>
                         </StackLayout>
 
-                        <Label x:Name="UsdLabel" Grid.Column="2" Text="$ --,--" FontSize="20" FontAttributes="Bold" TextColor="White" VerticalOptions="Center"/>
+                        <!-- Precio con marco -->
+                        <Border Grid.Column="2" 
+                                StrokeThickness="0"
+                                BackgroundColor="White"
+                                Padding="15,10"
+                                VerticalOptions="Center">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="15"/>
+                            </Border.StrokeShape>
+                            <Label x:Name="UsdLabel" 
+                                   Text="$ --,--" 
+                                   FontSize="20" 
+                                   FontAttributes="Bold" 
+                                   TextColor="#1E40AF"
+                                   HorizontalOptions="Center"/>
+                        </Border>
                     </Grid>
                 </Frame>
 
                 <!-- EUR Card -->
-                <Frame BackgroundColor="#5c6bc0" CornerRadius="15" Padding="0" HasShadow="True">
-                    <Grid Padding="20,18">
+                <Frame CornerRadius="22" 
+                       Padding="0" 
+                       HasShadow="True"
+                       BorderColor="#60A5FA">
+
+                    <Frame.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="#3B82F6" Offset="0" />
+                            <GradientStop Color="#2563EB" Offset="0.5" />
+                            <GradientStop Color="#1E40AF" Offset="1" />
+                        </LinearGradientBrush>
+                    </Frame.Background>
+
+                    <Frame.Shadow>
+                        <Shadow Brush="#1E40AF" 
+                                Offset="0,6" 
+                                Radius="15" 
+                                Opacity="0.3" />
+                    </Frame.Shadow>
+
+                    <Grid Padding="25,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <Frame Grid.Column="0" BackgroundColor="#7986cb" CornerRadius="12" Padding="12" HasShadow="False" VerticalOptions="Center">
-                            <Label Text="🇪🇺" FontSize="24"/>
-                        </Frame>
+                        <Border Grid.Column="0" 
+                                StrokeThickness="0"
+                                BackgroundColor="White"
+                                WidthRequest="60"
+                                HeightRequest="60"
+                                VerticalOptions="Center">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="30"/>
+                            </Border.StrokeShape>
+                            <Label Text="🇪🇺" 
+                                   FontSize="28"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"/>
+                        </Border>
 
-                        <StackLayout Grid.Column="1" Padding="15,0,0,0" VerticalOptions="Center">
-                            <Label Text="Euro" FontSize="16" FontAttributes="Bold" TextColor="White"/>
-                            <Label Text="EUR → UYU" FontSize="12" TextColor="#b3d4fc"/>
+                        <StackLayout Grid.Column="1" 
+                                   Padding="20,0,15,0" 
+                                   VerticalOptions="Center">
+                            <Label Text="Euro" 
+                                   FontSize="18" 
+                                   FontAttributes="Bold" 
+                                   TextColor="White"/>
+                            <Label Text="EUR → UYU" 
+                                   FontSize="14" 
+                                   TextColor="#E0F2FE"
+                                   FontAttributes="Italic"/>
                         </StackLayout>
 
-                        <Label x:Name="EurLabel" Grid.Column="2" Text="$ --,--" FontSize="20" FontAttributes="Bold" TextColor="White" VerticalOptions="Center"/>
+                        <Border Grid.Column="2" 
+                                StrokeThickness="0"
+                                BackgroundColor="White"
+                                Padding="15,10"
+                                VerticalOptions="Center">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="15"/>
+                            </Border.StrokeShape>
+                            <Label x:Name="EurLabel" 
+                                   Text="$ --,--" 
+                                   FontSize="20" 
+                                   FontAttributes="Bold" 
+                                   TextColor="#1E40AF"
+                                   HorizontalOptions="Center"/>
+                        </Border>
                     </Grid>
                 </Frame>
 
                 <!-- BRL Card -->
-                <Frame BackgroundColor="#5c6bc0" CornerRadius="15" Padding="0" HasShadow="True">
-                    <Grid Padding="20,18">
+                <Frame CornerRadius="22" 
+                       Padding="0" 
+                       HasShadow="True"
+                       BorderColor="#60A5FA">
+
+                    <Frame.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="#3B82F6" Offset="0" />
+                            <GradientStop Color="#2563EB" Offset="0.5" />
+                            <GradientStop Color="#1E40AF" Offset="1" />
+                        </LinearGradientBrush>
+                    </Frame.Background>
+
+                    <Frame.Shadow>
+                        <Shadow Brush="#1E40AF" 
+                                Offset="0,6" 
+                                Radius="15" 
+                                Opacity="0.3" />
+                    </Frame.Shadow>
+
+                    <Grid Padding="25,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <Frame Grid.Column="0" BackgroundColor="#7986cb" CornerRadius="12" Padding="12" HasShadow="False" VerticalOptions="Center">
-                            <Label Text="🇧🇷" FontSize="24"/>
-                        </Frame>
+                        <Border Grid.Column="0" 
+                                StrokeThickness="0"
+                                BackgroundColor="White"
+                                WidthRequest="60"
+                                HeightRequest="60"
+                                VerticalOptions="Center">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="30"/>
+                            </Border.StrokeShape>
+                            <Label Text="🇧🇷" 
+                                   FontSize="28"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"/>
+                        </Border>
 
-                        <StackLayout Grid.Column="1" Padding="15,0,0,0" VerticalOptions="Center">
-                            <Label Text="Real Brasileño" FontSize="16" FontAttributes="Bold" TextColor="White"/>
-                            <Label Text="BRL → UYU" FontSize="12" TextColor="#b3d4fc"/>
+                        <StackLayout Grid.Column="1" 
+                                   Padding="20,0,15,0" 
+                                   VerticalOptions="Center">
+                            <Label Text="Real Brasileño" 
+                                   FontSize="18" 
+                                   FontAttributes="Bold" 
+                                   TextColor="White"/>
+                            <Label Text="BRL → UYU" 
+                                   FontSize="14" 
+                                   TextColor="#E0F2FE"
+                                   FontAttributes="Italic"/>
                         </StackLayout>
 
-                        <Label x:Name="BrlLabel" Grid.Column="2" Text="$ --,--" FontSize="20" FontAttributes="Bold" TextColor="White" VerticalOptions="Center"/>
+                        <Border Grid.Column="2" 
+                                StrokeThickness="0"
+                                BackgroundColor="White"
+                                Padding="15,10"
+                                VerticalOptions="Center">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="15"/>
+                            </Border.StrokeShape>
+                            <Label x:Name="BrlLabel" 
+                                   Text="$ --,--" 
+                                   FontSize="20" 
+                                   FontAttributes="Bold" 
+                                   TextColor="#1E40AF"
+                                   HorizontalOptions="Center"/>
+                        </Border>
                     </Grid>
                 </Frame>
 
             </StackLayout>
 
-            <!-- Last Updated Info -->
-            <Frame Grid.Row="3" BackgroundColor="#3949ab" CornerRadius="12" Padding="15" HasShadow="False" Margin="0,10,0,0">
-                <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
-                    <Label Text="🕒" FontSize="14"/>
-                    <Label x:Name="LastUpdatedLabel" Text="Última actualización: --" FontSize="13" TextColor="#b3d4fc" VerticalOptions="Center"/>
+            <!-- Last Updated Info mejorada -->
+            <Frame Grid.Row="3" 
+                   CornerRadius="18" 
+                   Padding="20,15" 
+                   HasShadow="True"
+                   HorizontalOptions="Center"
+                   Margin="0,10,0,0">
+
+                <Frame.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#1E293B" Offset="0" />
+                        <GradientStop Color="#334155" Offset="1" />
+                    </LinearGradientBrush>
+                </Frame.Background>
+
+                <Frame.Shadow>
+                    <Shadow Brush="#000000" 
+                            Offset="0,4" 
+                            Radius="10" 
+                            Opacity="0.3" />
+                </Frame.Shadow>
+
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="10">
+                    <Label Text="🕒" FontSize="16"/>
+                    <Label x:Name="LastUpdatedLabel" 
+                           Text="Última actualización: --" 
+                           FontSize="15" 
+                           TextColor="#94A3B8" 
+                           VerticalOptions="Center"
+                           FontAttributes="Bold"/>
                 </StackLayout>
             </Frame>
 
-            <!-- Información adicional -->
-            <Label Grid.Row="4" Text="Datos actualizados cada hora" FontSize="12" TextColor="#9fa8da" HorizontalOptions="Center" Margin="0,5,0,0"/>
+            <!-- Información adicional mejorada -->
+            <Frame Grid.Row="4" 
+                   BackgroundColor="Transparent"
+                   Padding="15,10"
+                   CornerRadius="12"
+                   HorizontalOptions="Center">
+                <Label Text="🔄 Datos actualizados cada hora" 
+                       FontSize="14" 
+                       TextColor="#60A5FA" 
+                       HorizontalOptions="Center"
+                       FontAttributes="Italic"/>
+            </Frame>
         </Grid>
     </ScrollView>
 </ContentPage>
