@@ -49,7 +49,6 @@
     <!-- Negro frío -->
 
     <!-- Colores adicionales que necesita CreateUserPage -->
-    <Color x:Key="CoolGray50">#F8FAFC</Color>
     <!-- Extra claro -->
     <Color x:Key="CoolGray200">#E2E8F0</Color>
     <!-- Para bordes -->
@@ -81,7 +80,6 @@
     <!-- Colores de superficie -->
     <Color x:Key="Surface">#FFFFFF</Color>
     <!-- Superficie principal -->
-    <Color x:Key="SurfaceVariant">#F8FAFC</Color>
     <!-- Superficie variante -->
     <Color x:Key="SurfaceCard">#FFFFFF</Color>
     <!-- Superficie para cards -->

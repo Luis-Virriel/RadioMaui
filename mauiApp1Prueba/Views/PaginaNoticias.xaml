@@ -34,7 +34,7 @@
                        />
 
             <Button Grid.Column="1"
-                    Text="Buscar"
+                    Text="➡️"
                     Command="{Binding SearchCommand}"
                     BackgroundColor="#007ACC"
                     TextColor="White"
