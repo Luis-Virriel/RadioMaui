@@ -13,6 +13,7 @@ public partial class AppShell : Shell
         // Registrar rutas para navegación con Shell
         Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
         Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
+        Routing.RegisterRoute(nameof(EditUserPage), typeof(EditUserPage)); // ✅ NUEVA: Registrar ruta EditUserPage
 
         // 🎬 NUEVA: Registrar ruta para la página de trailer
         Routing.RegisterRoute("trailer", typeof(TrailerPage));
@@ -42,6 +43,9 @@ public partial class AppShell : Shell
                 }
             }
         });
+
+        // ✅ NUEVO: Mi Perfil siempre visible
+        AgregarFlyoutItem("Mi Perfil", typeof(EditUserPage), "EditUserPage");
 
         if (Preferences.Get("MostrarNoticias", true))
             AgregarFlyoutItem("Noticias", typeof(PaginaNoticias), "PaginaNoticias");

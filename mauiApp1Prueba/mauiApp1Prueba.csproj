@@ -72,6 +72,9 @@
 		<MauiXaml Update="Resources\Styles\Converters.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
+		<MauiXaml Update="Views\EditUserPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
 		<MauiXaml Update="Views\LocationPickerPage.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
