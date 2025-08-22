@@ -43,7 +43,7 @@
                     <Label Text="Radio Punta del Este" 
                            FontSize="28" 
                            FontAttributes="Bold"
-                           TextColor="{StaticResource Primary}"
+                           TextColor="White"
                            HorizontalOptions="Center"
                            Margin="0,5,0,0"/>
 
@@ -363,7 +363,7 @@
                                    
                                    TextColor="{StaticResource TextSecondary}"/>
                             <Frame BackgroundColor="{StaticResource Gray100}"
-                                   BorderColor="Transparent"
+                                   
                                    CornerRadius="12"
                                    Padding="0"
                                    HeightRequest="50">
@@ -405,8 +405,8 @@
                                            Placeholder="Repetir contraseña"
                                            IsPassword="True"
                                            BackgroundColor="Transparent"
-                                           TextColor="{StaticResource TextPrimary}"
-                                           PlaceholderColor="{StaticResource TextLight}"
+                                           TextColor="Black"
+ PlaceholderColor="Gray"
                                            FontSize="16"
                                            Margin="16,0,45,0"/>
                                     <Button Text="👁️"
@@ -470,13 +470,12 @@
 
                         <!-- Info de contraseña -->
                         <Frame BackgroundColor="{StaticResource Secondary}"
-                               BorderColor="Transparent"
                                CornerRadius="12"
                                Padding="12"
-                               Opacity="0.1">
+                               Opacity="1">
                             <Label Text="💡 La contraseña debe tener al menos 6 caracteres e incluir letras y números para mayor seguridad" 
                                    FontSize="13" 
-                                   TextColor="{StaticResource TextSecondary}"
+                                   TextColor="White"
                                    HorizontalTextAlignment="Center"/>
                         </Frame>
                     </StackLayout>
@@ -490,14 +489,14 @@
                            BorderColor="Transparent"
                            CornerRadius="12"
                            Padding="16"
-                           Opacity="0.1">
+                           Opacity="1">
                         <StackLayout Orientation="Horizontal" Spacing="8">
                             <Label Text="⚠️" 
                                    FontSize="16" 
                                    VerticalOptions="Center"
                                    TextColor="{StaticResource Error}"/>
                             <Label Text="{Binding ErrorMessage}"
-                                   TextColor="{StaticResource Error}"
+                                   TextColor="Black"
                                    FontSize="14"
                                    
                                    VerticalOptions="Center"
