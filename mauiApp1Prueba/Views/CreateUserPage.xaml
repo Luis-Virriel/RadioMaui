@@ -8,279 +8,538 @@
              Background="{StaticResource CoolBackgroundGradient}">
 
     <ScrollView>
-        <Grid Padding="20">
+        <Grid Padding="24,20,24,40">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <!-- Header -->
-            <StackLayout Grid.Row="0" Spacing="10" Margin="0,20,0,30">
-                <Label Text="📻" 
-                       FontSize="48" 
-                       HorizontalOptions="Center"/>
+            <!-- Header Mejorado -->
+            <Frame Grid.Row="0" 
+                   BackgroundColor="Transparent"
+                   BorderColor="Transparent"
+                   Margin="0,10,0,20">
+                <StackLayout Spacing="12">
+                    <!-- Logo con background circular -->
+                    <Frame BackgroundColor="{StaticResource Primary}"
+                           WidthRequest="90"
+                           HeightRequest="90"
+                           CornerRadius="45"
+                           HasShadow="True"
+                           HorizontalOptions="Center">
+                        <Frame.Shadow>
+                            <Shadow Brush="{StaticResource PrimaryBrush}"
+                                    Offset="0,6"
+                                    Radius="15"
+                                    Opacity="0.25"/>
+                        </Frame.Shadow>
+                        <Label Text="📻" 
+                               FontSize="42" 
+                               VerticalOptions="Center"
+                               HorizontalOptions="Center"
+                               TextColor="White"/>
+                    </Frame>
 
-                <Label Text="Radio Punta del Este" 
-                       FontSize="24" 
-                       FontAttributes="Bold"
-                       TextColor="{StaticResource Primary}"
-                       HorizontalOptions="Center"/>
+                    <Label Text="Radio Punta del Este" 
+                           FontSize="28" 
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource Primary}"
+                           HorizontalOptions="Center"
+                           Margin="0,5,0,0"/>
 
-                <Label Text="Crea tu cuenta para acceder a todos los servicios" 
-                       FontSize="16" 
-                       TextColor="{StaticResource TextSecondary}"
-                       HorizontalOptions="Center"
-                       HorizontalTextAlignment="Center"/>
-            </StackLayout>
+                    <Label Text="Únete a nuestra comunidad" 
+                           FontSize="18" 
+                           FontAttributes="Italic"
+                           TextColor="{StaticResource TextSecondary}"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center"/>
 
-            <!-- Formulario -->
-            <StackLayout Grid.Row="1" Spacing="20">
+                    <Label Text="Completa tu registro para acceder a todos los servicios exclusivos" 
+                           FontSize="14" 
+                           TextColor="{StaticResource TextLight}"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center"
+                           Margin="20,5,20,0"/>
+                </StackLayout>
+            </Frame>
 
-                <!-- Foto de perfil -->
+            <!-- Formulario Mejorado -->
+            <StackLayout Grid.Row="1" Spacing="24">
+
+                <!-- Foto de perfil con diseño mejorado -->
                 <Frame BackgroundColor="{StaticResource SurfaceCard}"
-                       BorderColor="{StaticResource Gray300}"
-                       CornerRadius="15"
-                       Padding="20">
-                    <StackLayout Spacing="15">
-                        <Label Text="Foto de Perfil" 
-                               FontSize="16" 
-                               FontAttributes="Bold"
-                               TextColor="{StaticResource TextPrimary}"/>
+                       BorderColor="Transparent"
+                       CornerRadius="20"
+                       Padding="24"
+                       HasShadow="True">
+                    <Frame.Shadow>
+                        <Shadow Brush="Black"
+                                Offset="0,2"
+                                Radius="8"
+                                Opacity="0.1"/>
+                    </Frame.Shadow>
+                    <StackLayout Spacing="16">
+                        <!-- Header de sección -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Frame Grid.Column="0" 
+                                   BackgroundColor="{StaticResource Secondary}"
+                                   WidthRequest="32"
+                                   HeightRequest="32"
+                                   CornerRadius="16"
+                                   Padding="0">
+                                <Label Text="📸" 
+                                       FontSize="16" 
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="Center"
+                                       TextColor="White"/>
+                            </Frame>
+
+                            <StackLayout Grid.Column="1" 
+                                       VerticalOptions="Center" 
+                                       Margin="12,0,0,0">
+                                <Label Text="Foto de Perfil" 
+                                       FontSize="17" 
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource TextPrimary}"/>
+                                <Label Text="Opcional" 
+                                       FontSize="12" 
+                                       TextColor="{StaticResource TextLight}"/>
+                            </StackLayout>
+                        </Grid>
 
                         <Button Text="{Binding ProfileImageDisplayText}"
                                 Command="{Binding SelectPhotoCommand}"
                                 BackgroundColor="{StaticResource Secondary}"
                                 TextColor="{StaticResource TextOnPrimary}"
-                                CornerRadius="25"
-                                HeightRequest="50"
-                                FontAttributes="Bold"/>
+                                CornerRadius="30"
+                                HeightRequest="56"
+                                FontSize="16"
+                                >
+                            <Button.Shadow>
+                                <Shadow Brush="{StaticResource Secondary}"
+                                        Offset="0,3"
+                                        Radius="8"
+                                        Opacity="0.2"/>
+                            </Button.Shadow>
+                        </Button>
 
-                        <Label Text="📸 Puedes tomar una foto o seleccionar desde la galería" 
-                               FontSize="12" 
+                        <Label Text="Toma una foto nueva o selecciona desde tu galería" 
+                               FontSize="13" 
                                TextColor="{StaticResource TextLight}"
                                HorizontalOptions="Center"
                                HorizontalTextAlignment="Center"/>
                     </StackLayout>
                 </Frame>
 
-                <!-- Información personal -->
+                <!-- Información personal mejorada -->
                 <Frame BackgroundColor="{StaticResource SurfaceCard}"
-                       BorderColor="{StaticResource Gray300}"
-                       CornerRadius="15"
-                       Padding="20">
-                    <StackLayout Spacing="15">
-                        <Label Text="Información Personal" 
-                               FontSize="16" 
-                               FontAttributes="Bold"
-                               TextColor="{StaticResource TextPrimary}"/>
+                       BorderColor="Transparent"
+                       CornerRadius="20"
+                       Padding="24"
+                       HasShadow="True">
+                    <Frame.Shadow>
+                        <Shadow Brush="Black"
+                                Offset="0,2"
+                                Radius="8"
+                                Opacity="0.1"/>
+                    </Frame.Shadow>
+                    <StackLayout Spacing="20">
+                        <!-- Header de sección -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
 
-                        <!-- Nombre de usuario -->
-                        <StackLayout Spacing="8">
-                            <Label Text="Nombre de usuario *" 
-                                   FontSize="14" 
-                                   TextColor="{StaticResource TextSecondary}"/>
-                            <Entry Text="{Binding Username}"
-                                   Placeholder="Ej: juan123"
-                                   BackgroundColor="{StaticResource Gray100}"
-                                   TextColor="{StaticResource TextPrimary}"
-                                   PlaceholderColor="{StaticResource TextLight}"
-                                   HeightRequest="45"
-                                   FontSize="16"/>
-                        </StackLayout>
+                            <Frame Grid.Column="0" 
+                                   BackgroundColor="{StaticResource Primary}"
+                                   WidthRequest="32"
+                                   HeightRequest="32"
+                                   CornerRadius="16"
+                                   Padding="0">
+                                <Label Text="👤" 
+                                       FontSize="16" 
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="Center"
+                                       TextColor="White"/>
+                            </Frame>
 
-                        <!-- Nombre completo -->
-                        <StackLayout Spacing="8">
-                            <Label Text="Nombre completo *" 
-                                   FontSize="14" 
-                                   TextColor="{StaticResource TextSecondary}"/>
-                            <Entry Text="{Binding FullName}"
-                                   Placeholder="Ej: Juan Pérez"
-                                   BackgroundColor="{StaticResource Gray100}"
-                                   TextColor="{StaticResource TextPrimary}"
-                                   PlaceholderColor="{StaticResource TextLight}"
-                                   HeightRequest="45"
-                                   FontSize="16"/>
-                        </StackLayout>
+                            <StackLayout Grid.Column="1" 
+                                       VerticalOptions="Center" 
+                                       Margin="12,0,0,0">
+                                <Label Text="Información Personal" 
+                                       FontSize="17" 
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource TextPrimary}"/>
+                                <Label Text="Datos básicos de tu perfil" 
+                                       FontSize="12" 
+                                       TextColor="{StaticResource TextLight}"/>
+                            </StackLayout>
+                        </Grid>
 
-                        <!-- Email -->
-                        <StackLayout Spacing="8">
-                            <Label Text="Email *" 
-                                   FontSize="14" 
-                                   TextColor="{StaticResource TextSecondary}"/>
-                            <Entry Text="{Binding Email}"
-                                   Placeholder="ejemplo@correo.com"
-                                   Keyboard="Email"
-                                   BackgroundColor="{StaticResource Gray100}"
-                                   TextColor="{StaticResource TextPrimary}"
-                                   PlaceholderColor="{StaticResource TextLight}"
-                                   HeightRequest="45"
-                                   FontSize="16"/>
-                        </StackLayout>
+                        <!-- Campos de entrada con mejor diseño -->
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
 
-                        <!-- Teléfono -->
-                        <StackLayout Spacing="8">
-                            <Label Text="Teléfono" 
-                                   FontSize="14" 
-                                   TextColor="{StaticResource TextSecondary}"/>
-                            <Entry Text="{Binding Phone}"
-                                   Placeholder="099 123 456"
-                                   Keyboard="Telephone"
-                                   BackgroundColor="{StaticResource Gray100}"
-                                   TextColor="{StaticResource TextPrimary}"
-                                   PlaceholderColor="{StaticResource TextLight}"
-                                   HeightRequest="45"
-                                   FontSize="16"/>
-                        </StackLayout>
+                            <!-- Nombre de usuario -->
+                            <StackLayout Grid.Row="0" Spacing="10">
+                                <Label Text="Nombre de usuario *" 
+                                       FontSize="15" 
+                                       
+                                       TextColor="{StaticResource TextSecondary}"/>
+                                <Frame BackgroundColor="{StaticResource Gray100}"
+                                       BorderColor="Black"
+                                       CornerRadius="12"
+                                       Padding="0"
+                                       HeightRequest="50">
+                                    <Entry Text="{Binding Username}"
+                                           Placeholder="Ej: juan123"
+                                           BackgroundColor="Transparent"
+                                           TextColor="Black"
+                                           PlaceholderColor="Gray"
+                                           FontSize="16"
+                                           Margin="16,0"/>
+                                </Frame>
+                            </StackLayout>
 
-                        <!-- Dirección -->
-                        <StackLayout Spacing="8">
-                            <Label Text="Dirección" 
-                                   FontSize="14" 
-                                   TextColor="{StaticResource TextSecondary}"/>
-                            <Entry Text="{Binding Address}"
-                                   Placeholder="Calle, número, ciudad"
-                                   BackgroundColor="{StaticResource Gray100}"
-                                   TextColor="{StaticResource TextPrimary}"
-                                   PlaceholderColor="{StaticResource TextLight}"
-                                   HeightRequest="45"
-                                   FontSize="16"/>
-                        </StackLayout>
+                            <!-- Nombre completo -->
+                            <StackLayout Grid.Row="1" Spacing="10" Margin="0,15,0,0">
+                                <Label Text="Nombre completo *" 
+                                       FontSize="15" 
+                                       
+                                       TextColor="{StaticResource TextSecondary}"/>
+                                <Frame BackgroundColor="{StaticResource Gray100}"
+                                       BorderColor="Transparent"
+                                       CornerRadius="12"
+                                       Padding="0"
+                                       HeightRequest="50">
+                                    <Entry Text="{Binding FullName}"
+                                           Placeholder="Ej: Juan Pérez"
+                                           BackgroundColor="Transparent"
+                                           TextColor="Black"
+                                            PlaceholderColor="Gray"
+                                           FontSize="16"
+                                           Margin="16,0"/>
+                                </Frame>
+                            </StackLayout>
+
+                            <!-- Email -->
+                            <StackLayout Grid.Row="2" Spacing="10" Margin="0,15,0,0">
+                                <Label Text="Email *" 
+                                       FontSize="15" 
+                                       
+                                       TextColor="{StaticResource TextSecondary}"/>
+                                <Frame BackgroundColor="{StaticResource Gray100}"
+                                       BorderColor="Transparent"
+                                       CornerRadius="12"
+                                       Padding="0"
+                                       HeightRequest="50">
+                                    <Entry Text="{Binding Email}"
+                                           Placeholder="ejemplo@correo.com"
+                                           Keyboard="Email"
+                                           BackgroundColor="Transparent"
+                                           TextColor="Black"
+                                            PlaceholderColor="Gray"
+                                           FontSize="16"
+                                           Margin="16,0"/>
+                                </Frame>
+                            </StackLayout>
+
+                            <!-- Teléfono y Dirección en una fila en tablets -->
+                            <Grid Grid.Row="3" Margin="0,15,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="12" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackLayout Grid.Column="0" Spacing="10">
+                                    <Label Text="Teléfono" 
+                                           FontSize="15" 
+                                           
+                                           TextColor="{StaticResource TextSecondary}"/>
+                                    <Frame BackgroundColor="{StaticResource Gray100}"
+                                           BorderColor="Transparent"
+                                           CornerRadius="12"
+                                           Padding="0"
+                                           HeightRequest="50">
+                                        <Entry Text="{Binding Phone}"
+                                               Placeholder="099 123 456"
+                                               Keyboard="Telephone"
+                                               BackgroundColor="Transparent"
+                                               TextColor="Black"
+                                                PlaceholderColor="Gray"
+                                               FontSize="16"
+                                               Margin="16,0"/>
+                                    </Frame>
+                                </StackLayout>
+                            </Grid>
+
+                            <!-- Dirección -->
+                            <StackLayout Grid.Row="4" Spacing="10" Margin="0,15,0,0">
+                                <Label Text="Dirección" 
+                                       FontSize="15" 
+                                       
+                                       TextColor="{StaticResource TextSecondary}"/>
+                                <Frame BackgroundColor="{StaticResource Gray100}"
+                                       BorderColor="Transparent"
+                                       CornerRadius="12"
+                                       Padding="0"
+                                       HeightRequest="50">
+                                    <Entry Text="{Binding Address}"
+                                           Placeholder="Calle, número, ciudad"
+                                           BackgroundColor="Transparent"
+                                           TextColor="Black"
+                                            PlaceholderColor="Gray" 
+                                           FontSize="16"
+                                           Margin="16,0"/>
+                                </Frame>
+                            </StackLayout>
+                        </Grid>
                     </StackLayout>
                 </Frame>
 
-                <!-- Contraseñas -->
+                <!-- Contraseñas con diseño mejorado -->
                 <Frame BackgroundColor="{StaticResource SurfaceCard}"
-                       BorderColor="{StaticResource Gray300}"
-                       CornerRadius="15"
-                       Padding="20">
-                    <StackLayout Spacing="15">
-                        <Label Text="Seguridad" 
-                               FontSize="16" 
-                               FontAttributes="Bold"
-                               TextColor="{StaticResource TextPrimary}"/>
+                       BorderColor="Transparent"
+                       CornerRadius="20"
+                       Padding="24"
+                       HasShadow="True">
+                    <Frame.Shadow>
+                        <Shadow Brush="Black"
+                                Offset="0,2"
+                                Radius="8"
+                                Opacity="0.1"/>
+                    </Frame.Shadow>
+                    <StackLayout Spacing="20">
+                        <!-- Header de sección -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Frame Grid.Column="0" 
+                                   BackgroundColor="{StaticResource Primary}"
+                                   WidthRequest="32"
+                                   HeightRequest="32"
+                                   CornerRadius="16"
+                                   Padding="0">
+                                <Label Text="🔒" 
+                                       FontSize="16" 
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="Center"
+                                       TextColor="White"/>
+                            </Frame>
+
+                            <StackLayout Grid.Column="1" 
+                                       VerticalOptions="Center" 
+                                       Margin="12,0,0,0">
+                                <Label Text="Seguridad" 
+                                       FontSize="17" 
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource TextPrimary}"/>
+                                <Label Text="Protege tu cuenta con una contraseña segura" 
+                                       FontSize="12" 
+                                       TextColor="{StaticResource TextLight}"/>
+                            </StackLayout>
+                        </Grid>
 
                         <!-- Contraseña -->
-                        <StackLayout Spacing="8">
+                        <StackLayout Spacing="10">
                             <Label Text="Contraseña *" 
-                                   FontSize="14" 
+                                   FontSize="15" 
+                                   
                                    TextColor="{StaticResource TextSecondary}"/>
-                            <Grid>
-                                <Entry Text="{Binding Password}"
-                                       Placeholder="Mínimo 6 caracteres"
-                                       IsPassword="True"
-                                       BackgroundColor="{StaticResource Gray100}"
-                                       TextColor="{StaticResource TextPrimary}"
-                                       PlaceholderColor="{StaticResource TextLight}"
-                                       HeightRequest="45"
-                                       FontSize="16"/>
-                                <Button Text="👁️"
-                                        Command="{Binding TogglePasswordVisibilityCommand}"
-                                        BackgroundColor="Transparent"
-                                        TextColor="{StaticResource TextLight}"
-                                        HorizontalOptions="End"
-                                        VerticalOptions="Center"
-                                        Margin="0,0,10,0"
-                                        FontSize="18"/>
-                            </Grid>
+                            <Frame BackgroundColor="{StaticResource Gray100}"
+                                   BorderColor="Transparent"
+                                   CornerRadius="12"
+                                   Padding="0"
+                                   HeightRequest="50">
+                                <Grid>
+                                    <Entry Text="{Binding Password}"
+                                           Placeholder="Mínimo 6 caracteres"
+                                           IsPassword="True"
+                                           BackgroundColor="Transparent"
+                                           TextColor="Black"
+                                            PlaceholderColor="Gray"
+                                           FontSize="16"
+                                           Margin="16,0,45,0"/>
+                                    <Button Text="👁️"
+                                            Command="{Binding TogglePasswordVisibilityCommand}"
+                                            BackgroundColor="Transparent"
+                                            TextColor="{StaticResource TextLight}"
+                                            HorizontalOptions="End"
+                                            VerticalOptions="Center"
+                                            Margin="0,0,8,0"
+                                            FontSize="18"
+                                            WidthRequest="40"/>
+                                </Grid>
+                            </Frame>
                         </StackLayout>
 
                         <!-- Confirmar contraseña -->
-                        <StackLayout Spacing="8">
+                        <StackLayout Spacing="10">
                             <Label Text="Confirmar contraseña *" 
-                                   FontSize="14" 
+                                   FontSize="15" 
+                                   
                                    TextColor="{StaticResource TextSecondary}"/>
-                            <Grid>
-                                <Entry Text="{Binding ConfirmPassword}"
-                                       Placeholder="Repetir contraseña"
-                                       IsPassword="True"
-                                       BackgroundColor="{StaticResource Gray100}"
-                                       TextColor="{StaticResource TextPrimary}"
-                                       PlaceholderColor="{StaticResource TextLight}"
-                                       HeightRequest="45"
-                                       FontSize="16"/>
-                                <Button Text="👁️"
-                                        Command="{Binding ToggleConfirmPasswordVisibilityCommand}"
-                                        BackgroundColor="Transparent"
-                                        TextColor="{StaticResource TextLight}"
-                                        HorizontalOptions="End"
-                                        VerticalOptions="Center"
-                                        Margin="0,0,10,0"
-                                        FontSize="18"/>
-                            </Grid>
+                            <Frame BackgroundColor="{StaticResource Gray100}"
+                                   BorderColor="Transparent"
+                                   CornerRadius="12"
+                                   Padding="0"
+                                   HeightRequest="50">
+                                <Grid>
+                                    <Entry Text="{Binding ConfirmPassword}"
+                                           Placeholder="Repetir contraseña"
+                                           IsPassword="True"
+                                           BackgroundColor="Transparent"
+                                           TextColor="{StaticResource TextPrimary}"
+                                           PlaceholderColor="{StaticResource TextLight}"
+                                           FontSize="16"
+                                           Margin="16,0,45,0"/>
+                                    <Button Text="👁️"
+                                            Command="{Binding ToggleConfirmPasswordVisibilityCommand}"
+                                            BackgroundColor="Transparent"
+                                            TextColor="{StaticResource TextLight}"
+                                            HorizontalOptions="End"
+                                            VerticalOptions="Center"
+                                            Margin="0,0,8,0"
+                                            FontSize="18"
+                                            WidthRequest="40"/>
+                                </Grid>
+                            </Frame>
                         </StackLayout>
 
-                        <!-- Autenticación biométrica -->
-                        <StackLayout Spacing="10" IsVisible="{Binding IsBiometricAvailable}">
-                            <Label Text="Autenticación Biométrica" 
-                                   FontSize="14" 
-                                   FontAttributes="Bold"
-                                   TextColor="{StaticResource TextSecondary}"/>
-
+                        <!-- Autenticación biométrica mejorada -->
+                        <Frame IsVisible="{Binding IsBiometricAvailable}"
+                               BackgroundColor="{StaticResource Primary}"
+                               BorderColor="Transparent"
+                               CornerRadius="12"
+                               Padding="16">
+                            <Frame.Shadow>
+                                <Shadow Brush="{StaticResource Primary}"
+                                        Offset="0,2"
+                                        Radius="6"
+                                        Opacity="0.15"/>
+                            </Frame.Shadow>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
-                                <Switch Grid.Column="0"
-                                        IsToggled="{Binding EnableBiometric}"
-                                        OnColor="{StaticResource Primary}"
-                                        ThumbColor="{StaticResource White}"
-                                        VerticalOptions="Center"/>
+                                <Label Grid.Column="0" 
+                                       Text="🔐" 
+                                       FontSize="20" 
+                                       VerticalOptions="Center"
+                                       TextColor="White"/>
 
                                 <StackLayout Grid.Column="1" 
-                                           Margin="15,0,0,0"
+                                           Margin="12,0,12,0"
                                            VerticalOptions="Center">
-                                    <Label Text="Habilitar huella dactilar / Face ID" 
-                                           FontSize="14" 
-                                           TextColor="{StaticResource TextPrimary}"/>
-                                    <Label Text="Podrás ingresar de forma más rápida y segura" 
+                                    <Label Text="Autenticación Biométrica" 
+                                           FontSize="15" 
+                                           FontAttributes="Bold"
+                                           TextColor="White"/>
+                                    <Label Text="Acceso rápido y seguro con huella o Face ID" 
                                            FontSize="12" 
-                                           TextColor="{StaticResource TextLight}"/>
+                                           TextColor="White"
+                                           Opacity="0.9"/>
                                 </StackLayout>
-                            </Grid>
-                        </StackLayout>
 
-                        <Label Text="🔒 Mínimo 6 caracteres, debe incluir letras y números" 
-                               FontSize="12" 
-                               TextColor="{StaticResource TextLight}"
-                               HorizontalTextAlignment="Center"/>
+                                <Switch Grid.Column="2"
+                                        IsToggled="{Binding EnableBiometric}"
+                                        OnColor="White"
+                                        ThumbColor="{StaticResource Primary}"
+                                        VerticalOptions="Center"/>
+                            </Grid>
+                        </Frame>
+
+                        <!-- Info de contraseña -->
+                        <Frame BackgroundColor="{StaticResource Secondary}"
+                               BorderColor="Transparent"
+                               CornerRadius="12"
+                               Padding="12"
+                               Opacity="0.1">
+                            <Label Text="💡 La contraseña debe tener al menos 6 caracteres e incluir letras y números para mayor seguridad" 
+                                   FontSize="13" 
+                                   TextColor="{StaticResource TextSecondary}"
+                                   HorizontalTextAlignment="Center"/>
+                        </Frame>
                     </StackLayout>
                 </Frame>
 
-                <!-- Mensajes -->
-                <StackLayout Spacing="10">
-                    <Label Text="{Binding ErrorMessage}"
-                           TextColor="{StaticResource Error}"
-                           FontSize="14"
-                           FontAttributes="Bold"
-                           HorizontalOptions="Center"
-                           HorizontalTextAlignment="Center"
-                           IsVisible="{Binding ErrorMessage, Converter={StaticResource StringToBoolConverter}}"/>
+                <!-- Mensajes de estado -->
+                <StackLayout Spacing="12">
+                    <!-- Error message con mejor diseño -->
+                    <Frame IsVisible="{Binding ErrorMessage, Converter={StaticResource StringToBoolConverter}}"
+                           BackgroundColor="{StaticResource Error}"
+                           BorderColor="Transparent"
+                           CornerRadius="12"
+                           Padding="16"
+                           Opacity="0.1">
+                        <StackLayout Orientation="Horizontal" Spacing="8">
+                            <Label Text="⚠️" 
+                                   FontSize="16" 
+                                   VerticalOptions="Center"
+                                   TextColor="{StaticResource Error}"/>
+                            <Label Text="{Binding ErrorMessage}"
+                                   TextColor="{StaticResource Error}"
+                                   FontSize="14"
+                                   
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="FillAndExpand"/>
+                        </StackLayout>
+                    </Frame>
 
-                    <Label Text="{Binding SuccessMessage}"
-                           TextColor="{StaticResource Success}"
-                           FontSize="14"
-                           FontAttributes="Bold"
-                           HorizontalOptions="Center"
-                           HorizontalTextAlignment="Center"
-                           IsVisible="{Binding SuccessMessage, Converter={StaticResource StringToBoolConverter}}"/>
+                    <!-- Success message con mejor diseño -->
+                    <Frame IsVisible="{Binding SuccessMessage, Converter={StaticResource StringToBoolConverter}}"
+                           BackgroundColor="{StaticResource Success}"
+                           BorderColor="Transparent"
+                           CornerRadius="12"
+                           Padding="16"
+                           Opacity="0.1">
+                        <StackLayout Orientation="Horizontal" Spacing="8">
+                            <Label Text="✅" 
+                                   FontSize="16" 
+                                   VerticalOptions="Center"
+                                   TextColor="{StaticResource Success}"/>
+                            <Label Text="{Binding SuccessMessage}"
+                                   TextColor="{StaticResource Success}"
+                                   FontSize="14"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="FillAndExpand"/>
+                        </StackLayout>
+                    </Frame>
                 </StackLayout>
 
-                <!-- Botones -->
-                <StackLayout Spacing="15" Margin="0,20,0,40">
-                    <Button Text="Crear Usuario"
+                <!-- Botones mejorados -->
+                <StackLayout Spacing="16" Margin="0,24,0,0">
+                    <Button Text="Crear Mi Cuenta"
                             Command="{Binding CreateUserCommand}"
                             BackgroundColor="{StaticResource Primary}"
                             TextColor="{StaticResource TextOnPrimary}"
-                            CornerRadius="25"
-                            HeightRequest="55"
+                            CornerRadius="28"
+                            HeightRequest="56"
                             FontSize="18"
                             FontAttributes="Bold">
                         <Button.Shadow>
                             <Shadow Brush="{StaticResource PrimaryBrush}"
-                                    Offset="0,4"
-                                    Radius="10"
+                                    Offset="0,6"
+                                    Radius="12"
                                     Opacity="0.3"/>
                         </Button.Shadow>
                     </Button>
@@ -290,34 +549,61 @@
                             BackgroundColor="Transparent"
                             TextColor="{StaticResource TextSecondary}"
                             BorderColor="{StaticResource Gray300}"
-                            BorderWidth="1"
-                            CornerRadius="25"
-                            HeightRequest="45"
-                            FontSize="16"/>
+                            BorderWidth="2"
+                            CornerRadius="28"
+                            HeightRequest="48"
+                            FontSize="16"
+                            />
                 </StackLayout>
 
-                <!-- Loading indicator -->
-                <ActivityIndicator IsVisible="{Binding IsLoading}"
-                                   IsRunning="{Binding IsLoading}"
-                                   Color="{StaticResource Primary}"
-                                   HeightRequest="40"
-                                   WidthRequest="40"
-                                   HorizontalOptions="Center"/>
+                <!-- Loading indicator mejorado -->
+                <Frame IsVisible="{Binding IsLoading}"
+                       BackgroundColor="{StaticResource SurfaceCard}"
+                       BorderColor="Transparent"
+                       CornerRadius="20"
+                       Padding="20"
+                       HorizontalOptions="Center">
+                    <StackLayout Orientation="Horizontal" Spacing="12">
+                        <ActivityIndicator IsVisible="{Binding IsLoading}"
+                                           IsRunning="{Binding IsLoading}"
+                                           Color="{StaticResource Primary}"
+                                           HeightRequest="24"
+                                           WidthRequest="24"/>
+                        <Label Text="Creando tu cuenta..." 
+                               FontSize="16" 
+                               TextColor="{StaticResource TextSecondary}"
+                               
+                               VerticalOptions="Center"/>
+                    </StackLayout>
+                </Frame>
 
-                <!-- Footer -->
-                <StackLayout Spacing="5" Margin="0,20,0,20">
-                    <Label Text="Los campos marcados con * son obligatorios" 
-                           FontSize="12" 
-                           TextColor="{StaticResource TextLight}"
-                           HorizontalOptions="Center"
-                           HorizontalTextAlignment="Center"/>
+                <!-- Footer mejorado -->
+                <Frame BackgroundColor="Transparent"
+                       BorderColor="Transparent"
+                       Padding="16"
+                       Margin="0,20,0,0">
+                    <StackLayout Spacing="8">
+                        <Label Text="📋 Los campos marcados con * son obligatorios" 
+                               FontSize="13" 
+                               TextColor="{StaticResource TextLight}"
+                               HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center"/>
 
-                    <Label Text="Al registrarte aceptas nuestros términos y condiciones" 
-                           FontSize="12" 
-                           TextColor="{StaticResource TextLight}"
-                           HorizontalOptions="Center"
-                           HorizontalTextAlignment="Center"/>
-                </StackLayout>
+                        <Label Text="🔐 Al registrarte aceptas nuestros términos y condiciones de uso" 
+                               FontSize="13" 
+                               TextColor="{StaticResource TextLight}"
+                               HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center"/>
+
+                        <Label Text="¿Ya tienes cuenta? Inicia sesión" 
+                               FontSize="14" 
+                               TextColor="{StaticResource Primary}"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center"
+                               Margin="0,8,0,0"/>
+                    </StackLayout>
+                </Frame>
 
             </StackLayout>
         </Grid>
