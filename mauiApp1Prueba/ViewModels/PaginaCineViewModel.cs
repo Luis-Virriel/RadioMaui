@@ -30,6 +30,7 @@ namespace mauiApp1Prueba.ViewModels
             // Inicializar colecciones
             Movies = new ObservableCollection<Movie>();
             Genres = new ObservableCollection<Genre>();
+            AllGenreOptions = new ObservableCollection<Genre>();
 
             // Inicializar comandos
             LoadMoviesCommand = new Command(async () => await LoadMoviesAsync());
@@ -39,6 +40,10 @@ namespace mauiApp1Prueba.ViewModels
             ShowTrailerCommand = new Command<Movie>(async (movie) => await ShowTrailerAsync(movie));
             ChangeViewTypeCommand = new Command<string>(async (viewType) => await ChangeViewTypeAsync(viewType));
 
+            // Nuevos comandos para géneros
+            SelectGenreCommand = new Command<Genre>(async (genre) => await SelectGenreAsync(genre));
+            ClearGenreCommand = new Command(async () => await ClearGenreAsync());
+
             // Cargar géneros al inicializar
             _ = Task.Run(LoadGenresAsync);
         }
@@ -47,6 +52,7 @@ namespace mauiApp1Prueba.ViewModels
 
         public ObservableCollection<Movie> Movies { get; }
         public ObservableCollection<Genre> Genres { get; }
+        public ObservableCollection<Genre> AllGenreOptions { get; private set; }
 
         public bool IsLoading
         {
@@ -103,9 +109,13 @@ namespace mauiApp1Prueba.ViewModels
             set
             {
                 SetProperty(ref _selectedGenre, value);
+                OnPropertyChanged(nameof(HasSelectedGenre));
                 _ = Task.Run(async () => await FilterMoviesAsync());
             }
         }
+
+        // Nueva propiedad para saber si hay un género seleccionado
+        public bool HasSelectedGenre => SelectedGenre != null;
 
         public MovieViewType SelectedViewType
         {
@@ -143,6 +153,10 @@ namespace mauiApp1Prueba.ViewModels
         public ICommand SearchCommand { get; }
         public ICommand ShowTrailerCommand { get; }
         public ICommand ChangeViewTypeCommand { get; }
+
+        // Nuevos comandos para géneros
+        public ICommand SelectGenreCommand { get; }
+        public ICommand ClearGenreCommand { get; }
 
         #endregion
 
@@ -217,6 +231,28 @@ namespace mauiApp1Prueba.ViewModels
             SelectedGenre = null;
             SelectedViewType = MovieViewType.All;
 
+            await FilterMoviesAsync();
+        }
+
+        // Nuevo método para seleccionar género
+        private async Task SelectGenreAsync(Genre genre)
+        {
+            // Si es el género "Todos" (Id = 0), limpiar selección
+            if (genre != null && genre.Id == 0)
+            {
+                SelectedGenre = null;
+            }
+            else
+            {
+                SelectedGenre = genre;
+            }
+            await FilterMoviesAsync();
+        }
+
+        // Nuevo método para limpiar solo el género
+        private async Task ClearGenreAsync()
+        {
+            SelectedGenre = null;
             await FilterMoviesAsync();
         }
 
@@ -310,7 +346,6 @@ namespace mauiApp1Prueba.ViewModels
             });
         }
 
-        // Reemplaza tu método ShowTrailerAsync en PaginaCineViewModel con este:
         private async Task ShowTrailerAsync(Movie movie)
         {
             try
@@ -397,9 +432,15 @@ namespace mauiApp1Prueba.ViewModels
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
                     Genres.Clear();
+                    AllGenreOptions.Clear();
+
+                    // Agregar opción "Todos" primero
+                    AllGenreOptions.Add(new Genre { Id = 0, Name = "Todos" });
+
                     foreach (var genre in genres)
                     {
                         Genres.Add(genre);
+                        AllGenreOptions.Add(genre);
                     }
                 });
             }
