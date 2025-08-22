@@ -1,14 +1,13 @@
 ﻿using mauiApp1Prueba.ViewModels;
+using Microsoft.Maui.Storage;
 
 namespace mauiApp1Prueba;
 
 public partial class MainPage : ContentPage
 {
     private readonly RadioHomeViewModel _viewModel;
-    private CancellationTokenSource _liveAnimationCancellation = new();
     private CancellationTokenSource _rotationAnimationCancellation = new();
     private bool _isRotating = false;
-    private bool _isBlinking = false;
 
     public MainPage(RadioHomeViewModel viewModel)
     {
@@ -23,7 +22,80 @@ public partial class MainPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        StartLiveIndicatorAnimation();
+        ConfigurarVisibilidadSecciones();
+    }
+
+    private void ConfigurarVisibilidadSecciones()
+    {
+        // Configurar visibilidad basada en preferencias
+        NoticiasFrame.IsVisible = Preferences.Get("MostrarNoticias", true);
+        CineFrame.IsVisible = Preferences.Get("MostrarCine", true);
+        ClimaFrame.IsVisible = Preferences.Get("MostrarClima", true);
+        CotizacionesFrame.IsVisible = Preferences.Get("MostrarCotizaciones", true);
+        PatrocinadoresFrame.IsVisible = Preferences.Get("MostrarPatrocinadores", true);
+
+        // Reorganizar el grid para eliminar espacios vacíos
+        ReorganizarGrid();
+    }
+
+    private void ReorganizarGrid()
+    {
+        var sectionsGrid = this.FindByName<Grid>("SectionsGrid");
+        if (sectionsGrid == null) return;
+
+        // Limpiar el grid
+        sectionsGrid.Children.Clear();
+        sectionsGrid.RowDefinitions.Clear();
+
+        var visibleFrames = new List<Frame>();
+
+        if (NoticiasFrame.IsVisible) visibleFrames.Add(NoticiasFrame);
+        if (CineFrame.IsVisible) visibleFrames.Add(CineFrame);
+        if (ClimaFrame.IsVisible) visibleFrames.Add(ClimaFrame);
+        if (CotizacionesFrame.IsVisible) visibleFrames.Add(CotizacionesFrame);
+        if (PatrocinadoresFrame.IsVisible) visibleFrames.Add(PatrocinadoresFrame);
+
+        // Calcular filas necesarias
+        int rows = (int)Math.Ceiling(visibleFrames.Count / 2.0);
+        if (PatrocinadoresFrame.IsVisible) rows++; // Patrocinadores ocupa una fila completa
+
+        // Agregar definiciones de fila
+        for (int i = 0; i < rows; i++)
+        {
+            sectionsGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        }
+
+        // Colocar frames en el grid
+        int currentRow = 0;
+        int currentColumn = 0;
+
+        foreach (var frame in visibleFrames)
+        {
+            if (frame == PatrocinadoresFrame)
+            {
+                // Patrocinadores ocupa toda la fila
+                Grid.SetRow(frame, currentRow);
+                Grid.SetColumn(frame, 0);
+                Grid.SetColumnSpan(frame, 2);
+                currentRow++;
+                currentColumn = 0;
+            }
+            else
+            {
+                Grid.SetRow(frame, currentRow);
+                Grid.SetColumn(frame, currentColumn);
+                Grid.SetColumnSpan(frame, 1);
+
+                currentColumn++;
+                if (currentColumn >= 2)
+                {
+                    currentColumn = 0;
+                    currentRow++;
+                }
+            }
+
+            sectionsGrid.Children.Add(frame);
+        }
     }
 
     protected override void OnDisappearing()
@@ -40,48 +112,17 @@ public partial class MainPage : ContentPage
             {
                 if (_viewModel.IsPlaying)
                 {
-                    StartRadioIconRotation();
+                    StartPlayIconRotation();
                 }
                 else
                 {
-                    StopRadioIconRotation();
+                    StopPlayIconRotation();
                 }
             });
         }
     }
 
-    private async void StartLiveIndicatorAnimation()
-    {
-        if (_isBlinking) return;
-
-        _isBlinking = true;
-
-        try
-        {
-            while (!_liveAnimationCancellation.Token.IsCancellationRequested && _viewModel.IsLive)
-            {
-                await LiveIndicator.FadeTo(0.3, 1000, Easing.Linear);
-                if (_liveAnimationCancellation.Token.IsCancellationRequested) break;
-
-                await LiveIndicator.FadeTo(1.0, 1000, Easing.Linear);
-                if (_liveAnimationCancellation.Token.IsCancellationRequested) break;
-            }
-        }
-        catch (TaskCanceledException)
-        {
-            // Expected when animation is cancelled
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error in live indicator animation: {ex.Message}");
-        }
-        finally
-        {
-            _isBlinking = false;
-        }
-    }
-
-    private async void StartRadioIconRotation()
+    private async void StartPlayIconRotation()
     {
         if (_isRotating) return;
 
@@ -93,7 +134,7 @@ public partial class MainPage : ContentPage
         {
             while (!_rotationAnimationCancellation.Token.IsCancellationRequested && _viewModel.IsPlaying)
             {
-                await RadioIcon.RotateTo(RadioIcon.Rotation + 360, 10000, Easing.Linear);
+                await PlayIcon.RotateTo(PlayIcon.Rotation + 360, 8000, Easing.Linear);
 
                 if (_rotationAnimationCancellation.Token.IsCancellationRequested) break;
             }
@@ -104,7 +145,7 @@ public partial class MainPage : ContentPage
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Error in radio icon rotation: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Error in play icon rotation: {ex.Message}");
         }
         finally
         {
@@ -112,7 +153,7 @@ public partial class MainPage : ContentPage
         }
     }
 
-    private async void StopRadioIconRotation()
+    private async void StopPlayIconRotation()
     {
         _rotationAnimationCancellation?.Cancel();
 
@@ -120,21 +161,79 @@ public partial class MainPage : ContentPage
         {
             if (_isRotating)
             {
-                await RadioIcon.RotateTo(0, 1000, Easing.CubicOut);
+                await PlayIcon.RotateTo(0, 1000, Easing.CubicOut);
             }
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Error stopping radio icon rotation: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Error stopping play icon rotation: {ex.Message}");
         }
     }
 
     private void StopAllAnimations()
     {
-        _liveAnimationCancellation?.Cancel();
         _rotationAnimationCancellation?.Cancel();
-
-        _isBlinking = false;
         _isRotating = false;
+    }
+
+    // Navegación a las diferentes páginas
+    private async void OnNoticiasClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            await Shell.Current.GoToAsync("//PaginaNoticias");
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"No se pudo navegar a Noticias: {ex.Message}", "OK");
+        }
+    }
+
+    private async void OnCineClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            await Shell.Current.GoToAsync("//PaginaCine");
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"No se pudo navegar a Cine: {ex.Message}", "OK");
+        }
+    }
+
+    private async void OnClimaClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            await Shell.Current.GoToAsync("//PaginaClima");
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"No se pudo navegar a Clima: {ex.Message}", "OK");
+        }
+    }
+
+    private async void OnCotizacionesClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            await Shell.Current.GoToAsync("//PaginaCotizaciones");
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"No se pudo navegar a Cotizaciones: {ex.Message}", "OK");
+        }
+    }
+
+    private async void OnPatrocinadoresClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            await Shell.Current.GoToAsync("//patrocinadores");
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"No se pudo navegar a Patrocinadores: {ex.Message}", "OK");
+        }
     }
 }

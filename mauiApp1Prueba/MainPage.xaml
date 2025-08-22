@@ -37,7 +37,7 @@
     <Grid Background="{StaticResource CoolBackgroundGradient}">
 
         <ScrollView>
-            <Grid Padding="20" RowSpacing="25">
+            <Grid Padding="15" RowSpacing="20">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -45,282 +45,208 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <!-- Header con logo y saludo -->
-                <StackLayout Grid.Row="0" Spacing="15" Margin="0,20,0,0">
+                <!-- Header simplificado -->
+                <StackLayout Grid.Row="0" Spacing="10" Margin="0,15,0,0">
                     <Label Text="🎵" 
-                           FontSize="64" 
+                           FontSize="40" 
                            HorizontalOptions="Center"/>
 
                     <Label Text="Radio Punta del Este" 
-                           FontSize="28" 
+                           FontSize="22" 
                            FontAttributes="Bold"
                            TextColor="{StaticResource White}"
                            HorizontalOptions="Center"/>
-
-                    <Label Text="{Binding WelcomeMessage}" 
-                           FontSize="16" 
-                           TextColor="{StaticResource White}"
-                           Opacity="0.9"
-                           HorizontalOptions="Center"/>
                 </StackLayout>
 
-                <!-- Indicador EN VIVO -->
+                <!-- Reproductor simplificado -->
                 <Frame Grid.Row="1" 
-                       BackgroundColor="{StaticResource Error}"
-                       BorderColor="Transparent"
-                       CornerRadius="20"
-                       Padding="15,8"
-                       HorizontalOptions="Center"
-                       IsVisible="{Binding IsLive}">
-                    <StackLayout Orientation="Horizontal" Spacing="8">
-                        <Ellipse Fill="{StaticResource White}" 
-                                 WidthRequest="12" 
-                                 HeightRequest="12"
-                                 VerticalOptions="Center"
-                                 x:Name="LiveIndicator" />
-                        <Label Text="EN VIVO" 
-                               FontSize="14" 
-                               FontAttributes="Bold"
-                               TextColor="{StaticResource White}"
-                               VerticalOptions="Center"/>
-                    </StackLayout>
-                </Frame>
-
-                <!-- Reproductor Principal -->
-                <Frame Grid.Row="2" 
                        BackgroundColor="{StaticResource SurfaceCard}"
-                       BorderColor="Transparent"
-                       CornerRadius="25"
-                       Padding="30"
+                       CornerRadius="20"
+                       Padding="20"
                        HasShadow="True">
-                    <StackLayout Spacing="25">
-
-                        <!-- Info de la radio -->
-                        <StackLayout Spacing="10">
-                            <Label Text="{Binding CurrentShow}" 
-                                   FontSize="22" 
+                    <StackLayout Orientation="Horizontal" Spacing="15">
+                        <!-- Estado EN VIVO -->
+                        <Frame BackgroundColor="{StaticResource Error}"
+                               BorderColor="Transparent"
+                               CornerRadius="12"
+                               Padding="8,4"
+                               VerticalOptions="Center"
+                               IsVisible="{Binding IsLive}">
+                            <Label Text="🔴 VIVO" 
+                                   FontSize="10" 
                                    FontAttributes="Bold"
-                                   TextColor="{StaticResource TextPrimary}"
-                                   HorizontalOptions="Center"
-                                   HorizontalTextAlignment="Center"/>
+                                   TextColor="{StaticResource White}"/>
+                        </Frame>
 
-                            <Label Text="{Binding CurrentTime}" 
-                                   FontSize="16" 
-                                   TextColor="{StaticResource TextSecondary}"
-                                   HorizontalOptions="Center"/>
-                        </StackLayout>
-
-                        <!-- Artwork/Logo con efectos -->
-                        <Frame BackgroundColor="{StaticResource Gray100}"
-                               CornerRadius="20"
-                               WidthRequest="140"
-                               HeightRequest="140"
-                               HorizontalOptions="Center"
-                               Padding="25"
-                               HasShadow="True">
-                            <Label Text="🎵" 
-                                   FontSize="56" 
+                        <!-- Botón Play/Pause -->
+                        <Frame BackgroundColor="{StaticResource Primary}"
+                               CornerRadius="25"
+                               WidthRequest="50"
+                               HeightRequest="50"
+                               Padding="0"
+                               VerticalOptions="Center">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding PlayPauseCommand}" />
+                            </Frame.GestureRecognizers>
+                            <Label Text="{Binding PlayPauseIcon}" 
+                                   FontSize="20"
                                    HorizontalOptions="Center"
                                    VerticalOptions="Center"
-                                   x:Name="RadioIcon" />
+                                   TextColor="{StaticResource White}"
+                                   x:Name="PlayIcon"/>
                         </Frame>
 
-                        <!-- Controles de reproducción -->
-                        <StackLayout Orientation="Horizontal" 
-                                     HorizontalOptions="Center" 
-                                     Spacing="25">
-
-                            <!-- Botón de volumen -->
-                            <Button Text="{Binding VolumeIcon}"
-                                    Command="{Binding ToggleMuteCommand}"
-                                    BackgroundColor="Transparent"
-                                    TextColor="{StaticResource TextSecondary}"
-                                    FontSize="28"
-                                    WidthRequest="60"
-                                    HeightRequest="60"/>
-
-                            <!-- Botón principal play/pause -->
-                            <Frame BackgroundColor="{StaticResource Primary}"
-                                   CornerRadius="40"
-                                   WidthRequest="80"
-                                   HeightRequest="80"
-                                   Padding="0"
-                                   HasShadow="True">
-                                <Frame.Shadow>
-                                    <Shadow Brush="{StaticResource PrimaryBrush}"
-                                            Offset="0,6"
-                                            Radius="15"
-                                            Opacity="0.4"/>
-                                </Frame.Shadow>
-                                <Frame.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding PlayPauseCommand}" />
-                                </Frame.GestureRecognizers>
-                                <Label Text="{Binding PlayPauseIcon}" 
-                                       FontSize="32"
-                                       HorizontalOptions="Center"
-                                       VerticalOptions="Center"
-                                       TextColor="{StaticResource White}"/>
-                            </Frame>
-
-                            <!-- Botón de favoritos -->
-                            <Button Text="{Binding FavoriteIcon}"
-                                    Command="{Binding ToggleFavoriteCommand}"
-                                    BackgroundColor="Transparent"
-                                    TextColor="{StaticResource Error}"
-                                    FontSize="28"
-                                    WidthRequest="60"
-                                    HeightRequest="60"/>
+                        <!-- Info actual -->
+                        <StackLayout VerticalOptions="Center" HorizontalOptions="FillAndExpand">
+                            <Label Text="{Binding CurrentShow}" 
+                                   FontSize="16" 
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextPrimary}"/>
+                            <Label Text="{Binding CurrentTime}" 
+                                   FontSize="12" 
+                                   TextColor="{StaticResource TextSecondary}"/>
                         </StackLayout>
-
-                        <!-- Slider de volumen -->
-                        <StackLayout Spacing="15" IsVisible="{Binding ShowVolumeControl}">
-                            <Label Text="Volumen" 
-                                   FontSize="14" 
-                                   TextColor="{StaticResource TextSecondary}"
-                                   HorizontalOptions="Center"/>
-                            <Slider Value="{Binding Volume}"
-                                    Minimum="0"
-                                    Maximum="100"
-                                    ThumbColor="{StaticResource Primary}"
-                                    MinimumTrackColor="{StaticResource Primary}"
-                                    MaximumTrackColor="{StaticResource Gray300}"
-                                    WidthRequest="250"/>
-                        </StackLayout>
-
-                        <!-- Estado de conexión -->
-                        <StackLayout Orientation="Horizontal" 
-                                     HorizontalOptions="Center" 
-                                     Spacing="8"
-                                     IsVisible="{Binding ShowConnectionStatus}">
-                            <Ellipse Fill="{Binding ConnectionStatusColor}" 
-                                     WidthRequest="10" 
-                                     HeightRequest="10"
-                                     VerticalOptions="Center"/>
-                            <Label Text="{Binding ConnectionStatus}" 
-                                   FontSize="14" 
-                                   TextColor="{StaticResource TextLight}"
-                                   VerticalOptions="Center"/>
-                        </StackLayout>
-
                     </StackLayout>
                 </Frame>
 
-                <!-- Sección de accesos rápidos -->
-                <StackLayout Grid.Row="3" Spacing="20" Margin="0,15,0,40">
+                <!-- Grid principal de secciones en 2 columnas -->
+                <Grid Grid.Row="2" ColumnSpacing="15" RowSpacing="15" x:Name="SectionsGrid">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-                    <!-- Título de sección -->
-                    <Label Text="Accesos Rápidos" 
-                           FontSize="20" 
-                           FontAttributes="Bold"
-                           TextColor="{StaticResource White}"
-                           Margin="0,15,0,0"/>
+                    <!-- NOTICIAS -->
+                    <Frame Grid.Row="0" Grid.Column="0"
+                           BackgroundColor="{StaticResource SurfaceCard}"
+                           CornerRadius="15"
+                           Padding="20"
+                           HasShadow="True"
+                           x:Name="NoticiasFrame">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnNoticiasClicked" />
+                        </Frame.GestureRecognizers>
+                        <StackLayout Spacing="10">
+                            <Label Text="📰" FontSize="32" HorizontalOptions="Center"/>
+                            <Label Text="Noticias" 
+                                   FontSize="16" 
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   HorizontalOptions="Center"/>
+                            <Label Text="Últimas noticias" 
+                                   FontSize="11" 
+                                   TextColor="{StaticResource TextLight}"
+                                   HorizontalOptions="Center"
+                                   HorizontalTextAlignment="Center"/>
+                        </StackLayout>
+                    </Frame>
 
-                    <!-- Grid de accesos rápidos -->
-                    <Grid ColumnSpacing="20" RowSpacing="20">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
+                    <!-- CINE -->
+                    <Frame Grid.Row="0" Grid.Column="1"
+                           BackgroundColor="{StaticResource SurfaceCard}"
+                           CornerRadius="15"
+                           Padding="20"
+                           HasShadow="True"
+                           x:Name="CineFrame">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnCineClicked" />
+                        </Frame.GestureRecognizers>
+                        <StackLayout Spacing="10">
+                            <Label Text="🎬" FontSize="32" HorizontalOptions="Center"/>
+                            <Label Text="Cine" 
+                                   FontSize="16" 
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   HorizontalOptions="Center"/>
+                            <Label Text="Cartelera actual" 
+                                   FontSize="11" 
+                                   TextColor="{StaticResource TextLight}"
+                                   HorizontalOptions="Center"
+                                   HorizontalTextAlignment="Center"/>
+                        </StackLayout>
+                    </Frame>
 
-                        <!-- Programación -->
-                        <Frame Grid.Row="0" Grid.Column="0"
-                               BackgroundColor="{StaticResource SurfaceCard}"
-                               CornerRadius="20"
-                               Padding="25"
-                               HasShadow="True">
-                            <Frame.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding ViewScheduleCommand}" />
-                            </Frame.GestureRecognizers>
-                            <StackLayout Spacing="12">
-                                <Label Text="📅" FontSize="32" HorizontalOptions="Center"/>
-                                <Label Text="Programación" 
+                    <!-- CLIMA -->
+                    <Frame Grid.Row="1" Grid.Column="0"
+                           BackgroundColor="{StaticResource SurfaceCard}"
+                           CornerRadius="15"
+                           Padding="20"
+                           HasShadow="True"
+                           x:Name="ClimaFrame">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnClimaClicked" />
+                        </Frame.GestureRecognizers>
+                        <StackLayout Spacing="10">
+                            <Label Text="☀️" FontSize="32" HorizontalOptions="Center"/>
+                            <Label Text="Clima" 
+                                   FontSize="16" 
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   HorizontalOptions="Center"/>
+                            <Label Text="Punta del Este" 
+                                   FontSize="11" 
+                                   TextColor="{StaticResource TextLight}"
+                                   HorizontalOptions="Center"/>
+                        </StackLayout>
+                    </Frame>
+
+                    <!-- COTIZACIONES -->
+                    <Frame Grid.Row="1" Grid.Column="1"
+                           BackgroundColor="{StaticResource SurfaceCard}"
+                           CornerRadius="15"
+                           Padding="20"
+                           HasShadow="True"
+                           x:Name="CotizacionesFrame">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnCotizacionesClicked" />
+                        </Frame.GestureRecognizers>
+                        <StackLayout Spacing="10">
+                            <Label Text="💱" FontSize="32" HorizontalOptions="Center"/>
+                            <Label Text="Cotizaciones" 
+                                   FontSize="16" 
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   HorizontalOptions="Center"/>
+                            <Label Text="Monedas" 
+                                   FontSize="11" 
+                                   TextColor="{StaticResource TextLight}"
+                                   HorizontalOptions="Center"/>
+                        </StackLayout>
+                    </Frame>
+
+                    <!-- PATROCINADORES (ocupa ambas columnas) -->
+                    <Frame Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                           BackgroundColor="{StaticResource SurfaceCard}"
+                           CornerRadius="15"
+                           Padding="20"
+                           HasShadow="True"
+                           x:Name="PatrocinadoresFrame">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnPatrocinadoresClicked" />
+                        </Frame.GestureRecognizers>
+                        <StackLayout Orientation="Horizontal" Spacing="15">
+                            <Label Text="🤝" FontSize="28" VerticalOptions="Center"/>
+                            <StackLayout VerticalOptions="Center" HorizontalOptions="FillAndExpand">
+                                <Label Text="Patrocinadores" 
                                        FontSize="16" 
                                        FontAttributes="Bold"
-                                       TextColor="{StaticResource TextPrimary}"
-                                       HorizontalOptions="Center"/>
-                                <Label Text="Horarios y shows" 
-                                       FontSize="12" 
-                                       TextColor="{StaticResource TextLight}"
-                                       HorizontalOptions="Center"/>
+                                       TextColor="{StaticResource TextPrimary}"/>
+                                <Label Text="Nuestros aliados" 
+                                       FontSize="11" 
+                                       TextColor="{StaticResource TextLight}"/>
                             </StackLayout>
-                        </Frame>
+                            <Label Text="→" FontSize="20" TextColor="{StaticResource Primary}" VerticalOptions="Center"/>
+                        </StackLayout>
+                    </Frame>
+                </Grid>
 
-                        <!-- Podcasts -->
-                        <Frame Grid.Row="0" Grid.Column="1"
-                               BackgroundColor="{StaticResource SurfaceCard}"
-                               CornerRadius="20"
-                               Padding="25"
-                               HasShadow="True">
-                            <Frame.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding ViewPodcastsCommand}" />
-                            </Frame.GestureRecognizers>
-                            <StackLayout Spacing="12">
-                                <Label Text="🎧" FontSize="32" HorizontalOptions="Center"/>
-                                <Label Text="Podcasts" 
-                                       FontSize="16" 
-                                       FontAttributes="Bold"
-                                       TextColor="{StaticResource TextPrimary}"
-                                       HorizontalOptions="Center"/>
-                                <Label Text="Episodios favoritos" 
-                                       FontSize="12" 
-                                       TextColor="{StaticResource TextLight}"
-                                       HorizontalOptions="Center"/>
-                            </StackLayout>
-                        </Frame>
-
-                        <!-- Noticias -->
-                        <Frame Grid.Row="1" Grid.Column="0"
-                               BackgroundColor="{StaticResource SurfaceCard}"
-                               CornerRadius="20"
-                               Padding="25"
-                               HasShadow="True">
-                            <Frame.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding ViewNewsCommand}" />
-                            </Frame.GestureRecognizers>
-                            <StackLayout Spacing="12">
-                                <Label Text="📰" FontSize="32" HorizontalOptions="Center"/>
-                                <Label Text="Noticias" 
-                                       FontSize="16" 
-                                       FontAttributes="Bold"
-                                       TextColor="{StaticResource TextPrimary}"
-                                       HorizontalOptions="Center"/>
-                                <Label Text="Últimas noticias" 
-                                       FontSize="12" 
-                                       TextColor="{StaticResource TextLight}"
-                                       HorizontalOptions="Center"/>
-                            </StackLayout>
-                        </Frame>
-
-                        <!-- Contacto -->
-                        <Frame Grid.Row="1" Grid.Column="1"
-                               BackgroundColor="{StaticResource SurfaceCard}"
-                               CornerRadius="20"
-                               Padding="25"
-                               HasShadow="True">
-                            <Frame.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding ContactCommand}" />
-                            </Frame.GestureRecognizers>
-                            <StackLayout Spacing="12">
-                                <Label Text="📞" FontSize="32" HorizontalOptions="Center"/>
-                                <Label Text="Contacto" 
-                                       FontSize="16" 
-                                       FontAttributes="Bold"
-                                       TextColor="{StaticResource TextPrimary}"
-                                       HorizontalOptions="Center"/>
-                                <Label Text="Llámanos al aire" 
-                                       FontSize="12" 
-                                       TextColor="{StaticResource TextLight}"
-                                       HorizontalOptions="Center"/>
-                            </StackLayout>
-                        </Frame>
-
-                    </Grid>
-
-                </StackLayout>
+                <!-- Espacio final -->
+                <BoxView Grid.Row="3" HeightRequest="30" BackgroundColor="Transparent"/>
 
             </Grid>
         </ScrollView>
@@ -335,7 +261,7 @@
                                    Color="{StaticResource White}"
                                    HeightRequest="50"
                                    WidthRequest="50"/>
-                <Label Text="Conectando..."
+                <Label Text="Cargando..."
                        FontSize="16"
                        TextColor="{StaticResource White}"
                        HorizontalOptions="Center"/>

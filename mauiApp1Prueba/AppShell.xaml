@@ -6,38 +6,44 @@
     xmlns:root="clr-namespace:mauiApp1Prueba"
     xmlns:views="clr-namespace:mauiApp1Prueba.Views"
     Shell.FlyoutBehavior="Flyout"
-    Title="mauiApp1Prueba">
+    Title="Radio Punta del Este">
 
+    <!-- Home -->
     <FlyoutItem Title="Home" Icon="home_icon.png">
         <ShellContent ContentTemplate="{DataTemplate root:MainPage}" Route="main" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Noticias" Icon="news_icon.png">
-        <ShellContent ContentTemplate="{DataTemplate views:PaginaNoticias}" Route="PaginaNoticias" />
-    </FlyoutItem>
-
-    <FlyoutItem Title="Cine" Icon="cine_icon.png">
-        <ShellContent ContentTemplate="{DataTemplate views:PaginaCine}" Route="PaginaCine" />
-    </FlyoutItem>
-
-    <FlyoutItem Title="Clima" Icon="clima_icon.png">
-        <ShellContent ContentTemplate="{DataTemplate views:PaginaClima}" Route="PaginaClima" />
-    </FlyoutItem>
-
-    <FlyoutItem Title="Cotizaciones" Icon="cotizaciones_icon.png">
-        <ShellContent ContentTemplate="{DataTemplate views:PaginaCotizaciones}" Route="PaginaCotizaciones" />
-    </FlyoutItem>
-
-    <FlyoutItem Title="Patrocinadores" Icon="patrocinadores_icon.png">
-        <ShellContent ContentTemplate="{DataTemplate views:PaginaPatrocinadores}" Route="patrocinadores" />
-    </FlyoutItem>
-
-    <FlyoutItem Title="Editar Usuario" Icon="edit_user_icon.png">
+    <!-- Mi Perfil -->
+    <FlyoutItem Title="Mi Perfil" Icon="edit_user_icon.png">
         <ShellContent ContentTemplate="{DataTemplate views:EditUserPage}" Route="EditUserPage" />
     </FlyoutItem>
 
+    <!-- Preferencias -->
     <FlyoutItem Title="Preferencias" Icon="settings_icon.png">
         <ShellContent ContentTemplate="{DataTemplate views:PaginaPreferencias}" Route="PaginaPreferencias" />
     </FlyoutItem>
+
+    <!-- 
+    Páginas ocultas del flyout pero accesibles por navegación programática 
+    -->
+    <ShellContent ContentTemplate="{DataTemplate views:PaginaNoticias}" 
+                  Route="PaginaNoticias" 
+                  Shell.FlyoutItemIsVisible="False" />
+
+    <ShellContent ContentTemplate="{DataTemplate views:PaginaCine}" 
+                  Route="PaginaCine" 
+                  Shell.FlyoutItemIsVisible="False" />
+
+    <ShellContent ContentTemplate="{DataTemplate views:PaginaClima}" 
+                  Route="PaginaClima" 
+                  Shell.FlyoutItemIsVisible="False" />
+
+    <ShellContent ContentTemplate="{DataTemplate views:PaginaCotizaciones}" 
+                  Route="PaginaCotizaciones" 
+                  Shell.FlyoutItemIsVisible="False" />
+
+    <ShellContent ContentTemplate="{DataTemplate views:PaginaPatrocinadores}" 
+                  Route="patrocinadores" 
+                  Shell.FlyoutItemIsVisible="False" />
 
 </Shell>
