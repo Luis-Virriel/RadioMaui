@@ -8,24 +8,19 @@
     Shell.FlyoutBehavior="Flyout"
     Title="Radio Punta del Este">
 
-    <!-- Home -->
     <FlyoutItem Title="Home" Icon="home_icon.png">
         <ShellContent ContentTemplate="{DataTemplate root:MainPage}" Route="main" />
     </FlyoutItem>
 
-    <!-- Mi Perfil -->
     <FlyoutItem Title="Mi Perfil" Icon="edit_user_icon.png">
         <ShellContent ContentTemplate="{DataTemplate views:EditUserPage}" Route="EditUserPage" />
     </FlyoutItem>
 
-    <!-- Preferencias -->
+    
     <FlyoutItem Title="Preferencias" Icon="settings_icon.png">
         <ShellContent ContentTemplate="{DataTemplate views:PaginaPreferencias}" Route="PaginaPreferencias" />
     </FlyoutItem>
 
-    <!-- 
-    Páginas ocultas del flyout pero accesibles por navegación programática 
-    -->
     <ShellContent ContentTemplate="{DataTemplate views:PaginaNoticias}" 
                   Route="PaginaNoticias" 
                   Shell.FlyoutItemIsVisible="False" />

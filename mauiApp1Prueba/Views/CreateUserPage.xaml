@@ -4,7 +4,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:mauiApp1Prueba.ViewModels"
              x:DataType="viewmodels:CreateUserViewModel"
-             Title="Crear Usuario"
              Background="{StaticResource CoolBackgroundGradient}">
 
     <ScrollView>

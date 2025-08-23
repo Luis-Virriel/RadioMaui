@@ -4,37 +4,40 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:mauiApp1Prueba.ViewModels"
              x:DataType="viewmodels:RadioHomeViewModel"
-             Title="Radio Punta del Este">
+             BackgroundColor="#0F172A">
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            <!-- Gradiente para el fondo -->
-            <LinearGradientBrush x:Key="CoolBackgroundGradient" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#667eea" Offset="0.0" />
-                <GradientStop Color="#764ba2" Offset="1.0" />
-            </LinearGradientBrush>
-
-            <!-- Colores personalizados -->
-            <Color x:Key="Primary">#667eea</Color>
-            <Color x:Key="Secondary">#764ba2</Color>
-            <Color x:Key="SurfaceCard">#FFFFFF</Color>
-            <Color x:Key="TextPrimary">#1a1a1a</Color>
-            <Color x:Key="TextSecondary">#666666</Color>
-            <Color x:Key="TextLight">#999999</Color>
-            <Color x:Key="Error">#ff4757</Color>
-            <Color x:Key="Success">#2ed573</Color>
-            <Color x:Key="Gray100">#f8f9fa</Color>
-            <Color x:Key="Gray200">#e9ecef</Color>
-            <Color x:Key="Gray300">#dee2e6</Color>
-            <Color x:Key="White">#FFFFFF</Color>
+            <!-- Colores base planos -->
+            <Color x:Key="Primary">#2563EB</Color>
+            <!-- Azul brillante -->
+            <Color x:Key="Secondary">#1E40AF</Color>
+            <!-- Azul intenso -->
+            <Color x:Key="Accent">#60A5FA</Color>
+            <!-- Celeste -->
+            <Color x:Key="SurfaceDark">#1E293B</Color>
+            <!-- Fondo tarjetas oscuras -->
+            <Color x:Key="SurfaceCard">#334155</Color>
+            <!-- Fondo tarjetas claras -->
+            <Color x:Key="TextPrimary">#FFFFFF</Color>
+            <!-- Texto principal -->
+            <Color x:Key="TextSecondary">#E0F2FE</Color>
+            <!-- Texto secundario -->
+            <Color x:Key="TextLight">#94A3B8</Color>
+            <!-- Texto tenue -->
+            <Color x:Key="Error">#EF4444</Color>
+            <!-- Rojo error -->
+            <Color x:Key="Success">#22C55E</Color>
+            <!-- Verde éxito -->
 
             <!-- Brushes -->
             <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}" />
             <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}" />
+            <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource Accent}" />
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <Grid Background="{StaticResource CoolBackgroundGradient}">
+    <Grid BackgroundColor="#0F172A">
 
         <ScrollView>
             <Grid Padding="15" RowSpacing="20">
@@ -45,71 +48,76 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <!-- Header simplificado -->
-                <StackLayout Grid.Row="0" Spacing="10" Margin="0,15,0,0">
+                <!-- Header -->
+                <StackLayout Grid.Row="0" Spacing="10" Margin="0,25,0,0">
                     <Label Text="🎵" 
-                           FontSize="40" 
+                           FontSize="44" 
                            HorizontalOptions="Center"/>
-
                     <Label Text="Radio Punta del Este" 
-                           FontSize="22" 
+                           FontSize="24" 
                            FontAttributes="Bold"
-                           TextColor="{StaticResource White}"
+                           TextColor="{StaticResource TextPrimary}"
                            HorizontalOptions="Center"/>
                 </StackLayout>
 
-                <!-- Reproductor simplificado -->
+                <!-- Reproductor -->
                 <Frame Grid.Row="1" 
-                       BackgroundColor="{StaticResource SurfaceCard}"
-                       CornerRadius="20"
-                       Padding="20"
-                       HasShadow="True">
-                    <StackLayout Orientation="Horizontal" Spacing="15">
+       BackgroundColor="{StaticResource SurfaceDark}"
+       BorderColor="{StaticResource Secondary}"
+       CornerRadius="20"
+       Padding="20"
+       HasShadow="True">
+
+                    <StackLayout Orientation="Horizontal" 
+                 Spacing="15"
+                 HorizontalOptions="Center"
+                 VerticalOptions="Center">
+
                         <!-- Estado EN VIVO -->
                         <Frame BackgroundColor="{StaticResource Error}"
-                               BorderColor="Transparent"
-                               CornerRadius="12"
-                               Padding="8,4"
-                               VerticalOptions="Center"
-                               IsVisible="{Binding IsLive}">
+               CornerRadius="12"
+               Padding="8,4"
+               VerticalOptions="Center"
+               IsVisible="{Binding IsLive}">
                             <Label Text="🔴 VIVO" 
-                                   FontSize="10" 
-                                   FontAttributes="Bold"
-                                   TextColor="{StaticResource White}"/>
+                   FontSize="11" 
+                   FontAttributes="Bold"
+                   TextColor="White"/>
                         </Frame>
 
                         <!-- Botón Play/Pause -->
                         <Frame BackgroundColor="{StaticResource Primary}"
-                               CornerRadius="25"
-                               WidthRequest="50"
-                               HeightRequest="50"
-                               Padding="0"
-                               VerticalOptions="Center">
+               CornerRadius="25"
+               WidthRequest="50"
+               HeightRequest="50"
+               Padding="0"
+               VerticalOptions="Center">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding PlayPauseCommand}" />
                             </Frame.GestureRecognizers>
                             <Label Text="{Binding PlayPauseIcon}" 
-                                   FontSize="20"
-                                   HorizontalOptions="Center"
-                                   VerticalOptions="Center"
-                                   TextColor="{StaticResource White}"
-                                   x:Name="PlayIcon"/>
+                   FontSize="20"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   TextColor="White"
+                   x:Name="PlayIcon"/>
                         </Frame>
 
                         <!-- Info actual -->
                         <StackLayout VerticalOptions="Center" HorizontalOptions="FillAndExpand">
                             <Label Text="{Binding CurrentShow}" 
-                                   FontSize="16" 
-                                   FontAttributes="Bold"
-                                   TextColor="{StaticResource TextPrimary}"/>
+                   FontSize="16" 
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource TextPrimary}"/>
                             <Label Text="{Binding CurrentTime}" 
-                                   FontSize="12" 
-                                   TextColor="{StaticResource TextSecondary}"/>
+                   FontSize="12" 
+                   TextColor="{StaticResource TextSecondary}"/>
                         </StackLayout>
                     </StackLayout>
                 </Frame>
 
-                <!-- Grid principal de secciones en 2 columnas -->
+
+                <!-- Secciones -->
                 <Grid Grid.Row="2" ColumnSpacing="15" RowSpacing="15" x:Name="SectionsGrid">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -124,7 +132,8 @@
                     <!-- NOTICIAS -->
                     <Frame Grid.Row="0" Grid.Column="0"
                            BackgroundColor="{StaticResource SurfaceCard}"
-                           CornerRadius="15"
+                           BorderColor="{StaticResource Secondary}"
+                           CornerRadius="18"
                            Padding="20"
                            HasShadow="True"
                            x:Name="NoticiasFrame">
@@ -141,15 +150,15 @@
                             <Label Text="Últimas noticias" 
                                    FontSize="11" 
                                    TextColor="{StaticResource TextLight}"
-                                   HorizontalOptions="Center"
-                                   HorizontalTextAlignment="Center"/>
+                                   HorizontalOptions="Center"/>
                         </StackLayout>
                     </Frame>
 
                     <!-- CINE -->
                     <Frame Grid.Row="0" Grid.Column="1"
                            BackgroundColor="{StaticResource SurfaceCard}"
-                           CornerRadius="15"
+                           BorderColor="{StaticResource Secondary}"
+                           CornerRadius="18"
                            Padding="20"
                            HasShadow="True"
                            x:Name="CineFrame">
@@ -166,15 +175,15 @@
                             <Label Text="Cartelera actual" 
                                    FontSize="11" 
                                    TextColor="{StaticResource TextLight}"
-                                   HorizontalOptions="Center"
-                                   HorizontalTextAlignment="Center"/>
+                                   HorizontalOptions="Center"/>
                         </StackLayout>
                     </Frame>
 
                     <!-- CLIMA -->
                     <Frame Grid.Row="1" Grid.Column="0"
                            BackgroundColor="{StaticResource SurfaceCard}"
-                           CornerRadius="15"
+                           BorderColor="{StaticResource Secondary}"
+                           CornerRadius="18"
                            Padding="20"
                            HasShadow="True"
                            x:Name="ClimaFrame">
@@ -198,7 +207,8 @@
                     <!-- COTIZACIONES -->
                     <Frame Grid.Row="1" Grid.Column="1"
                            BackgroundColor="{StaticResource SurfaceCard}"
-                           CornerRadius="15"
+                           BorderColor="{StaticResource Secondary}"
+                           CornerRadius="18"
                            Padding="20"
                            HasShadow="True"
                            x:Name="CotizacionesFrame">
@@ -219,10 +229,11 @@
                         </StackLayout>
                     </Frame>
 
-                    <!-- PATROCINADORES (ocupa ambas columnas) -->
+                    <!-- PATROCINADORES -->
                     <Frame Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
                            BackgroundColor="{StaticResource SurfaceCard}"
-                           CornerRadius="15"
+                           BorderColor="{StaticResource Secondary}"
+                           CornerRadius="18"
                            Padding="20"
                            HasShadow="True"
                            x:Name="PatrocinadoresFrame">
@@ -240,34 +251,28 @@
                                        FontSize="11" 
                                        TextColor="{StaticResource TextLight}"/>
                             </StackLayout>
-                            <Label Text="→" FontSize="20" TextColor="{StaticResource Primary}" VerticalOptions="Center"/>
+                            <Label Text="→" FontSize="20" TextColor="{StaticResource Accent}" VerticalOptions="Center"/>
                         </StackLayout>
                     </Frame>
                 </Grid>
 
-                <!-- Espacio final -->
                 <BoxView Grid.Row="3" HeightRequest="30" BackgroundColor="Transparent"/>
-
             </Grid>
         </ScrollView>
 
-        <!-- Loading indicator overlay -->
-        <Grid IsVisible="{Binding IsLoading}"
-              BackgroundColor="#80000000">
-            <StackLayout HorizontalOptions="Center" 
-                         VerticalOptions="Center"
-                         Spacing="15">
+        <!-- Overlay Loading -->
+        <Grid IsVisible="{Binding IsLoading}" BackgroundColor="#80000000">
+            <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="15">
                 <ActivityIndicator IsRunning="{Binding IsLoading}"
-                                   Color="{StaticResource White}"
+                                   Color="{StaticResource Accent}"
                                    HeightRequest="50"
                                    WidthRequest="50"/>
                 <Label Text="Cargando..."
                        FontSize="16"
-                       TextColor="{StaticResource White}"
+                       TextColor="{StaticResource TextPrimary}"
                        HorizontalOptions="Center"/>
             </StackLayout>
         </Grid>
 
     </Grid>
-
 </ContentPage>

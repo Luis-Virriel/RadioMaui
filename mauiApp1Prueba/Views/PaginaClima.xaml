@@ -2,7 +2,6 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="mauiApp1Prueba.Views.PaginaClima"
-             Title="Clima en Punta del Este"
              BackgroundColor="#0F172A">
 
     <ScrollView>
@@ -55,7 +54,7 @@
 
                         <VerticalStackLayout Spacing="8">
                             <Label x:Name="LblTemp" 
-                                   FontSize="56" 
+                                   FontSize="55" 
                                    FontAttributes="Bold"
                                    TextColor="White" />
                             <Label x:Name="LblDesc" 
@@ -68,39 +67,9 @@
                 </VerticalStackLayout>
             </Frame>
 
-            <!-- Sección de Pronóstico Completamente Nueva -->
+            <!-- Sección de Pronóstico -->
             <VerticalStackLayout Grid.Row="1" Spacing="25">
 
-                <!-- Título del pronóstico -->
-                <Frame Padding="25,20" 
-                       CornerRadius="20"
-                       HasShadow="True"
-                       HorizontalOptions="Center"
-                       WidthRequest="300"
-                       BackgroundColor="#1E40AF">
-
-                    <Frame.Shadow>
-                        <Shadow Brush="#1E40AF" 
-                                Offset="0,6" 
-                                Radius="15" 
-                                Opacity="0.3" />
-                    </Frame.Shadow>
-
-                    <StackLayout HorizontalOptions="Center">
-                        <Label Text="🌤️ Pronóstico" 
-                               FontSize="22" 
-                               FontAttributes="Bold"
-                               TextColor="White"
-                               HorizontalOptions="Center" />
-                        <Label Text="próximos días" 
-                               FontSize="16" 
-                               TextColor="#E0F2FE"
-                               HorizontalOptions="Center"
-                               Margin="0,-5,0,0" />
-                    </StackLayout>
-                </Frame>
-
-                <!-- Contenedor principal del pronóstico con dimensiones ajustadas -->
                 <Frame Padding="15,20" 
                        CornerRadius="25" 
                        BackgroundColor="#1E293B"
@@ -154,7 +123,6 @@
                                                            VerticalOptions="FillAndExpand" 
                                                            Spacing="12">
 
-                                            <!-- Fecha -->
                                             <Border StrokeThickness="0"
                                                     BackgroundColor="White"
                                                     Padding="10,6"
@@ -170,7 +138,6 @@
                                                        VerticalOptions="Center" />
                                             </Border>
 
-                                            <!-- Icono -->
                                             <Border StrokeThickness="0"
                                                     BackgroundColor="#1E40AF"
                                                     Padding="10"
@@ -187,7 +154,6 @@
                                                        VerticalOptions="Center" />
                                             </Border>
 
-                                            <!-- Temperatura -->
                                             <Border StrokeThickness="0"
                                                     BackgroundColor="White"
                                                     Padding="12,8"
@@ -203,7 +169,6 @@
                                                        VerticalOptions="Center" />
                                             </Border>
 
-                                            <!-- Descripción -->
                                             <Label Text="{Binding Description}" 
                                                    FontSize="12" 
                                                    TextColor="White"
@@ -221,7 +186,6 @@
                     </CollectionView>
                 </Frame>
 
-                <!-- Información adicional mejorada -->
                 <Frame Padding="25,20" 
                        CornerRadius="20"
                        BorderColor="#334155"
@@ -263,7 +227,7 @@
                             </BoxView.Background>
                         </BoxView>
 
-                        <Label Text="🔄 Datos actualizados cada hora" 
+                        <Label Text="🔄 Datos actualizados cada día" 
                                FontSize="15" 
                                TextColor="#94A3B8"
                                HorizontalOptions="Center"
