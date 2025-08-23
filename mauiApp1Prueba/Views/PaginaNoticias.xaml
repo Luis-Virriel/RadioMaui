@@ -3,7 +3,6 @@
              xmlns:viewmodels="clr-namespace:mauiApp1Prueba.ViewModels"
              x:Class="mauiApp1Prueba.Views.PaginaNoticias"
              x:Name="RootPage"
-             Title="Noticias"
              BackgroundColor="#1E293B">
 
     <ContentPage.BindingContext>

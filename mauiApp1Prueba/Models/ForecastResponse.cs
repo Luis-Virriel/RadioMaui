@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Text.Json.Serialization;
 
 namespace mauiApp1Prueba.Models
 {
@@ -9,4 +10,6 @@ namespace mauiApp1Prueba.Models
         public string Icon { get; set; }
         public double Temperature { get; set; }
     }
+
+    
 }

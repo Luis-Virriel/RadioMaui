@@ -4,8 +4,7 @@
              x:Class="mauiApp1Prueba.Views.PaginaPatrocinadores"
              xmlns:vm="clr-namespace:mauiApp1Prueba.ViewModels"
              xmlns:models="clr-namespace:mauiApp1Prueba.Models"
-             x:DataType="vm:PatrocinadoresViewModel"
-             Title="{Binding PageTitle}">
+             x:DataType="vm:PatrocinadoresViewModel">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Agregar" 
