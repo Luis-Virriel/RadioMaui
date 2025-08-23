@@ -6,7 +6,6 @@
              xmlns:viewmodels="clr-namespace:mauiApp1Prueba.ViewModels"
              xmlns:converters="clr-namespace:mauiApp1Prueba.Converters"
              x:DataType="viewmodels:PaginaCineViewModel"
-             Title="{Binding ViewTypeTitle}"
              BackgroundColor="#1a1a2e">
 
     <ContentPage.Resources>
@@ -33,12 +32,37 @@
                 <Setter Property="Margin" Value="10,5" />
             </Style>
 
-            <Style x:Key="PickerStyle" TargetType="Picker">
+            <!-- Nuevo estilo para botones de género con responsive -->
+            <Style x:Key="GenreButtonStyle" TargetType="Button">
                 <Setter Property="BackgroundColor" Value="#16213e" />
+                <Setter Property="TextColor" Value="#888" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="CornerRadius" Value="15" />
+                <Setter Property="Padding" Value="12,8" />
+                <Setter Property="MinimumHeightRequest" Value="36" />
+                <Setter Property="BorderWidth" Value="1" />
+                <Setter Property="BorderColor" Value="#333" />
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal" />
+                            <VisualState x:Name="Pressed">
+                                <VisualState.Setters>
+                                    <Setter Property="BackgroundColor" Value="#e94560" />
+                                    <Setter Property="TextColor" Value="White" />
+                                    <Setter Property="Scale" Value="0.96" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+            </Style>
+
+            <Style x:Key="GenreButtonSelectedStyle" TargetType="Button" BasedOn="{StaticResource GenreButtonStyle}">
+                <Setter Property="BackgroundColor" Value="#e94560" />
                 <Setter Property="TextColor" Value="White" />
-                <Setter Property="FontSize" Value="16" />
-                <Setter Property="HeightRequest" Value="45" />
-                <Setter Property="Margin" Value="10,5" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="BorderColor" Value="#e94560" />
             </Style>
 
             <Style x:Key="MovieCardStyle" TargetType="Frame">
@@ -75,69 +99,179 @@
                            Style="{StaticResource HeaderStyle}" />
 
                     <!-- Botones de categorías -->
-                    <StackLayout Orientation="Horizontal" 
-                               HorizontalOptions="Center" 
-                               Margin="0,10,0,15"
-                               Spacing="10">
+                    <!-- Versión corregida - Los botones se adaptan mejor al contenido -->
+                    <FlexLayout Direction="Row" 
+            JustifyContent="SpaceEvenly" 
+            AlignItems="Center"
+            Wrap="Wrap"
+            Margin="0,10,0,15">
 
                         <Button Text="🎪 Todas" 
-                                Command="{Binding ChangeViewTypeCommand}"
-                                CommandParameter="All"
-                                Style="{StaticResource CategoryButtonStyle}"
-                                IsEnabled="{Binding IsNotLoading}" />
+            Command="{Binding ChangeViewTypeCommand}"
+            CommandParameter="All"
+            Style="{StaticResource CategoryButtonStyle}"
+            IsEnabled="{Binding IsNotLoading}"
+            FlexLayout.Basis="Auto"
+            FlexLayout.Grow="0"
+            FlexLayout.Shrink="0"
+            MinimumWidthRequest="90"
+            Margin="3,5" />
 
                         <Button Text="🎬 En Cartelera" 
-                                Command="{Binding ChangeViewTypeCommand}"
-                                CommandParameter="NowPlaying"
-                                Style="{StaticResource CategoryButtonStyle}"
-                                IsEnabled="{Binding IsNotLoading}" />
+            Command="{Binding ChangeViewTypeCommand}"
+            CommandParameter="NowPlaying"
+            Style="{StaticResource CategoryButtonStyle}"
+            IsEnabled="{Binding IsNotLoading}"
+            FlexLayout.Basis="Auto"
+            FlexLayout.Grow="0"
+            FlexLayout.Shrink="0"
+            MinimumWidthRequest="120"
+            Margin="3,5" />
 
                         <Button Text="🎯 Próximas" 
-                                Command="{Binding ChangeViewTypeCommand}"
-                                CommandParameter="Upcoming"
-                                Style="{StaticResource CategoryButtonStyle}"
-                                IsEnabled="{Binding IsNotLoading}" />
+            Command="{Binding ChangeViewTypeCommand}"
+            CommandParameter="Upcoming"
+            Style="{StaticResource CategoryButtonStyle}"
+            IsEnabled="{Binding IsNotLoading}"
+            FlexLayout.Basis="Auto"
+            FlexLayout.Grow="0"
+            FlexLayout.Shrink="0"
+            MinimumWidthRequest="100"
+            Margin="3,5" />
+                    </FlexLayout>
+
+                    <!-- Controles de búsqueda -->
+                    <Entry Text="{Binding SearchText}" 
+                           Placeholder="Buscar películas..."
+                           Style="{StaticResource SearchEntryStyle}" 
+                           IsEnabled="{Binding IsNotLoading}"
+                           Margin="0,0,0,15" />
+
+                    <!-- Sección de géneros mejorada -->
+                    <StackLayout Spacing="10">
+
+                        <!-- Header de géneros con botón para limpiar -->
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,5">
+                            <Label Grid.Column="0" 
+                                   Text="Filtrar por género:" 
+                                   FontSize="16" 
+                                   FontAttributes="Bold" 
+                                   TextColor="White" 
+                                   VerticalOptions="Center" />
+
+                            <Button Grid.Column="1"
+                                    Text="Limpiar"
+                                    Command="{Binding ClearGenreCommand}"
+                                    BackgroundColor="Transparent"
+                                    TextColor="#e94560"
+                                    FontSize="12"
+                                    Padding="8,4"
+                                    IsVisible="{Binding HasSelectedGenre}"
+                                    IsEnabled="{Binding IsNotLoading}" />
+                        </Grid>
+
+                        <!-- Sección de géneros optimizada para móviles -->
+                        <StackLayout Spacing="10">
+
+                            <!-- Header de géneros compacto -->
+                            <Grid ColumnDefinitions="*,Auto" Margin="0,5">
+                                <Label Grid.Column="0" 
+                                   Text="Género:" 
+                                   FontSize="14" 
+                                   FontAttributes="Bold" 
+                                   TextColor="White" 
+                                   VerticalOptions="Center" />
+
+                                <Button Grid.Column="1"
+                                    Text="Limpiar"
+                                    Command="{Binding ClearGenreCommand}"
+                                    BackgroundColor="Transparent"
+                                    TextColor="#e94560"
+                                    FontSize="11"
+                                    Padding="6,2"
+                                    IsVisible="{Binding HasSelectedGenre}"
+                                    IsEnabled="{Binding IsNotLoading}" />
+                            </Grid>
+
+                            <!-- Géneros con FlexLayout responsive -->
+                            <FlexLayout Direction="Row"
+                                  Wrap="Wrap"
+                                  JustifyContent="Start"
+                                  AlignItems="Start"
+                                  BindableLayout.ItemsSource="{Binding AllGenreOptions}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="models:Genre">
+                                        <Button Text="{Binding Name}"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectGenreCommand}"
+                                            CommandParameter="{Binding}"
+                                            FontSize="11"
+                                            CornerRadius="12"
+                                            Padding="10,6"
+                                            Margin="3"
+                                            BorderWidth="1"
+                                            BackgroundColor="#16213e"
+                                            TextColor="#888"
+                                            BorderColor="#333"
+                                            IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.IsNotLoading}">
+
+                                            <!-- Triggers para mostrar selección -->
+                                            <Button.Triggers>
+                                                <DataTrigger TargetType="Button" 
+                                                       Binding="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectedGenre.Id}" 
+                                                       Value="{Binding Id}">
+                                                    <Setter Property="BackgroundColor" Value="#e94560" />
+                                                    <Setter Property="TextColor" Value="White" />
+                                                    <Setter Property="FontAttributes" Value="Bold" />
+                                                    <Setter Property="BorderColor" Value="#e94560" />
+                                                </DataTrigger>
+
+                                                <!-- Trigger especial para "Todos" cuando no hay selección -->
+                                                <MultiTrigger TargetType="Button">
+                                                    <MultiTrigger.Conditions>
+                                                        <BindingCondition Binding="{Binding Id}" Value="0" />
+                                                        <BindingCondition Binding="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectedGenre}" Value="{x:Null}" />
+                                                    </MultiTrigger.Conditions>
+                                                    <Setter Property="BackgroundColor" Value="#e94560" />
+                                                    <Setter Property="TextColor" Value="White" />
+                                                    <Setter Property="FontAttributes" Value="Bold" />
+                                                    <Setter Property="BorderColor" Value="#e94560" />
+                                                </MultiTrigger>
+                                            </Button.Triggers>
+                                        </Button>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </FlexLayout>
+
+                            <!-- Indicador de género seleccionado compacto -->
+                            <Label Text="{Binding SelectedGenre.Name, StringFormat='Filtrando: {0}'}"
+                               FontSize="11" 
+                               FontAttributes="Italic"
+                               TextColor="#e94560"
+                               HorizontalOptions="Center"
+                               IsVisible="{Binding HasSelectedGenre}"
+                               Margin="0,5,0,0" />
+                        </StackLayout>
                     </StackLayout>
 
-                    <!-- Controles de búsqueda y filtros -->
-                    <Grid ColumnDefinitions="2*,1*" RowDefinitions="Auto,Auto" Margin="0,0,0,0">
-
-                        <!-- Búsqueda -->
-                        <Entry Grid.Column="0" Grid.Row="0"
-                               Text="{Binding SearchText}" 
-                               Placeholder="Buscar películas..."
-                               Style="{StaticResource SearchEntryStyle}" 
-                               IsEnabled="{Binding IsNotLoading}" />
-
-                        <!-- Picker de géneros -->
-                        <Picker Grid.Column="1" Grid.Row="0"
-                                ItemsSource="{Binding Genres}"
-                                SelectedItem="{Binding SelectedGenre}"
-                                ItemDisplayBinding="{Binding Name}"
-                                Title="Género"
-                                Style="{StaticResource PickerStyle}"
+                    <!-- Botones de acción responsivos movidos después de géneros -->
+                    <Grid ColumnDefinitions="*,*" 
+                          ColumnSpacing="15"
+                          Margin="0,15,0,10">
+                        <Button Grid.Column="0"
+                                Text="🔄 Actualizar" 
+                                Command="{Binding RefreshCommand}"
+                                BackgroundColor="#e94560" 
+                                TextColor="White" 
+                                CornerRadius="20"
                                 IsEnabled="{Binding IsNotLoading}" />
 
-                        <!-- Botones de acción -->
-                        <StackLayout Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" 
-                                   Orientation="Horizontal" 
-                                   HorizontalOptions="Center" 
-                                   Margin="0,10">
-                            <Button Text="🔄 Actualizar" 
-                                    Command="{Binding RefreshCommand}"
-                                    BackgroundColor="#e94560" 
-                                    TextColor="White" 
-                                    CornerRadius="20"
-                                    IsEnabled="{Binding IsNotLoading}" />
-
-                            <Button Text="🗑️ Limpiar" 
-                                    Command="{Binding ClearFiltersCommand}"
-                                    BackgroundColor="#533483" 
-                                    TextColor="White" 
-                                    CornerRadius="20"
-                                    Margin="10,0,0,0"
-                                    IsEnabled="{Binding IsNotLoading}" />
-                        </StackLayout>
+                        <Button Grid.Column="1"
+                                Text="🗑️ Limpiar Todo" 
+                                Command="{Binding ClearFiltersCommand}"
+                                BackgroundColor="#533483" 
+                                TextColor="White" 
+                                CornerRadius="20"
+                                IsEnabled="{Binding IsNotLoading}" />
                     </Grid>
 
                     <!-- Status message -->
@@ -181,7 +315,7 @@
                             CornerRadius="20" />
                 </StackLayout>
 
-                <!-- Movies List mejorada -->
+                <!-- Movies List -->
                 <CollectionView ItemsSource="{Binding Movies}" 
                               IsVisible="{Binding HasMovies}"
                               Margin="0,10">

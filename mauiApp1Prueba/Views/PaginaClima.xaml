@@ -2,169 +2,240 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="mauiApp1Prueba.Views.PaginaClima"
-             Title="Clima en Punta del Este"
              BackgroundColor="#0F172A">
 
     <ScrollView>
-        <Grid RowDefinitions="Auto,*" Padding="20">
+        <Grid RowDefinitions="Auto,*" Padding="20" RowSpacing="25">
 
-            <!-- Header con gradiente -->
+            <!-- Header con gradiente mejorado -->
             <Frame Grid.Row="0" 
-                   Padding="25,30" 
-                   Margin="0,0,0,20"
-                   CornerRadius="20"
-                   HasShadow="True"
-                   BackgroundColor="#1E3A8A">
+                   Padding="30,35" 
+                   Margin="0,10,0,0"
+                   CornerRadius="25"
+                   HasShadow="True">
 
                 <Frame.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                         <GradientStop Color="#1E3A8A" Offset="0" />
-                        <GradientStop Color="#3B82F6" Offset="0.5" />
+                        <GradientStop Color="#2563EB" Offset="0.3" />
+                        <GradientStop Color="#3B82F6" Offset="0.7" />
                         <GradientStop Color="#60A5FA" Offset="1" />
                     </LinearGradientBrush>
                 </Frame.Background>
 
-                <VerticalStackLayout HorizontalOptions="Center" Spacing="10">
+                <Frame.Shadow>
+                    <Shadow Brush="#1E3A8A" 
+                            Offset="0,8" 
+                            Radius="20" 
+                            Opacity="0.4" />
+                </Frame.Shadow>
+
+                <VerticalStackLayout HorizontalOptions="Center" Spacing="15">
                     <Label x:Name="LblLocation" 
-                           FontSize="24" 
+                           FontSize="26" 
                            FontAttributes="Bold" 
                            TextColor="White"
                            HorizontalOptions="Center" />
 
-                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="15">
-                        <Image x:Name="ImgIcon" 
-                               HeightRequest="80" 
-                               WidthRequest="80" 
-                               VerticalOptions="Center" />
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="20">
+                        <!-- Icono con marco circular -->
+                        <Frame Padding="15" 
+                               CornerRadius="50"
+                               BackgroundColor="#1E40AF"
+                               HasShadow="True"
+                               WidthRequest="110"
+                               HeightRequest="110">
+                            <Image x:Name="ImgIcon" 
+                                   HeightRequest="80" 
+                                   WidthRequest="80" 
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Center" />
+                        </Frame>
 
-                        <VerticalStackLayout Spacing="5">
+                        <VerticalStackLayout Spacing="8">
                             <Label x:Name="LblTemp" 
-                                   FontSize="56" 
+                                   FontSize="55" 
                                    FontAttributes="Bold"
                                    TextColor="White" />
                             <Label x:Name="LblDesc" 
-                                   FontSize="18" 
+                                   FontSize="19" 
                                    TextColor="#E0F2FE"
-                                   HorizontalOptions="Center" />
+                                   HorizontalOptions="Center"
+                                   FontAttributes="Italic" />
                         </VerticalStackLayout>
                     </HorizontalStackLayout>
                 </VerticalStackLayout>
             </Frame>
 
-            <!-- Pronóstico -->
-            <VerticalStackLayout Grid.Row="1" Spacing="20">
+            <!-- Sección de Pronóstico -->
+            <VerticalStackLayout Grid.Row="1" Spacing="25">
 
-                <!-- Título del pronóstico -->
-                <Frame Padding="20,15" 
-                       CornerRadius="15"
-                       BackgroundColor="#1E40AF"
-                       HasShadow="True">
-                    <Label Text="Pronóstico para los próximos días" 
-                           FontSize="20" 
-                           FontAttributes="Bold"
-                           TextColor="White"
-                           HorizontalOptions="Center" />
-                </Frame>
-
-                <!-- Cards de pronóstico centradas -->
-                <Frame Padding="10" 
-                       CornerRadius="15" 
-                       BackgroundColor="Transparent"
+                <Frame Padding="15,20" 
+                       CornerRadius="25" 
+                       BackgroundColor="#1E293B"
+                       BorderColor="#0F172A"
+                       HasShadow="True"
                        HorizontalOptions="Center">
+
+                    <Frame.Shadow>
+                        <Shadow Brush="#000000" 
+                                Offset="0,8" 
+                                Radius="20" 
+                                Opacity="0.4" />
+                    </Frame.Shadow>
 
                     <CollectionView x:Name="ForecastCollection" 
                                   ItemsLayout="HorizontalList" 
-                                  HeightRequest="200"
-                                  HorizontalOptions="Center">
+                                  HeightRequest="280"
+                                  HorizontalOptions="Center"
+                                  VerticalOptions="Center"
+                                  BackgroundColor="Transparent">
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <Frame Padding="15" 
-                                       Margin="8" 
-                                       CornerRadius="18" 
-                                       HasShadow="True" 
-                                       WidthRequest="140"
-                                       BackgroundColor="#B3D9FF"
-                                       BorderColor="#3B82F6"
-                                       HorizontalOptions="Center">
+                                <ContentView Padding="8,10" 
+                                           HorizontalOptions="FillAndExpand">
+                                    <Frame Padding="15" 
+                                           Margin="0"
+                                           CornerRadius="25" 
+                                           HasShadow="True" 
+                                           WidthRequest="180"
+                                           HeightRequest="250"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"
+                                           BorderColor="#60A5FA">
 
-                                    <Frame.Shadow>
-                                        <Shadow Brush="#1E40AF" 
-                                                Offset="0,4" 
-                                                Radius="8" 
-                                                Opacity="0.3" />
-                                    </Frame.Shadow>
+                                        <Frame.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                <GradientStop Color="#3B82F6" Offset="0" />
+                                                <GradientStop Color="#2563EB" Offset="0.6" />
+                                                <GradientStop Color="#1E40AF" Offset="1" />
+                                            </LinearGradientBrush>
+                                        </Frame.Background>
 
-                                    <VerticalStackLayout HorizontalOptions="Center" Spacing="12">
+                                        <Frame.Shadow>
+                                            <Shadow Brush="#1E40AF" 
+                                                    Offset="0,4" 
+                                                    Radius="12" 
+                                                    Opacity="0.4" />
+                                        </Frame.Shadow>
 
-                                        <!-- Fecha -->
-                                        <Frame Padding="8,4" 
-                                               CornerRadius="12"
-                                               BackgroundColor="#EFF6FF"
-                                               BorderColor="#3B82F6"
-                                               HorizontalOptions="Center">
-                                            <Label Text="{Binding Date}" 
-                                                   FontSize="14" 
+                                        <VerticalStackLayout HorizontalOptions="Center" 
+                                                           VerticalOptions="FillAndExpand" 
+                                                           Spacing="12">
+
+                                            <Border StrokeThickness="0"
+                                                    BackgroundColor="White"
+                                                    Padding="10,6"
+                                                    HorizontalOptions="FillAndExpand">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="15"/>
+                                                </Border.StrokeShape>
+                                                <Label Text="{Binding Date}" 
+                                                       FontSize="13" 
+                                                       FontAttributes="Bold"
+                                                       TextColor="#1E40AF"
+                                                       HorizontalOptions="Center" 
+                                                       VerticalOptions="Center" />
+                                            </Border>
+
+                                            <Border StrokeThickness="0"
+                                                    BackgroundColor="#1E40AF"
+                                                    Padding="10"
+                                                    WidthRequest="70"
+                                                    HeightRequest="70"
+                                                    HorizontalOptions="Center">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="35"/>
+                                                </Border.StrokeShape>
+                                                <Image Source="{Binding IconUrl}" 
+                                                       HeightRequest="50" 
+                                                       WidthRequest="50"
+                                                       HorizontalOptions="Center"
+                                                       VerticalOptions="Center" />
+                                            </Border>
+
+                                            <Border StrokeThickness="0"
+                                                    BackgroundColor="White"
+                                                    Padding="12,8"
+                                                    HorizontalOptions="FillAndExpand">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="15"/>
+                                                </Border.StrokeShape>
+                                                <Label Text="{Binding TempDisplay}" 
+                                                       FontSize="22" 
+                                                       FontAttributes="Bold"
+                                                       TextColor="#1E40AF"
+                                                       HorizontalOptions="Center" 
+                                                       VerticalOptions="Center" />
+                                            </Border>
+
+                                            <Label Text="{Binding Description}" 
+                                                   FontSize="12" 
+                                                   TextColor="White"
                                                    FontAttributes="Bold"
-                                                   TextColor="#1E40AF"
-                                                   HorizontalOptions="Center" />
-                                        </Frame>
-
-                                        <!-- Icono del clima -->
-                                        <Frame Padding="8" 
-                                               CornerRadius="25"
-                                               BackgroundColor="#F0F9FF"
-                                               WidthRequest="70"
-                                               HeightRequest="70"
-                                               HorizontalOptions="Center">
-                                            <Image Source="{Binding IconUrl}" 
-                                                   HeightRequest="50" 
-                                                   WidthRequest="50"
                                                    HorizontalOptions="Center"
-                                                   VerticalOptions="Center" />
-                                        </Frame>
-
-                                        <!-- Temperatura -->
-                                        <Label Text="{Binding TempDisplay}" 
-                                               FontSize="20" 
-                                               FontAttributes="Bold"
-                                               TextColor="#1E40AF"
-                                               HorizontalOptions="Center" />
-
-                                        <!-- Descripción -->
-                                        <Label Text="{Binding Description}" 
-                                               FontSize="12" 
-                                               TextColor="#64748B"
-                                               HorizontalOptions="Center"
-                                               HorizontalTextAlignment="Center" />
-                                    </VerticalStackLayout>
-                                </Frame>
+                                                   HorizontalTextAlignment="Center"
+                                                   VerticalOptions="EndAndExpand"
+                                                   LineBreakMode="WordWrap"
+                                                   MaxLines="2" />
+                                        </VerticalStackLayout>
+                                    </Frame>
+                                </ContentView>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
                 </Frame>
 
-                <!-- Información adicional -->
-                <Frame Padding="20" 
-                       CornerRadius="15"
-                       BackgroundColor="#0F172A"
-                       BorderColor="#1E40AF"
-                       HasShadow="True">
+                <Frame Padding="25,20" 
+                       CornerRadius="20"
+                       BorderColor="#334155"
+                       HasShadow="True"
+                       HorizontalOptions="Center"
+                       WidthRequest="320">
 
-                    <VerticalStackLayout Spacing="10">
-                        <Label Text="Información del clima" 
-                               FontSize="18" 
+                    <Frame.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#1E293B" Offset="0" />
+                            <GradientStop Color="#334155" Offset="1" />
+                        </LinearGradientBrush>
+                    </Frame.Background>
+
+                    <Frame.Shadow>
+                        <Shadow Brush="#000000" 
+                                Offset="0,4" 
+                                Radius="10" 
+                                Opacity="0.3" />
+                    </Frame.Shadow>
+
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="⛅ Información del clima" 
+                               FontSize="20" 
                                FontAttributes="Bold"
                                TextColor="#60A5FA"
                                HorizontalOptions="Center" />
 
-                        <BoxView HeightRequest="2" 
-                                 Color="#3B82F6" 
-                                 CornerRadius="1"
-                                 Margin="0,5" />
+                        <BoxView HeightRequest="3" 
+                                 CornerRadius="1.5"
+                                 HorizontalOptions="Center"
+                                 WidthRequest="200"
+                                 Margin="0,5">
+                            <BoxView.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#3B82F6" Offset="0" />
+                                    <GradientStop Color="#60A5FA" Offset="1" />
+                                </LinearGradientBrush>
+                            </BoxView.Background>
+                        </BoxView>
 
-                        <Label Text="Datos actualizados cada hora" 
-                               FontSize="14" 
+                        <Label Text="🔄 Datos actualizados cada día" 
+                               FontSize="15" 
                                TextColor="#94A3B8"
+                               HorizontalOptions="Center"
+                               FontAttributes="Italic" />
+
+                        <Label Text="🌊 Ubicación: Punta del Este" 
+                               FontSize="14" 
+                               TextColor="#64748B"
                                HorizontalOptions="Center" />
                     </VerticalStackLayout>
                 </Frame>

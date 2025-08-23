@@ -26,8 +26,8 @@ namespace mauiApp1Prueba.ViewModels
         private Color _connectionStatusColor = Colors.Green;
         private string _welcomeMessage = "¡Bienvenido a Radio Punta!";
 
-        // URL del stream de radio - Metropolis
-        private const string RadioStreamUrl = "https://metropolis-web-1.nty.uy";
+        // URL del stream de radio
+        private const string RadioStreamUrl = "https://icecasthd.net/proxy/azulp/live";
 
         public RadioHomeViewModel(IAudioService audioService)
         {
@@ -42,7 +42,6 @@ namespace mauiApp1Prueba.ViewModels
         }
 
         #region Properties
-
         public bool IsPlaying
         {
             get => _isPlaying;
@@ -102,53 +101,30 @@ namespace mauiApp1Prueba.ViewModels
             get => _volume;
             set
             {
+                // Evitar que esté en 0 si no está muteado
+                if (!_isMuted && value <= 0)
+                    value = 50;
+
                 SetProperty(ref _volume, value);
                 Preferences.Set("radio_volume", value);
 
                 // Aplicar volumen al servicio de audio
-                _ = _audioService.SetVolumeAsync(value / 100.0); // Convertir 0-100 a 0-1
+                _ = _audioService.SetVolumeAsync(value / 100.0);
             }
         }
 
-        public string CurrentShow
-        {
-            get => _currentShow;
-            set => SetProperty(ref _currentShow, value);
-        }
+        public string CurrentShow { get => _currentShow; set => SetProperty(ref _currentShow, value); }
+        public string CurrentTime { get => _currentTime; set => SetProperty(ref _currentTime, value); }
+        public string ConnectionStatus { get => _connectionStatus; set => SetProperty(ref _connectionStatus, value); }
+        public Color ConnectionStatusColor { get => _connectionStatusColor; set => SetProperty(ref _connectionStatusColor, value); }
+        public string WelcomeMessage { get => _welcomeMessage; set => SetProperty(ref _welcomeMessage, value); }
 
-        public string CurrentTime
-        {
-            get => _currentTime;
-            set => SetProperty(ref _currentTime, value);
-        }
-
-        public string ConnectionStatus
-        {
-            get => _connectionStatus;
-            set => SetProperty(ref _connectionStatus, value);
-        }
-
-        public Color ConnectionStatusColor
-        {
-            get => _connectionStatusColor;
-            set => SetProperty(ref _connectionStatusColor, value);
-        }
-
-        public string WelcomeMessage
-        {
-            get => _welcomeMessage;
-            set => SetProperty(ref _welcomeMessage, value);
-        }
-
-        // Iconos dinámicos
         public string PlayPauseIcon => IsPlaying ? "⏸️" : "▶️";
         public string VolumeIcon => IsMuted ? "🔇" : "🔊";
         public string FavoriteIcon => IsFavorite ? "❤️" : "🤍";
-
         #endregion
 
         #region Commands
-
         public ICommand PlayPauseCommand { get; private set; } = null!;
         public ICommand ToggleMuteCommand { get; private set; } = null!;
         public ICommand ToggleFavoriteCommand { get; private set; } = null!;
@@ -156,11 +132,9 @@ namespace mauiApp1Prueba.ViewModels
         public ICommand ViewPodcastsCommand { get; private set; } = null!;
         public ICommand ViewNewsCommand { get; private set; } = null!;
         public ICommand ContactCommand { get; private set; } = null!;
-
         #endregion
 
         #region Methods
-
         private void InitializeCommands()
         {
             PlayPauseCommand = new Command(async () => await ExecutePlayPauseCommand());
@@ -179,14 +153,10 @@ namespace mauiApp1Prueba.ViewModels
                 // Cargar preferencias guardadas
                 Volume = Preferences.Get("radio_volume", 50.0);
                 IsFavorite = Preferences.Get("radio_is_favorite", false);
+                IsMuted = false; // Forzar que al iniciar no esté muteado
 
-                // Verificar conectividad
                 await CheckConnectivityAsync();
-
-                // Inicializar reloj
                 _ = StartClockAsync();
-
-                // Cargar información del programa actual
                 await LoadCurrentShowInfoAsync();
             }
             catch (Exception ex)
@@ -202,16 +172,8 @@ namespace mauiApp1Prueba.ViewModels
                 IsPlaying = isPlaying;
                 IsLoading = false;
 
-                if (isPlaying)
-                {
-                    ConnectionStatus = "En vivo";
-                    ConnectionStatusColor = Colors.Green;
-                }
-                else
-                {
-                    ConnectionStatus = "Desconectado";
-                    ConnectionStatusColor = Colors.Gray;
-                }
+                ConnectionStatus = isPlaying ? "En vivo" : "Desconectado";
+                ConnectionStatusColor = isPlaying ? Colors.Green : Colors.Gray;
             });
         }
 
@@ -226,10 +188,7 @@ namespace mauiApp1Prueba.ViewModels
             });
         }
 
-        public async Task StopRadioAsync()
-        {
-            await _audioService.StopAsync();
-        }
+        public async Task StopRadioAsync() => await _audioService.StopAsync();
 
         private async Task ExecutePlayPauseCommand()
         {
@@ -237,15 +196,16 @@ namespace mauiApp1Prueba.ViewModels
             {
                 if (IsPlaying)
                 {
-                    // Pausar
                     await _audioService.StopAsync();
                 }
                 else
                 {
-                    // Reproducir
                     IsLoading = true;
                     ConnectionStatus = "Conectando...";
                     ConnectionStatusColor = Colors.Orange;
+
+                    // Asegurarse que el volumen no sea 0
+                    if (Volume <= 0 && !IsMuted) Volume = 50;
 
                     var success = await _audioService.PlayStreamAsync(RadioStreamUrl);
                     if (!success)
@@ -271,13 +231,11 @@ namespace mauiApp1Prueba.ViewModels
 
             if (IsMuted)
             {
-                // Silenciar
                 Preferences.Set("radio_volume_before_mute", Volume);
                 Volume = 0;
             }
             else
             {
-                // Restaurar volumen
                 Volume = Preferences.Get("radio_volume_before_mute", 50.0);
             }
         }
@@ -291,49 +249,21 @@ namespace mauiApp1Prueba.ViewModels
             ShowToast(message);
         }
 
-        private async Task ExecuteViewScheduleCommand()
-        {
-            await ShowAlertAsync("Programación", "Próximamente: Horarios y programas de Radio Punta del Este");
-        }
-
-        private async Task ExecuteViewPodcastsCommand()
-        {
-            await ShowAlertAsync("Podcasts", "Próximamente: Biblioteca de podcasts y episodios");
-        }
-
-        private async Task ExecuteViewNewsCommand()
-        {
-            await ShowAlertAsync("Noticias", "Próximamente: Últimas noticias locales e internacionales");
-        }
-
-        private async Task ExecuteContactCommand()
-        {
-            await ShowAlertAsync("Contacto",
-                "📻 Radio Punta del Este\n" +
-                "📞 Tel: (598) 42 486 xxx\n" +
-                "📧 info@radiopunta.com\n" +
-                "📍 Punta del Este, Uruguay");
-        }
+        private async Task ExecuteViewScheduleCommand() => await ShowAlertAsync("Programación", "Próximamente: Horarios y programas de Radio Punta del Este");
+        private async Task ExecuteViewPodcastsCommand() => await ShowAlertAsync("Podcasts", "Próximamente: Biblioteca de podcasts y episodios");
+        private async Task ExecuteViewNewsCommand() => await ShowAlertAsync("Noticias", "Próximamente: Últimas noticias locales e internacionales");
+        private async Task ExecuteContactCommand() => await ShowAlertAsync("Contacto", "📻 Radio Punta del Este\n📞 Tel: (598) 42 486 xxx\n📧 info@radiopunta.com\n📍 Punta del Este, Uruguay");
 
         private async Task<bool> CheckConnectivityAsync()
         {
             try
             {
-                var current = Connectivity.Current;
-                var networkAccess = current.NetworkAccess;
+                var networkAccess = Connectivity.Current.NetworkAccess;
                 var isConnected = networkAccess == NetworkAccess.Internet;
 
-                if (!isConnected)
-                {
-                    ConnectionStatus = "Sin conexión";
-                    ConnectionStatusColor = Colors.Red;
-                    ShowConnectionStatus = true;
-                }
-                else
-                {
-                    ConnectionStatus = "Conectado";
-                    ConnectionStatusColor = Colors.Green;
-                }
+                ConnectionStatus = isConnected ? "Conectado" : "Sin conexión";
+                ConnectionStatusColor = isConnected ? Colors.Green : Colors.Red;
+                ShowConnectionStatus = true;
 
                 return isConnected;
             }
@@ -352,22 +282,17 @@ namespace mauiApp1Prueba.ViewModels
                 while (true)
                 {
                     CurrentTime = DateTime.Now.ToString("HH:mm");
-                    await Task.Delay(60000); // Actualizar cada minuto
+                    await Task.Delay(60000);
                 }
             }
-            catch (TaskCanceledException)
-            {
-                // Expected when cancelled
-            }
+            catch (TaskCanceledException) { }
         }
 
         private async Task LoadCurrentShowInfoAsync()
         {
             try
             {
-                // Aquí cargarías la información del programa actual desde una API
                 var hour = DateTime.Now.Hour;
-
                 CurrentShow = hour switch
                 {
                     >= 6 and < 10 => "Buenos Días Punta del Este",
@@ -386,43 +311,23 @@ namespace mauiApp1Prueba.ViewModels
 
         private async Task ShowAlertAsync(string title, string message)
         {
-            try
-            {
-                await Application.Current?.MainPage?.DisplayAlert(title, message, "OK");
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error showing alert: {ex.Message}");
-            }
+            try { await Application.Current?.MainPage?.DisplayAlert(title, message, "OK"); }
+            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error showing alert: {ex.Message}"); }
         }
 
-        private void ShowToast(string message)
-        {
-            // Implementar toast notification
-            System.Diagnostics.Debug.WriteLine($"Toast: {message}");
-        }
-
+        private void ShowToast(string message) => System.Diagnostics.Debug.WriteLine($"Toast: {message}");
         #endregion
 
         #region INotifyPropertyChanged
-
         public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         protected bool SetProperty<T>(ref T backingStore, T value, [CallerMemberName] string? propertyName = null)
         {
-            if (EqualityComparer<T>.Default.Equals(backingStore, value))
-                return false;
-
+            if (EqualityComparer<T>.Default.Equals(backingStore, value)) return false;
             backingStore = value;
             OnPropertyChanged(propertyName);
             return true;
         }
-
         #endregion
     }
 }

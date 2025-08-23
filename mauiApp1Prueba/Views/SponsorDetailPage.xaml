@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="mauiApp1Prueba.Views.SponsorDetailPage"
              xmlns:vm="clr-namespace:mauiApp1Prueba.ViewModels"
-             x:DataType="vm:SponsorDetailViewModel"
-             Title="{Binding PageTitle}">
+             x:DataType="vm:SponsorDetailViewModel">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Guardar" 

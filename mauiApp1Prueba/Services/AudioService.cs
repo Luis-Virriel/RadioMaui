@@ -29,18 +29,13 @@ namespace mauiApp1Prueba.Services
             try
             {
                 if (_isPlaying && _currentUrl == url)
-                {
                     return true;
-                }
 
                 if (_isPlaying)
-                {
                     await StopAsync();
-                }
 
                 _currentUrl = url;
 
-                // Crear WebView para reproducir audio
                 await MainThread.InvokeOnMainThreadAsync(() =>
                 {
                     _audioWebView = new WebView
@@ -50,7 +45,6 @@ namespace mauiApp1Prueba.Services
                         HeightRequest = 1
                     };
 
-                    // HTML que reproduce el stream de audio
                     var htmlContent = $@"
                     <!DOCTYPE html>
                     <html>
@@ -60,77 +54,46 @@ namespace mauiApp1Prueba.Services
                         <title>Radio Player</title>
                     </head>
                     <body>
-                        <audio id='radioPlayer' controls autoplay style='width:100%'>
+                        <audio id='radioPlayer' autoplay>
                             <source src='{url}' type='audio/mpeg'>
                             <source src='{url}' type='audio/ogg'>
                             <source src='{url}' type='audio/wav'>
                             Tu navegador no soporta audio HTML5.
                         </audio>
-                        
                         <script>
                             const audio = document.getElementById('radioPlayer');
-                            
-                            audio.addEventListener('loadstart', function() {{
-                                console.log('Cargando stream...');
-                            }});
-                            
-                            audio.addEventListener('loadeddata', function() {{
-                                console.log('Stream cargado, reproduciendo...');
-                            }});
-                            
-                            audio.addEventListener('playing', function() {{
-                                console.log('Reproduciendo stream');
-                            }});
-                            
-                            audio.addEventListener('error', function(e) {{
-                                console.error('Error reproduciendo stream:', e);
-                            }});
-                            
-                            // Configurar volumen
                             audio.volume = {_currentVolume};
-                            
-                            // Intentar reproducir automáticamente
-                            audio.play().catch(function(error) {{
-                                console.error('Error auto-reproduciendo:', error);
-                            }});
+                            audio.addEventListener('playing', () => console.log('Reproduciendo stream'));
+                            audio.addEventListener('error', (e) => console.error('Error reproduc. stream:', e));
+                            audio.play().catch(err => console.error('Error autoplay:', err));
                         </script>
                     </body>
                     </html>";
 
-                    var htmlSource = new HtmlWebViewSource
-                    {
-                        Html = htmlContent
-                    };
-
+                    var htmlSource = new HtmlWebViewSource { Html = htmlContent };
                     _audioWebView.Source = htmlSource;
 
-                    // Agregar a la página actual (invisible)
-                    if (Application.Current?.MainPage is ContentPage currentPage)
+                    if (Application.Current?.MainPage is ContentPage page)
                     {
-                        if (currentPage.Content is Grid grid)
-                        {
+                        if (page.Content is Grid grid)
                             grid.Children.Add(_audioWebView);
-                        }
-                        else if (currentPage.Content is StackLayout stack)
-                        {
+                        else if (page.Content is StackLayout stack)
                             stack.Children.Add(_audioWebView);
-                        }
                     }
                 });
 
-                // Simular tiempo de carga
-                await Task.Delay(2000);
-
+                await Task.Delay(1500); // Tiempo para cargar el stream
                 _isPlaying = true;
                 PlayingStateChanged?.Invoke(this, true);
+                System.Diagnostics.Debug.WriteLine($"🎵 Reproduciendo: {url}");
 
-                System.Diagnostics.Debug.WriteLine($"🎵 Reproduciendo stream: {url}");
                 return true;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Error reproduciendo audio: {ex.Message}");
+                _isPlaying = false;
                 ErrorOccurred?.Invoke(this, ex.Message);
+                System.Diagnostics.Debug.WriteLine($"❌ Error reproduc. audio: {ex.Message}");
                 return false;
             }
         }
@@ -145,20 +108,14 @@ namespace mauiApp1Prueba.Services
                 {
                     if (_audioWebView != null)
                     {
-                        // Detener el audio ejecutando JavaScript
                         _audioWebView.EvaluateJavaScriptAsync("document.getElementById('radioPlayer').pause();");
 
-                        // Remover el WebView
-                        if (Application.Current?.MainPage is ContentPage currentPage)
+                        if (Application.Current?.MainPage is ContentPage page)
                         {
-                            if (currentPage.Content is Grid grid)
-                            {
+                            if (page.Content is Grid grid)
                                 grid.Children.Remove(_audioWebView);
-                            }
-                            else if (currentPage.Content is StackLayout stack)
-                            {
+                            else if (page.Content is StackLayout stack)
                                 stack.Children.Remove(_audioWebView);
-                            }
                         }
 
                         _audioWebView = null;
@@ -167,13 +124,12 @@ namespace mauiApp1Prueba.Services
 
                 _isPlaying = false;
                 PlayingStateChanged?.Invoke(this, false);
-
                 System.Diagnostics.Debug.WriteLine("⏹️ Audio detenido");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Error deteniendo audio: {ex.Message}");
                 ErrorOccurred?.Invoke(this, ex.Message);
+                System.Diagnostics.Debug.WriteLine($"❌ Error deteniendo audio: {ex.Message}");
             }
         }
 
@@ -191,7 +147,7 @@ namespace mauiApp1Prueba.Services
                     });
                 }
 
-                System.Diagnostics.Debug.WriteLine($"🔊 Volumen ajustado a: {_currentVolume * 100:F0}%");
+                System.Diagnostics.Debug.WriteLine($"🔊 Volumen: {_currentVolume * 100:F0}%");
             }
             catch (Exception ex)
             {

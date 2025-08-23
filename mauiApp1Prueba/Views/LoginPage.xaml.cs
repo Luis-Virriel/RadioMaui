@@ -2,6 +2,7 @@
 using mauiApp1Prueba.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Maui.Controls;
+using Microsoft.Maui.Dispatching;
 using System;
 using System.Threading.Tasks;
 
@@ -18,9 +19,6 @@ public partial class LoginPage : ContentPage
         InitializeComponent();
         _userService = userService;
         _biometricAuthService = biometricAuthService;
-
-        // Verificar disponibilidad de biometría al cargar (sin bloquear UI)
-        _ = CheckBiometricAvailabilityAsync();
     }
 
     #region Login Methods
@@ -62,8 +60,17 @@ public partial class LoginPage : ContentPage
             await SetLoadingState(true);
             await HideErrorMessage();
 
-            var (result, user) = await _userService.BiometricLoginAsync(string.Empty);
-            await HandleLoginResult(result, user);
+            var result = await _biometricAuthService.AuthenticateAsync("Inicia sesión con tu huella");
+
+            if (result.IsSuccess)
+            {
+                var (loginResult, user) = await _userService.BiometricLoginAsync(result.UserId ?? string.Empty);
+                await HandleLoginResult(loginResult, user);
+            }
+            else
+            {
+                await ShowErrorMessage(result.ErrorMessage ?? "Falló la autenticación biométrica");
+            }
         }
         catch (Exception ex)
         {
@@ -167,20 +174,17 @@ public partial class LoginPage : ContentPage
     }
 
     private async Task ShowSuccessAndNavigate(User? user)
-{
-    var welcomeMessage = !string.IsNullOrEmpty(user?.FullName)
-        ? $"¡Bienvenido, {user.FullName}!"
-        : "¡Bienvenido!";
-
-    await DisplayAlert("Éxito", welcomeMessage, "Continuar");
-    if (Application.Current is App app)
     {
-        app.IniciarShell();
+        var welcomeMessage = !string.IsNullOrEmpty(user?.FullName)
+            ? $"¡Bienvenido, {user.FullName}!"
+            : "¡Bienvenido!";
+
+        await DisplayAlert("Éxito", welcomeMessage, "Continuar");
+        if (Application.Current is App app)
+        {
+            app.IniciarShell();
+        }
     }
-}
-
-
-
 
     private Task SetLoadingState(bool isLoading)
     {
@@ -224,11 +228,17 @@ public partial class LoginPage : ContentPage
         try
         {
             var status = await _biometricAuthService.GetAvailabilityStatusAsync();
-            BiometricButton.IsVisible = status == BiometricAuthStatus.Available;
+            Microsoft.Maui.Controls.Device.BeginInvokeOnMainThread(() =>
+            {
+                BiometricButton.IsVisible = status == BiometricAuthStatus.Available;
+            });
         }
         catch
         {
-            BiometricButton.IsVisible = false;
+            Microsoft.Maui.Controls.Device.BeginInvokeOnMainThread(() =>
+            {
+                BiometricButton.IsVisible = false;
+            });
         }
     }
 
@@ -243,6 +253,9 @@ public partial class LoginPage : ContentPage
         UsernameEntry.Text = string.Empty;
         PasswordEntry.Text = string.Empty;
         ErrorLabel.IsVisible = false;
+
+        // Verificar disponibilidad de biometría al mostrar la página
+        _ = CheckBiometricAvailabilityAsync();
     }
 
     #endregion

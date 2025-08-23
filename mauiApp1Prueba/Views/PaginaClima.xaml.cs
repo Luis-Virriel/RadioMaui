@@ -2,6 +2,7 @@ using System.Globalization;
 using mauiApp1Prueba.Models;
 using mauiApp1Prueba.Services;
 using System.Collections.ObjectModel;
+using Microsoft.Maui.Storage;
 
 namespace mauiApp1Prueba.Views;
 
@@ -10,16 +11,31 @@ public partial class PaginaClima : ContentPage
     private readonly WeatherServices _weatherServices;
     public ObservableCollection<ForecastItemViewModel> ForecastItems { get; set; }
 
+    private const string LastUpdateKey = "LastWeatherUpdate";
+
     public PaginaClima()
     {
         InitializeComponent();
         _weatherServices = new WeatherServices();
         ForecastItems = new ObservableCollection<ForecastItemViewModel>();
         ForecastCollection.ItemsSource = ForecastItems;
-        LoadWeatherAsync();
+
+        CheckAndLoadWeatherAsync();
     }
 
-    private async void LoadWeatherAsync()
+    // Verifica la última actualización y carga si es un nuevo día
+    private async void CheckAndLoadWeatherAsync()
+    {
+        var lastUpdate = Preferences.Get(LastUpdateKey, DateTime.MinValue);
+
+        if (lastUpdate.Date < DateTime.Now.Date)
+        {
+            await LoadWeatherAsync();
+            Preferences.Set(LastUpdateKey, DateTime.Now);
+        }
+    }
+
+    private async Task LoadWeatherAsync()
     {
         try
         {
