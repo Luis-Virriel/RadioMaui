@@ -6,6 +6,8 @@ using mauiApp1Prueba.ViewModels;
 #if ANDROID
 using Plugin.Fingerprint;
 #endif
+using Plugin.Maui.Audio; // <- Agregar referencia al AudioManager
+
 namespace mauiApp1Prueba
 {
     public static class MauiProgram
@@ -42,6 +44,10 @@ namespace mauiApp1Prueba
             builder.Services.AddSingleton<IUserService, UserService>();
             builder.Services.AddSingleton<IPhotoService, PhotoService>();
             builder.Services.AddSingleton<IAudioService, AudioService>();
+
+            // Registrar AudioManager de Plugin.Maui.Audio
+            builder.Services.AddSingleton<IAudioManager, AudioManager>();
+
             builder.Services.AddSingleton<AppShell>();
             // Servicio de noticias
             builder.Services.AddSingleton<NewsService>();
@@ -75,7 +81,7 @@ namespace mauiApp1Prueba
 
             // ViewModels
             builder.Services.AddTransient<CreateUserViewModel>();
-            builder.Services.AddTransient<RadioHomeViewModel>();
+            builder.Services.AddTransient<RadioHomeViewModel>(); // <- Este ahora puede recibir IAudioManager
             builder.Services.AddTransient<PatrocinadoresViewModel>();
             builder.Services.AddTransient<SponsorDetailViewModel>();
             builder.Services.AddTransient<LocationPickerViewModel>();

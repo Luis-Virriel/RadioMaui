@@ -12,7 +12,7 @@ public partial class MainPage : ContentPage
     public MainPage(RadioHomeViewModel viewModel)
     {
         InitializeComponent();
-        _viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+        _viewModel = new RadioHomeViewModel(new Plugin.Maui.Audio.AudioManager());
         BindingContext = _viewModel;
 
         // Suscribirse a cambios en las propiedades para manejar animaciones

@@ -12,6 +12,8 @@ public partial class PaginaClima : ContentPage
     public ObservableCollection<ForecastItemViewModel> ForecastItems { get; set; }
 
     private const string LastUpdateKey = "LastWeatherUpdate";
+    private const string WeatherCacheKey = "CachedWeather";
+    private const string ForecastCacheKey = "CachedForecast";
 
     public PaginaClima()
     {
@@ -19,57 +21,83 @@ public partial class PaginaClima : ContentPage
         _weatherServices = new WeatherServices();
         ForecastItems = new ObservableCollection<ForecastItemViewModel>();
         ForecastCollection.ItemsSource = ForecastItems;
-
-        CheckAndLoadWeatherAsync();
     }
 
-    // Verifica la última actualización y carga si es un nuevo día
-    private async void CheckAndLoadWeatherAsync()
+    protected override async void OnAppearing()
     {
-        var lastUpdate = Preferences.Get(LastUpdateKey, DateTime.MinValue);
+        base.OnAppearing();
 
+        var (cachedWeather, cachedForecast) = LoadWeatherCache();
+        if (cachedWeather != null && cachedForecast != null)
+            DisplayWeather(cachedWeather, cachedForecast);
+
+        var lastUpdate = Preferences.Get(LastUpdateKey, DateTime.MinValue);
         if (lastUpdate.Date < DateTime.Now.Date)
-        {
-            await LoadWeatherAsync();
-            Preferences.Set(LastUpdateKey, DateTime.Now);
-        }
+            await LoadWeatherAndSaveCacheAsync();
+        else
+            LblLastUpdate.Text = $"Última actualización: {lastUpdate:dd/MM/yyyy HH:mm}";
     }
 
-    private async Task LoadWeatherAsync()
+    private async Task LoadWeatherAndSaveCacheAsync()
     {
         try
         {
             Weather current = await _weatherServices.GetCurrentWeatherAsync();
-
-            LblLocation.Text = "Punta del Este, Uruguay";
-            LblTemp.Text = $"{Math.Round(current.Temperature)} °C";
-            LblDesc.Text = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(current.Description);
-            ImgIcon.Source = $"https://openweathermap.org/img/wn/{current.Icon}@2x.png";
-
             List<ForecastResponse> forecast = await _weatherServices.Get5DayForecastAsync();
 
-            // Filtrar un ítem por día a las 12:00h
-            var noonForecasts = forecast
-                .Where(f => f.DateTime.Hour == 12)
-                .GroupBy(f => f.DateTime.Date)
-                .Select(g => g.First())
-                .Take(5)
-                .Select(f => new ForecastItemViewModel(f))
-                .ToList();
+            Preferences.Set(WeatherCacheKey, System.Text.Json.JsonSerializer.Serialize(current));
+            Preferences.Set(ForecastCacheKey, System.Text.Json.JsonSerializer.Serialize(forecast));
+            Preferences.Set(LastUpdateKey, DateTime.Now);
 
-            ForecastItems.Clear();
-            foreach (var item in noonForecasts)
-            {
-                ForecastItems.Add(item);
-            }
+            DisplayWeather(current, forecast);
         }
         catch (Exception ex)
         {
             await DisplayAlert("Error", $"No se pudo obtener el clima: {ex.Message}", "OK");
         }
     }
+
+    private (Weather, List<ForecastResponse>) LoadWeatherCache()
+    {
+        var weatherJson = Preferences.Get(WeatherCacheKey, null);
+        var forecastJson = Preferences.Get(ForecastCacheKey, null);
+
+        if (!string.IsNullOrEmpty(weatherJson) && !string.IsNullOrEmpty(forecastJson))
+        {
+            var weather = System.Text.Json.JsonSerializer.Deserialize<Weather>(weatherJson);
+            var forecast = System.Text.Json.JsonSerializer.Deserialize<List<ForecastResponse>>(forecastJson);
+            return (weather, forecast);
+        }
+
+        return (null, null);
+    }
+
+    private void DisplayWeather(Weather current, List<ForecastResponse> forecast)
+    {
+        LblLocation.Text = "Punta del Este, Uruguay";
+        LblTemp.Text = $"{Math.Round(current.Temperature)} °C";
+        LblDesc.Text = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(current.Description);
+        ImgIcon.Source = $"https://openweathermap.org/img/wn/{current.Icon}@2x.png";
+        LblLastUpdate.Text = $"Última actualización: {DateTime.Now:dd/MM/yyyy HH:mm}";
+
+        var noonForecasts = forecast
+            .GroupBy(f => f.DateTime.Date)
+            .Select(g => new ForecastItemViewModel(g.FirstOrDefault(f => f.DateTime.Hour == 12) ?? g.First()))
+            .Take(5)
+            .ToList();
+
+        ForecastItems.Clear();
+        foreach (var item in noonForecasts)
+            ForecastItems.Add(item);
+    }
+
+    private async void BtnRefresh_Clicked(object sender, EventArgs e)
+    {
+        await LoadWeatherAndSaveCacheAsync();
+    }
 }
 
+// ViewModel para pronóstico
 public class ForecastItemViewModel
 {
     public string Date { get; }

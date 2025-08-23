@@ -10,7 +10,7 @@ namespace mauiApp1Prueba.Services
     public class WeatherServices
     {
         private readonly HttpClient _httpClient;
-        private const string ApiKey = "6854acbc28783ae1d4d2c2dce74337ad\r\n";
+        private const string ApiKey = "40ed30cc4da04b0fed28c1dd01a0e483";
         private const string CityQuery = "Punta%20del%20Este,UY";
 
         public WeatherServices()
@@ -18,7 +18,6 @@ namespace mauiApp1Prueba.Services
             _httpClient = new HttpClient();
         }
 
-        // Obtener clima actual
         public async Task<Weather> GetCurrentWeatherAsync()
         {
             var url = $"https://api.openweathermap.org/data/2.5/weather?q={CityQuery}&units=metric&lang=es&appid={ApiKey}";
@@ -26,7 +25,6 @@ namespace mauiApp1Prueba.Services
 
             using var doc = JsonDocument.Parse(response);
             var root = doc.RootElement;
-
             var weatherElement = root.GetProperty("weather")[0];
             var main = root.GetProperty("main");
 
@@ -40,19 +38,15 @@ namespace mauiApp1Prueba.Services
             };
         }
 
-        // Obtener pronóstico 5 días
         public async Task<List<ForecastResponse>> Get5DayForecastAsync()
         {
             var url = $"https://api.openweathermap.org/data/2.5/forecast?q={CityQuery}&units=metric&lang=es&appid={ApiKey}";
             var response = await _httpClient.GetStringAsync(url);
 
             using var doc = JsonDocument.Parse(response);
-            var root = doc.RootElement;
-
-            var list = root.GetProperty("list");
+            var list = doc.RootElement.GetProperty("list");
 
             var forecastList = new List<ForecastResponse>();
-
             foreach (var item in list.EnumerateArray())
             {
                 var weatherElement = item.GetProperty("weather")[0];

@@ -1,333 +1,81 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows.Input;
-using mauiApp1Prueba.Services;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Plugin.Maui.Audio;
 
-namespace mauiApp1Prueba.ViewModels
+namespace mauiApp1Prueba.ViewModels;
+
+public partial class RadioHomeViewModel : ObservableObject
 {
-    public class RadioHomeViewModel : INotifyPropertyChanged
+    private readonly IAudioManager _audioManager;
+    private IAudioPlayer _player;
+
+    [ObservableProperty]
+    private bool isPlaying;
+
+    [ObservableProperty]
+    private string playPauseIcon = "▶️";
+
+    [ObservableProperty]
+    private bool isLive = true;
+
+    [ObservableProperty]
+    private string currentShow = "Bienvenido a Radio Punta del Este";
+
+    [ObservableProperty]
+    private string currentTime = DateTime.Now.ToString("HH:mm");
+
+    [ObservableProperty]
+    private bool isLoading;
+
+    private readonly string[] mp3Files = { "cancion1.mp3", "cancion2.mp3", "cancion3.mp3" };
+
+    public RadioHomeViewModel(IAudioManager audioManager)
     {
-        private readonly IAudioService _audioService;
-
-        // Estado del reproductor
-        private bool _isPlaying = false;
-        private bool _isLoading = false;
-        private bool _isMuted = false;
-        private bool _isFavorite = false;
-        private bool _isLive = true;
-        private bool _showVolumeControl = false;
-        private bool _showConnectionStatus = true;
-        private double _volume = 50;
-
-        // Información de la radio
-        private string _currentShow = "Radio en Vivo";
-        private string _currentTime = DateTime.Now.ToString("HH:mm");
-        private string _connectionStatus = "Conectado";
-        private Color _connectionStatusColor = Colors.Green;
-        private string _welcomeMessage = "¡Bienvenido a Radio Punta!";
-
-        // URL del stream de radio
-        private const string RadioStreamUrl = "https://icecasthd.net/proxy/azulp/live";
-
-        public RadioHomeViewModel(IAudioService audioService)
-        {
-            _audioService = audioService ?? throw new ArgumentNullException(nameof(audioService));
-
-            // Suscribirse a eventos del servicio de audio
-            _audioService.PlayingStateChanged += OnAudioPlayingStateChanged;
-            _audioService.ErrorOccurred += OnAudioErrorOccurred;
-
-            InitializeCommands();
-            _ = InitializeAsync();
-        }
-
-        #region Properties
-        public bool IsPlaying
-        {
-            get => _isPlaying;
-            set
-            {
-                SetProperty(ref _isPlaying, value);
-                OnPropertyChanged(nameof(PlayPauseIcon));
-            }
-        }
-
-        public bool IsLoading
-        {
-            get => _isLoading;
-            set => SetProperty(ref _isLoading, value);
-        }
-
-        public bool IsMuted
-        {
-            get => _isMuted;
-            set
-            {
-                SetProperty(ref _isMuted, value);
-                OnPropertyChanged(nameof(VolumeIcon));
-            }
-        }
-
-        public bool IsFavorite
-        {
-            get => _isFavorite;
-            set
-            {
-                SetProperty(ref _isFavorite, value);
-                OnPropertyChanged(nameof(FavoriteIcon));
-            }
-        }
-
-        public bool IsLive
-        {
-            get => _isLive;
-            set => SetProperty(ref _isLive, value);
-        }
-
-        public bool ShowVolumeControl
-        {
-            get => _showVolumeControl;
-            set => SetProperty(ref _showVolumeControl, value);
-        }
-
-        public bool ShowConnectionStatus
-        {
-            get => _showConnectionStatus;
-            set => SetProperty(ref _showConnectionStatus, value);
-        }
-
-        public double Volume
-        {
-            get => _volume;
-            set
-            {
-                // Evitar que esté en 0 si no está muteado
-                if (!_isMuted && value <= 0)
-                    value = 50;
-
-                SetProperty(ref _volume, value);
-                Preferences.Set("radio_volume", value);
-
-                // Aplicar volumen al servicio de audio
-                _ = _audioService.SetVolumeAsync(value / 100.0);
-            }
-        }
-
-        public string CurrentShow { get => _currentShow; set => SetProperty(ref _currentShow, value); }
-        public string CurrentTime { get => _currentTime; set => SetProperty(ref _currentTime, value); }
-        public string ConnectionStatus { get => _connectionStatus; set => SetProperty(ref _connectionStatus, value); }
-        public Color ConnectionStatusColor { get => _connectionStatusColor; set => SetProperty(ref _connectionStatusColor, value); }
-        public string WelcomeMessage { get => _welcomeMessage; set => SetProperty(ref _welcomeMessage, value); }
-
-        public string PlayPauseIcon => IsPlaying ? "⏸️" : "▶️";
-        public string VolumeIcon => IsMuted ? "🔇" : "🔊";
-        public string FavoriteIcon => IsFavorite ? "❤️" : "🤍";
-        #endregion
-
-        #region Commands
-        public ICommand PlayPauseCommand { get; private set; } = null!;
-        public ICommand ToggleMuteCommand { get; private set; } = null!;
-        public ICommand ToggleFavoriteCommand { get; private set; } = null!;
-        public ICommand ViewScheduleCommand { get; private set; } = null!;
-        public ICommand ViewPodcastsCommand { get; private set; } = null!;
-        public ICommand ViewNewsCommand { get; private set; } = null!;
-        public ICommand ContactCommand { get; private set; } = null!;
-        #endregion
-
-        #region Methods
-        private void InitializeCommands()
-        {
-            PlayPauseCommand = new Command(async () => await ExecutePlayPauseCommand());
-            ToggleMuteCommand = new Command(() => ExecuteToggleMuteCommand());
-            ToggleFavoriteCommand = new Command(() => ExecuteToggleFavoriteCommand());
-            ViewScheduleCommand = new Command(async () => await ExecuteViewScheduleCommand());
-            ViewPodcastsCommand = new Command(async () => await ExecuteViewPodcastsCommand());
-            ViewNewsCommand = new Command(async () => await ExecuteViewNewsCommand());
-            ContactCommand = new Command(async () => await ExecuteContactCommand());
-        }
-
-        private async Task InitializeAsync()
-        {
-            try
-            {
-                // Cargar preferencias guardadas
-                Volume = Preferences.Get("radio_volume", 50.0);
-                IsFavorite = Preferences.Get("radio_is_favorite", false);
-                IsMuted = false; // Forzar que al iniciar no esté muteado
-
-                await CheckConnectivityAsync();
-                _ = StartClockAsync();
-                await LoadCurrentShowInfoAsync();
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error initializing: {ex.Message}");
-            }
-        }
-
-        private void OnAudioPlayingStateChanged(object? sender, bool isPlaying)
-        {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                IsPlaying = isPlaying;
-                IsLoading = false;
-
-                ConnectionStatus = isPlaying ? "En vivo" : "Desconectado";
-                ConnectionStatusColor = isPlaying ? Colors.Green : Colors.Gray;
-            });
-        }
-
-        private void OnAudioErrorOccurred(object? sender, string error)
-        {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                IsPlaying = false;
-                IsLoading = false;
-                ConnectionStatus = "Error";
-                ConnectionStatusColor = Colors.Red;
-            });
-        }
-
-        public async Task StopRadioAsync() => await _audioService.StopAsync();
-
-        private async Task ExecutePlayPauseCommand()
-        {
-            try
-            {
-                if (IsPlaying)
-                {
-                    await _audioService.StopAsync();
-                }
-                else
-                {
-                    IsLoading = true;
-                    ConnectionStatus = "Conectando...";
-                    ConnectionStatusColor = Colors.Orange;
-
-                    // Asegurarse que el volumen no sea 0
-                    if (Volume <= 0 && !IsMuted) Volume = 50;
-
-                    var success = await _audioService.PlayStreamAsync(RadioStreamUrl);
-                    if (!success)
-                    {
-                        IsLoading = false;
-                        ConnectionStatus = "Error";
-                        ConnectionStatusColor = Colors.Red;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
-                IsLoading = false;
-                ConnectionStatus = "Error";
-                ConnectionStatusColor = Colors.Red;
-            }
-        }
-
-        private void ExecuteToggleMuteCommand()
-        {
-            IsMuted = !IsMuted;
-
-            if (IsMuted)
-            {
-                Preferences.Set("radio_volume_before_mute", Volume);
-                Volume = 0;
-            }
-            else
-            {
-                Volume = Preferences.Get("radio_volume_before_mute", 50.0);
-            }
-        }
-
-        private void ExecuteToggleFavoriteCommand()
-        {
-            IsFavorite = !IsFavorite;
-            Preferences.Set("radio_is_favorite", IsFavorite);
-
-            var message = IsFavorite ? "¡Radio agregada a favoritos!" : "Radio removida de favoritos";
-            ShowToast(message);
-        }
-
-        private async Task ExecuteViewScheduleCommand() => await ShowAlertAsync("Programación", "Próximamente: Horarios y programas de Radio Punta del Este");
-        private async Task ExecuteViewPodcastsCommand() => await ShowAlertAsync("Podcasts", "Próximamente: Biblioteca de podcasts y episodios");
-        private async Task ExecuteViewNewsCommand() => await ShowAlertAsync("Noticias", "Próximamente: Últimas noticias locales e internacionales");
-        private async Task ExecuteContactCommand() => await ShowAlertAsync("Contacto", "📻 Radio Punta del Este\n📞 Tel: (598) 42 486 xxx\n📧 info@radiopunta.com\n📍 Punta del Este, Uruguay");
-
-        private async Task<bool> CheckConnectivityAsync()
-        {
-            try
-            {
-                var networkAccess = Connectivity.Current.NetworkAccess;
-                var isConnected = networkAccess == NetworkAccess.Internet;
-
-                ConnectionStatus = isConnected ? "Conectado" : "Sin conexión";
-                ConnectionStatusColor = isConnected ? Colors.Green : Colors.Red;
-                ShowConnectionStatus = true;
-
-                return isConnected;
-            }
-            catch
-            {
-                ConnectionStatus = "Error de conexión";
-                ConnectionStatusColor = Colors.Orange;
-                return false;
-            }
-        }
-
-        private async Task StartClockAsync()
-        {
-            try
-            {
-                while (true)
-                {
-                    CurrentTime = DateTime.Now.ToString("HH:mm");
-                    await Task.Delay(60000);
-                }
-            }
-            catch (TaskCanceledException) { }
-        }
-
-        private async Task LoadCurrentShowInfoAsync()
-        {
-            try
-            {
-                var hour = DateTime.Now.Hour;
-                CurrentShow = hour switch
-                {
-                    >= 6 and < 10 => "Buenos Días Punta del Este",
-                    >= 10 and < 14 => "Radio Mediodía",
-                    >= 14 and < 18 => "Tarde Radial",
-                    >= 18 and < 22 => "Noche en Punta",
-                    _ => "Música Nocturna"
-                };
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error loading show info: {ex.Message}");
-                CurrentShow = "Radio en Vivo";
-            }
-        }
-
-        private async Task ShowAlertAsync(string title, string message)
-        {
-            try { await Application.Current?.MainPage?.DisplayAlert(title, message, "OK"); }
-            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error showing alert: {ex.Message}"); }
-        }
-
-        private void ShowToast(string message) => System.Diagnostics.Debug.WriteLine($"Toast: {message}");
-        #endregion
-
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        protected bool SetProperty<T>(ref T backingStore, T value, [CallerMemberName] string? propertyName = null)
-        {
-            if (EqualityComparer<T>.Default.Equals(backingStore, value)) return false;
-            backingStore = value;
-            OnPropertyChanged(propertyName);
-            return true;
-        }
-        #endregion
+        _audioManager = audioManager;
     }
+
+    [RelayCommand]
+    private async void PlayPause()
+    {
+        if (_player != null && _player.IsPlaying)
+        {
+            _player.Pause();
+            PlayPauseIcon = "▶️";
+            IsPlaying = false;
+        }
+        else
+        {
+            await PlayRandomMp3Async();
+        }
+    }
+
+    private async Task PlayRandomMp3Async()
+    {
+        IsLoading = true;
+
+        try
+        {
+            var random = new Random();
+            string chosenFile = mp3Files[random.Next(mp3Files.Length)];
+
+            _player?.Stop();
+
+            using var stream = await FileSystem.OpenAppPackageFileAsync(chosenFile);
+
+            _player = _audioManager.CreatePlayer(stream);
+            _player.Play();
+
+            PlayPauseIcon = "⏸️";
+            IsPlaying = true;
+
+            // Cambiado para mostrar siempre "Radio del Este"
+            CurrentShow = "Radio del Este";
+            CurrentTime = DateTime.Now.ToString("HH:mm");
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
 }
