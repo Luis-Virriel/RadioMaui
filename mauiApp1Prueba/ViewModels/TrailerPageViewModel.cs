@@ -53,9 +53,31 @@ namespace mauiApp1Prueba.ViewModels
 
         public ObservableCollection<MovieVideo> AvailableTrailers { get; }
 
-        public string TrailerEmbedUrl => SelectedTrailer?.YouTubeEmbedUrl ?? string.Empty;
+        // URL embebida optimizada para MAUI WebView
+        public string TrailerEmbedUrl
+        {
+            get
+            {
+                if (SelectedTrailer?.IsYouTube == true && !string.IsNullOrEmpty(SelectedTrailer.Key))
+                {
+                    // URL embebida con parámetros optimizados para móviles
+                    return $"https://www.youtube.com/embed/{SelectedTrailer.Key}?" +
+                           "autoplay=0&" +          // Sin autoplay para mejor experiencia móvil
+                           "rel=0&" +               // No mostrar videos relacionados
+                           "showinfo=0&" +          // No mostrar información adicional
+                           "controls=1&" +          // Mostrar controles de reproducción
+                           "fs=1&" +                // Permitir pantalla completa
+                           "modestbranding=1&" +    // Branding mínimo de YouTube
+                           "playsinline=1&" +       // Reproducir inline en iOS
+                           "enablejsapi=1&" +       // Habilitar API de JavaScript
+                           "iv_load_policy=3&" +    // Ocultar anotaciones
+                           "disablekb=1";           // Deshabilitar atajos de teclado
+                }
+                return string.Empty;
+            }
+        }
 
-        public bool HasTrailer => SelectedTrailer != null && !string.IsNullOrEmpty(SelectedTrailer.YouTubeEmbedUrl);
+        public bool HasTrailer => SelectedTrailer != null && !string.IsNullOrEmpty(SelectedTrailer.Key);
 
         public bool HasMultipleTrailers => AvailableTrailers.Count > 1;
 
@@ -113,7 +135,7 @@ namespace mauiApp1Prueba.ViewModels
                     if (SelectedTrailer != null)
                     {
                         System.Diagnostics.Debug.WriteLine($"Trailer seleccionado: {SelectedTrailer.Name}");
-                        System.Diagnostics.Debug.WriteLine($"URL: {SelectedTrailer.YouTubeEmbedUrl}");
+                        System.Diagnostics.Debug.WriteLine($"URL embebida: {TrailerEmbedUrl}");
                     }
                     else
                     {
@@ -159,7 +181,10 @@ namespace mauiApp1Prueba.ViewModels
                 // Fallback: intentar cerrar de otra manera
                 try
                 {
-                    await Shell.Current.Navigation.PopAsync();
+                    if (Shell.Current.Navigation.NavigationStack.Count > 1)
+                    {
+                        await Shell.Current.Navigation.PopAsync();
+                    }
                 }
                 catch (Exception popEx)
                 {
@@ -209,6 +234,9 @@ namespace mauiApp1Prueba.ViewModels
 
                     // Pequeña pausa para que la UI se actualice
                     await Task.Delay(100);
+
+                    // Forzar actualización del WebView (útil en algunas plataformas)
+                    OnPropertyChanged(nameof(TrailerEmbedUrl));
                 }
             }
             catch (Exception ex)

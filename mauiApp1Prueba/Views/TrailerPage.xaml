@@ -10,6 +10,7 @@
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -68,28 +69,17 @@
                            BackgroundColor="#16213e"
                            Spacing="20">
 
-                    <!-- Thumbnail del trailer principal -->
+                    <!-- WebView para reproducir trailer embebido -->
                     <Frame BackgroundColor="Black" 
                            CornerRadius="15" 
                            Padding="0"
-                           HasShadow="True">
-                        <Grid>
-                            <Image Source="{Binding SelectedTrailer.YouTubeThumbnailUrl}" 
-                                   Aspect="AspectFill"
-                                   HeightRequest="200" />
-
-                            <!-- Play button overlay -->
-                            <Button Text="▶️ REPRODUCIR TRAILER"
-                                    Command="{Binding OpenInYouTubeCommand}"
-                                    BackgroundColor="#e94560CC"
-                                    TextColor="White"
-                                    FontSize="18"
-                                    FontAttributes="Bold"
-                                    CornerRadius="25"
-                                    Padding="20,10"
-                                    HorizontalOptions="Center"
-                                    VerticalOptions="Center" />
-                        </Grid>
+                           HasShadow="True"
+                           HeightRequest="250">
+                        <WebView x:Name="TrailerWebView"
+                                 Source="{Binding TrailerEmbedUrl}"
+                                 BackgroundColor="Black"
+                                 VerticalOptions="FillAndExpand"
+                                 HorizontalOptions="FillAndExpand" />
                     </Frame>
 
                     <!-- Información del trailer -->
