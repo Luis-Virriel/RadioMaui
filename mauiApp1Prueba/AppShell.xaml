@@ -8,19 +8,22 @@
     Shell.FlyoutBehavior="Flyout"
     Title="Radio Punta del Este">
 
+    <!-- 🏠 Inicio -->
     <FlyoutItem Title="Home" Icon="home_icon.png">
         <ShellContent ContentTemplate="{DataTemplate root:MainPage}" Route="main" />
     </FlyoutItem>
 
+    <!-- 👤 Perfil -->
     <FlyoutItem Title="Mi Perfil" Icon="edit_user_icon.png">
         <ShellContent ContentTemplate="{DataTemplate views:EditUserPage}" Route="EditUserPage" />
     </FlyoutItem>
 
-    
+    <!-- ⚙️ Preferencias -->
     <FlyoutItem Title="Preferencias" Icon="settings_icon.png">
         <ShellContent ContentTemplate="{DataTemplate views:PaginaPreferencias}" Route="PaginaPreferencias" />
     </FlyoutItem>
 
+    <!-- 📑 Páginas internas (no visibles en el menú lateral) -->
     <ShellContent ContentTemplate="{DataTemplate views:PaginaNoticias}" 
                   Route="PaginaNoticias" 
                   Shell.FlyoutItemIsVisible="False" />
@@ -38,7 +41,13 @@
                   Shell.FlyoutItemIsVisible="False" />
 
     <ShellContent ContentTemplate="{DataTemplate views:PaginaPatrocinadores}" 
-                  Route="patrocinadores" 
+                  Route="PaginaPatrocinadores" 
                   Shell.FlyoutItemIsVisible="False" />
+
+    <!-- 🗺️ Nueva página de mapa de patrocinadores -->
+    <ShellContent ContentTemplate="{DataTemplate views:SponsorsMapPage}" 
+              Route="SponsorsMapPage" 
+              Shell.FlyoutItemIsVisible="False" />
+
 
 </Shell>

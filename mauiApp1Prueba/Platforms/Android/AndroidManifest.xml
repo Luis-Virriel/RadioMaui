@@ -50,16 +50,22 @@
 	<uses-feature android:name="android.hardware.audio.output" android:required="true" />
 
 	<application
-        android:allowBackup="true"
-        android:icon="@mipmap/appicon"
-        android:supportsRtl="true"
-        android:label="Radio Punta"
-        android:theme="@style/Maui.SplashTheme"
-        android:usesCleartextTraffic="true">
+    android:allowBackup="true"
+    android:icon="@mipmap/appicon"
+    android:supportsRtl="true"
+    android:label="Radio Punta"
+    android:theme="@style/Maui.SplashTheme"
+    android:usesCleartextTraffic="true">
 
 		<!-- ⭐ CONFIGURACIÓN PARA REPRODUCCIÓN DE AUDIO EN BACKGROUND -->
 		<service android:name="androidx.media.session.MediaButtonReceiver" />
 
+		<!-- ⭐ API KEY PARA GOOGLE MAPS -->
+		<meta-data
+			android:name="com.google.android.geo.API_KEY"
+			android:value="AIzaSyDKW73zN7jJ9Xtt3QhnHclx6ikj7HPZdX4" />
+
 	</application>
+
 
 </manifest>

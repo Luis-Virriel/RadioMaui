@@ -2,6 +2,7 @@
 using mauiApp1Prueba.Services;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using Microsoft.Maui.Controls;
 
 namespace mauiApp1Prueba.ViewModels
 {
@@ -31,9 +32,7 @@ namespace mauiApp1Prueba.ViewModels
             set
             {
                 if (SetProperty(ref _searchText, value))
-                {
                     OnSearchTextChanged(value);
-                }
             }
         }
 
@@ -57,14 +56,30 @@ namespace mauiApp1Prueba.ViewModels
             _sponsorService = sponsorService;
             PageTitle = "Patrocinadores";
 
-            // Initialize commands
+            // Inicializar comandos
             LoadSponsorsCommand = new Command(async () => await LoadSponsorsAsync());
             RefreshCommand = new Command(async () => await RefreshAsync());
             SelectSponsorCommand = new Command<Sponsor>(async (sponsor) => await SelectSponsorAsync(sponsor));
             AddSponsorCommand = new Command(async () => await AddSponsorAsync());
             DeleteSponsorCommand = new Command<Sponsor>(async (sponsor) => await DeleteSponsorAsync(sponsor));
             SearchSponsorsCommand = new Command(async () => await SearchSponsorsAsync());
-            ViewMapCommand = new Command(async () => await ViewMapAsync());
+
+            // Comando para abrir mapa
+            // Nuevo: abrir página de mapa
+            ViewMapCommand = new Command(async () =>
+            {
+                try
+                {
+                    // Navegar usando la ruta registrada en AppShell
+                    await Shell.Current.GoToAsync("SponsorsMapPage");
+                }
+                catch (Exception ex)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error",
+                        $"No se pudo abrir el mapa: {ex.Message}", "OK");
+                }
+            });
+
         }
 
         public override async Task InitializeAsync()
@@ -84,9 +99,7 @@ namespace mauiApp1Prueba.ViewModels
 
                 Sponsors.Clear();
                 foreach (var sponsor in sponsors)
-                {
                     Sponsors.Add(sponsor);
-                }
 
                 IsEmptyStateVisible = !Sponsors.Any();
             }
@@ -114,7 +127,6 @@ namespace mauiApp1Prueba.ViewModels
 
             SelectedSponsor = sponsor;
 
-            // Navegar a la página de detalles para editar
             await Shell.Current.GoToAsync($"sponsordetail?id={sponsor.Id}");
         }
 
@@ -178,17 +190,15 @@ namespace mauiApp1Prueba.ViewModels
                 SetBusyState(true, "Buscando...");
 
                 var allSponsors = await _sponsorService.GetAllSponsorsAsync();
-                var filteredSponsors = allSponsors.Where(s =>
+                var filtered = allSponsors.Where(s =>
                     s.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
                     (!string.IsNullOrEmpty(s.Description) && s.Description.Contains(SearchText, StringComparison.OrdinalIgnoreCase)) ||
                     s.Address.Contains(SearchText, StringComparison.OrdinalIgnoreCase)
                 ).ToList();
 
                 Sponsors.Clear();
-                foreach (var sponsor in filteredSponsors)
-                {
+                foreach (var sponsor in filtered)
                     Sponsors.Add(sponsor);
-                }
 
                 IsEmptyStateVisible = !Sponsors.Any();
             }
@@ -203,22 +213,10 @@ namespace mauiApp1Prueba.ViewModels
             }
         }
 
-        private async Task ViewMapAsync()
-        {
-            // TODO: Navegar al mapa cuando lo creemos
-            // await Shell.Current.GoToAsync("sponsormap");
-
-            // Por ahora, mostrar un alert temporal
-            await Application.Current?.MainPage?.DisplayAlert("Mapa",
-                "Función en desarrollo", "OK");
-        }
-
         private void OnSearchTextChanged(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
-            {
                 _ = LoadSponsorsAsync();
-            }
         }
     }
 }
