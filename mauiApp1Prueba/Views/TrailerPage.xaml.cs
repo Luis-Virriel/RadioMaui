@@ -1,104 +1,77 @@
-using mauiApp1Prueba.ViewModels;
 using mauiApp1Prueba.Models;
+using mauiApp1Prueba.ViewModels;
 
 namespace mauiApp1Prueba.Views;
 
 [QueryProperty(nameof(Movie), "Movie")]
-public partial class TrailerPage : ContentPage
+public partial class TrailerPage : ContentPage, IQueryAttributable
 {
     private readonly TrailerPageViewModel _viewModel;
-    private Movie _pendingMovie;
-
-    public TrailerPage(TrailerPageViewModel viewModel)
-    {
-        try
-        {
-            InitializeComponent();
-            _viewModel = viewModel;
-            BindingContext = _viewModel;
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error en constructor TrailerPage: {ex.Message}");
-            // Si falla la inicialización, crear un ViewModel temporal
-            _viewModel = viewModel;
-        }
-    }
+    private Movie _movie;
 
     public Movie Movie
     {
+        get => _movie;
         set
         {
-            try
+            _movie = value;
+            if (_viewModel != null && value != null)
             {
-                if (value != null)
-                {
-                    _pendingMovie = value;
-                    System.Diagnostics.Debug.WriteLine($"Movie asignado: {value.Title}");
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error asignando Movie: {ex.Message}");
+                _ = Task.Run(async () => await _viewModel.InitializeAsync(value));
             }
         }
     }
 
-    protected override async void OnAppearing()
+    public TrailerPage(TrailerPageViewModel viewModel)
+    {
+        InitializeComponent();
+        _viewModel = viewModel;
+        BindingContext = _viewModel;
+    }
+
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
         try
         {
-            base.OnAppearing();
-
-            // Dar tiempo para que la UI se estabilice
-            await Task.Delay(100);
-
-            if (_pendingMovie != null && _viewModel != null)
+            if (query != null && query.ContainsKey("Movie"))
             {
-                System.Diagnostics.Debug.WriteLine($"Inicializando ViewModel para: {_pendingMovie.Title}");
-                await _viewModel.InitializeAsync(_pendingMovie);
-                _pendingMovie = null; // Limpiar referencia
+                Movie = query["Movie"] as Movie;
+                System.Diagnostics.Debug.WriteLine($"TrailerPage recibió película: {Movie?.Title}");
             }
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Error en OnAppearing: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Error en ApplyQueryAttributes: {ex.Message}");
+        }
+    }
 
-            // Mostrar error al usuario y volver atrás
-            await MainThread.InvokeOnMainThreadAsync(async () =>
-            {
-                try
-                {
-                    await DisplayAlert("Error",
-                        "No se pudo cargar la información del trailer. Volviendo a la lista de películas.", "OK");
-                    await Shell.Current.GoToAsync("..");
-                }
-                catch
-                {
-                    // Si falla incluso el alert, intentar navegar atrás directamente
-                    try
-                    {
-                        await Shell.Current.GoToAsync("..");
-                    }
-                    catch (Exception navEx)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"Error navegando atrás: {navEx.Message}");
-                    }
-                }
-            });
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+
+        // Asegurar que el WebView esté listo si hay un trailer
+        if (_viewModel?.HasTrailer == true && !string.IsNullOrEmpty(_viewModel.TrailerEmbedUrl))
+        {
+            // Forzar la actualización del WebView si es necesario
+            TrailerWebView.Source = _viewModel.TrailerEmbedUrl;
         }
     }
 
     protected override void OnDisappearing()
     {
+        base.OnDisappearing();
+
+        // Limpiar el WebView al salir para liberar memoria
         try
         {
-            base.OnDisappearing();
-            _pendingMovie = null;
+            if (TrailerWebView != null)
+            {
+                TrailerWebView.Source = null;
+            }
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Error en OnDisappearing: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Error limpiando WebView: {ex.Message}");
         }
     }
 }
