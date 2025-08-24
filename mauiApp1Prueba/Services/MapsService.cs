@@ -49,7 +49,7 @@ namespace mauiApp1Prueba.Services
 
                 if (current == null) return null;
 
-                // Convertir a Microsoft.Maui.Devices.Sensors.Location
+                // Convertir a Microsoft.Maui.Devices.Sensors.Locatio
                 return new Location(current.Latitude, current.Longitude);
             }
             catch
